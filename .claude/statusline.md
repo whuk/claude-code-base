@@ -11,7 +11,7 @@
 현재 세션에서 아래 형식의 상태표시줄(status line)을 설정해줘.
 
 **표시 형식:**
-{현재 디렉토리} | {모델명} | {git branch} | 토큰 사용: {사용량} | 토큰 잔여: {잔여량} ({잔여%}%)
+📁 {현재 디렉토리} | 🤖 {모델명} | 🌿 {git branch} | 📈 토큰 사용: {사용량} | 📉 토큰 잔여: {잔여량} ({잔여%}%)
 
 **구현 요구사항:**
 
@@ -53,12 +53,12 @@
 
 ### 출력 예시
 ```
-C:\Users\ryan-woo\dev\my-project | claude-opus-4-5 | feature/add-login | 토큰 사용: 12,430 | 토큰 잔여: 187,570 (93.8%)
+📁 C:\Users\ryan-woo\dev\my-project | 🤖 claude-opus-4-5 | 🌿 feature/add-login | 📈 토큰 사용: 12,430 | 📉 토큰 잔여: 187,570 (93.8%)
 ```
 
 또는 macOS/Linux:
 ```
-/home/ryan/dev/my-project | claude-opus-4-5 | main | 토큰 사용: 12,430 | 토큰 잔여: 187,570 (93.8%)
+📁 /home/ryan/dev/my-project | 🤖 claude-opus-4-5 | 🌿 main | 📈 토큰 사용: 12,430 | 📉 토큰 잔여: 187,570 (93.8%)
 ```
 
 위 설정을 완료한 후, 매 응답마다 또는 요청 시 상태표시줄을 출력해줘.
