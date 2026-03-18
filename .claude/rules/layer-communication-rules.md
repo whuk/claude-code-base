@@ -29,7 +29,7 @@ Controller, Service, Domain 계층 간의 데이터 전달 규칙을 정의한�
 
 ### 3.2. 단순 조회 (Read / Query) 흐름
 
-- 대상: GET 요청 (단순 데이터 렌더링 목적)
+- 대상: GET 요청 (단순 데이터 렌더링 목적) 및 POST를 사용한 검색 요청 (`POST /resources/search` 등)
 - 흐름: Controller → Query DTO → Repository (Projection) → Controller
 - 단순 조회를 위해 Rich Domain 객체를 거치지 않는다.
 - JPA Projection, Querydsl, jOOQ 등을 사용하여 DB에서 읽어올 때부터 Read DTO(`record`/`data class`)로 직접 매핑하여 반환한다.

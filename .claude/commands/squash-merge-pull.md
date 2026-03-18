@@ -1,3 +1,7 @@
+---
+argument-hint: squash merge할 PR 번호 (예: #123 또는 123, 선택)
+---
+
 GitHub PR을 squash merge하고 로컬 main 브랜치를 최신 상태로 동기화합니다.
 
 1. 대상 PR을 결정하세요:
