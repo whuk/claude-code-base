@@ -3,7 +3,7 @@ user-invocable: true
 argument-hint: "[프로젝트 설명]"
 ---
 
-# /prd1 — 러프 기획 문서(PRD1) 생성
+# /rw:prd:prd1 — 러프 기획 문서(PRD1) 생성
 
 사용자가 `$ARGUMENTS`로 전달한 프로젝트 설명을 바탕으로, 프로젝트 루트에 **PRD1.md** 파일을 생성한다.
 
