@@ -33,6 +33,8 @@ model: inherit
 - **Read 흐름**: Controller → Query/Read DTO → Repository(Projection). 단순 조회는 Rich Domain을 경유하지 않는다.
 - 조회 전용은 `{Domain}Finder`(`@Transactional(readOnly = true)`), 상태 변경은 `{Domain}Service`(`@Transactional`). 트랜잭션은 클래스 단위 선언.
 - Repository 동적 검색은 Specification 우선. QueryDSL/JdbcClient는 `repository.md`의 escalation ladder 근거가 있을 때만.
+- Domain 클래스가 JPA 엔티티 역할을 겸한다(별도 Entity 클래스 없음). 클래스에는 `@Entity` 마커만 남기고, `@Column`/`@Id`/`@Table` 등 나머지 매핑은 `orm.xml`에 작성한다 (`domain.md` 9번).
+- 연관된 파라미터가 4개 이상이면 Value Object로 그룹화한다. Command/Query에도 Web DTO와 동일한 Bean Validation 애노테이션을 붙이고 Service 클래스에 `@Validated`를 선언한다 (`layer-communication-rules.md` 8번).
 
 ## 커밋 규율
 

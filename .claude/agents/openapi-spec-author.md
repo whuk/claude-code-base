@@ -18,22 +18,24 @@ model: inherit
 1. 작업 전 `.claude/rules/api-dto.md`와 `.claude/rules/rest-api.md`를 읽는다.
 2. 이 저장소의 openapi 스펙 위치와 빌드 도구(Gradle 또는 Maven), 모델 스타일(`record`)을 파악한다. 기존 도메인 스펙의 구조·컨벤션을 확인해 일관성을 맞춘다. 도메인별 파일 분할과 `$ref` 참조 패턴을 따른다.
 3. 엔드포인트와 스키마를 추가/수정한다.
-4. 빌드로 Controller 인터페이스와 DTO 모델이 정상 생성되는지 검증한다. 모델 스타일은 `record`.
+4. 빌드로 Controller 인터페이스와 DTO 모델이 정상 생성되는지 검증한다. 모델 스타일은 `record`이며, 명시한 제약조건이 Bean Validation 애노테이션으로, 중첩 스키마가 `@Valid`로 변환됐는지 확인한다.
 
 ## rest-api.md 규약 준수
 
 - URI: 복수 명사, kebab-case, 동사 금지(복잡 검색은 `POST /{resource}/search` 예외), trailing slash 금지, 중첩 2단계 이하.
 - HTTP 메서드/상태코드 규약: 생성 201 + `Location` 헤더, 부분 수정은 PATCH, 400(구문)과 422(비즈니스) 구분.
-- 응답: envelope 없이 직접 반환. 에러는 `ErrorResponse`(status/error/message/path) 스키마. 필드명 camelCase, 날짜 ISO 8601, null 필드 생략.
+- 응답: envelope 없이 직접 반환. 에러는 RFC 9457 Problem Details 형식(`type`/`title`/`status`/`detail`/`instance`, 필드별 오류는 `errors` 배열 추가). 필드명 camelCase, 날짜 ISO 8601, null 필드 생략.
 - 페이지네이션(오프셋/커서), 정렬(`-` 접두사), 필터(`min/max{Field}`) 규약 준수.
 - 버전: URI path(`/v1/...`).
 
 ## OpenAPI 작성 규칙
 
 - 스키마 이름 PascalCase, 재사용 스키마는 `components/schemas`에 전역 정의 후 `$ref`. 인라인 최소화.
+- 연관된 필드가 4개 이상이면 인라인 나열하지 않고 별도 스키마로 분리해 `$ref`로 참조한다 (`layer-communication-rules.md` 8번, Value Object 그룹화).
+- 필드 제약조건(`required`, `minLength`/`maxLength`, `pattern`, `minimum`/`maximum`, `format`)을 명시해 Bean Validation 애노테이션이 자동 생성되도록 한다. 제너레이터가 `format`을 애노테이션으로 변환하지 못하면 `pattern`으로 보완한다 (`rest-api.md` 8번).
 - 모든 엔드포인트에 `operationId` 명시(생성 메서드명이 됨).
 - 요청/응답 `example` 포함.
-- 공통 패턴(페이지네이션 응답, ErrorResponse)은 한 번 정의하고 재사용. 파일 500줄 초과 시 도메인 분할.
+- 공통 패턴(페이지네이션 응답, Problem Details)은 한 번 정의하고 재사용. 파일 500줄 초과 시 도메인 분할.
 
 ## 마무리
 

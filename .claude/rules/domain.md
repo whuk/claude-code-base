@@ -14,11 +14,12 @@ globs: "**/domain/**"
 - 비즈니스 로직을 도메인 객체 내부에 배치한다. Anemic Domain Model(getter/setter만 있는 빈약한 모델)을 금지한다.
 - 도메인 객체가 스스로 자신의 상태를 관리하고, 비즈니스 규칙을 실행한다.
 
-### 2. 인프라 비종속 (순수 도메인)
+### 2. 인프라 비종속 (애노테이션 최소화)
 
-- JPA 어노테이션(`@Entity`, `@Column`, `@Id` 등), Spring 어노테이션, DB 관련 의존성을 일절 포함하지 않는다.
-- 프레임워크나 라이브러리에 의존하지 않는 순수한 언어 수준의 클래스로 작성한다.
-- 영속성 매핑은 별도의 인프라 계층에서 담당한다.
+- Domain 클래스가 JPA 엔티티 역할을 겸한다. Domain과 별도로 JPA Entity 클래스를 만들지 않는다.
+- 클래스에는 `@Entity` 마커 애노테이션만 남긴다. JPA 엔티티 스캔과 QueryDSL Q-class 생성(APT)이 `@Entity` 존재 여부를 기준으로 동작하기 때문에 예외적으로 허용한다.
+- `@Column`, `@Id`, `@Table`, `@OneToMany` 등 구체적인 매핑 애노테이션은 소스 코드에 작성하지 않는다. 해당 정보는 JPA XML 디스크립터(`orm.xml`)로 분리한다 (9번 참조).
+- Spring 어노테이션, DB 관련 의존성은 포함하지 않는다.
 
 ### 3. Entity vs Value Object 구분
 
@@ -53,6 +54,17 @@ globs: "**/domain/**"
 
 - 특정 도메인 클래스 내부에서만 사용하는 enum은 별도 파일로 분리하지 않고, 해당 도메인 클래스의 **중첩 타입(nested type)**으로 선언한다 (예: `Order.Status`, `Payment.Method`).
 - 여러 도메인 클래스에서 공통으로 사용하는 enum은 도메인 패키지 내 별도 파일로 분리한다.
+
+### 9. JPA 영속성 매핑 (orm.xml)
+
+- Domain 클래스와 JPA Entity를 분리하지 않는다. 하나의 클래스가 Rich Domain 모델이자 영속성 대상 역할을 겸한다.
+- `@Entity` 마커를 제외한 매핑 정보(`@Table`, `@Id`, `@Column`, `@OneToMany` 등에 해당하는 내용)는 클래스에 애노테이션으로 작성하지 않고, JPA XML 디스크립터(`orm.xml`)에 작성한다.
+- 매핑 파일은 애그리거트 단위로 분리한다 (예: `src/main/resources/META-INF/jpa/{aggregate}-orm.xml`). 하나의 파일에 모든 애그리거트를 몰아넣지 않는다.
+- access type은 `FIELD`로 지정하여 getter 유무와 무관하게 필드에 직접 매핑되도록 한다.
+- JPA가 영속성 컨텍스트에서 객체를 재구성(하이드레이션)할 때 사용할 `protected` 기본 생성자를 허용한다. 이 생성자는 프레임워크 전용이며 애플리케이션 코드에서 직접 호출하지 않는다.
+- 5번 원칙(자기 검증)의 불변 조건 검증은 애플리케이션 코드를 통한 최초 생성/상태 변경 시점에만 적용한다. JPA 하이드레이션 경로(기본 생성자 + 필드 주입)는 이미 검증된 상태를 DB에서 재구성하는 것이므로 검증 대상에서 제외한다.
+- Value Object도 동일한 방식으로 `orm.xml`의 `<embeddable>`로 매핑한다. 별도의 영속성 DTO나 변환 계층을 두지 않는다.
+- 6번 원칙(Aggregate Root)에 따라, `orm.xml`에서도 다른 Aggregate Root에 대한 `@ManyToOne`/`@OneToMany`에 해당하는 연관관계 매핑을 정의하지 않는다. Aggregate 경계를 넘는 참조는 ID 필드로만 매핑한다.
 
 ## 작성 원칙
 

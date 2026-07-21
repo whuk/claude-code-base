@@ -25,10 +25,11 @@ model: opus
    - Aggregate Root와 경계를 식별한다. 경계를 넘는 참조는 ID로만.
    - 비즈니스 규칙을 어느 도메인 메서드가 책임질지 배치한다(Anemic 금지). 불변 조건과 상태 변경 메서드(`approve()` 등)를 명세한다.
    - 도메인 클래스 내부 전용 enum은 중첩 타입으로, 공통 enum은 별도 파일로.
+   - Domain 클래스는 JPA 엔티티 역할을 겸한다. `@Entity` 마커 외의 매핑은 `orm.xml`에 정의하도록 설계하며, 애그리거트별 매핑 파일 위치를 함께 제시한다 (`domain.md` 9번).
 4. **계층 배치**:
    - Write는 Controller(Web DTO)→Service(Command)→Rich Domain→Repository, Read는 Controller→Query/Read DTO→Repository(Projection)로 흐름을 정한다.
    - `{Domain}Finder`/`{Domain}Service` 분리와 트랜잭션 경계를 지정한다.
-   - 필요한 Command/Query 객체(sealed interface 그룹화)와 Read DTO(Java record / Kotlin data class)를 나열한다.
+   - 필요한 Command/Query 객체(sealed interface 그룹화)와 Read DTO(Java record / Kotlin data class)를 나열한다. 연관 파라미터가 4개 이상이면 Value Object로 그룹화하고, Web DTO와 동일한 Bean Validation 애노테이션을 부여하도록 명시한다 (`layer-communication-rules.md` 8번).
 5. **Repository 도구 티어 선택**: `repository.md`의 ladder에서 **가장 낮은 충분한 단계**를 근거와 함께 고른다. 상위(QueryDSL/JdbcClient/jOOQ)로 올라가려면 구체적 근거(N+1, 다중 조인, 측정된 성능 등)를 제시한다. 선제적 상위 선택을 금지한다.
 
 ## 산출물 형식

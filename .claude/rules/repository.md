@@ -46,6 +46,7 @@ JPA Repository 작성 시 동적 검색 조건 처리 방식과 쿼리 작성 �
 - `io.github.openfeign.querydsl` 6.x를 사용한다 (Jakarta EE / Spring Boot 3+ 네이티브 지원).
 - 원본 `com.querydsl` 5.1.0은 사실상 관리 중단 상태이므로 신규 프로젝트에서 사용하지 않는다.
 - Q-class는 빌드 시 자동 생성한다. 버전 관리(VCS)에 포함하지 않는다.
+- `domain.md` 2번/9번 규칙에 따라 Domain 클래스에는 `@Entity` 마커 애노테이션만 남기고 나머지 매핑(`@Column`, `@Id` 등)은 `orm.xml`에 작성한다. `@Entity`가 소스에 남아있으므로 기존 애노테이션 스캔 기반 APT(`JPAAnnotationProcessor`)로 Q-class 생성이 그대로 동작한다.
 
 ### 6.2. 클래스 구조
 
@@ -67,8 +68,8 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
 }
 
 public interface OrderRepository extends
-        JpaRepository<OrderEntity, Long>,
-        JpaSpecificationExecutor<OrderEntity>,
+        JpaRepository<Order, Long>,
+        JpaSpecificationExecutor<Order>,
         OrderRepositoryCustom {
 }
 ```

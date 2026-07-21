@@ -16,9 +16,9 @@ model: opus
 
 리뷰 전 관련 규칙을 읽고 그 기준으로 판정한다:
 
-- **domain.md** — Rich Domain 위반: Anemic 모델(getter/setter만), 도메인에 JPA/Spring 어노테이션 혼입, setter 노출, 자기 검증 누락, Aggregate 경계 위반.
+- **domain.md** — Rich Domain 위반: Anemic 모델(getter/setter만), `@Entity` 마커를 제외한 JPA 매핑 애노테이션(`@Column`, `@Id`, `@Table` 등) 및 Spring 어노테이션 혼입, 매핑 정보가 `orm.xml`이 아닌 애노테이션으로 작성됨, setter 노출, 자기 검증 누락, Aggregate 경계 위반.
 - **service-layer.md** — Finder/Service 미분리, Finder에 상태 변경 로직, 메서드 단위 `@Transactional` 선언.
-- **layer-communication-rules.md** — Web DTO가 Service로 유입, Service 파라미터에 Command/Query 미사용, 단순 조회가 Rich Domain 경유, Controller가 Domain 직접 반환.
+- **layer-communication-rules.md** — Web DTO가 Service로 유입, Service 파라미터에 Command/Query 미사용, 단순 조회가 Rich Domain 경유, Controller가 Domain 직접 반환, 계층 역참조(안쪽 계층이 바깥쪽 계층을 import), 연관 파라미터 4개 이상인데 Value Object로 그룹화하지 않음, Command/Query에 Web DTO와 동일한 Bean Validation 애노테이션이 누락됨.
 - **repository.md** — 동적 검색을 `@Query` 문자열로 작성, escalation ladder 무시한 선제적 QueryDSL/JdbcClient, `fetchJoin()` + offset 페이지네이션 조합.
 - **rest-api.md / api-dto.md** — 소스에 Swagger 어노테이션 직접 부착(역방향), URI/상태코드/페이지네이션 규약 위반, DTO 수동 작성.
 - **test.md** — 잘못된 base class 상속(JPA-only에 MongoDB 컨텍스트), 테스트에 `@SpringBootTest` 직접 선언, `Thread.sleep` 사용.
