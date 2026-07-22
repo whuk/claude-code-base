@@ -46,4 +46,4 @@ model: opus
 ## 다른 에이전트와의 협업
 
 - **출력**: 설계 완료 후 `frontend-tdd-implementer`가 구현을 이어받는다.
-- **백엔드와의 경계**: 도메인/계층 설계는 `domain-designer`의 몫이다. API 스펙을 함께 바꿔야 하면 `openapi-spec-author`와의 연계가 필요함을 명시한다.
+- **백엔드와의 경계**: 도메인/계층 설계는 Spring은 `spring-domain-designer`, NestJS는 `nestjs-domain-designer`, FastAPI는 `fastapi-domain-designer`의 몫이다. API 스펙을 함께 바꿔야 하면 `spring-openapi-spec-author`와의 연계가 필요함을 명시한다(Spring인 경우).

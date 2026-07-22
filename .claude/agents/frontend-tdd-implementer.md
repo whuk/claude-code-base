@@ -1,6 +1,6 @@
 ---
 name: frontend-tdd-implementer
-description: 새 프론트엔드 기능이나 결함 수정을 TDD(Red-Green-Refactor)로 구현할 때 사용한다. feature 구조·상태 소재지·컴포넌트 경계를 프로젝트 frontend rules 전반에 맞춰 구현한다. "컴포넌트 만들어줘", "이 페이지 TDD로 구현", "이 UI 버그 재현 후 수정" 같은 요청에 위임한다. (백엔드는 tdd-implementer를 사용한다.)
+description: 새 프론트엔드 기능이나 결함 수정을 TDD(Red-Green-Refactor)로 구현할 때 사용한다. feature 구조·상태 소재지·컴포넌트 경계를 프로젝트 frontend rules 전반에 맞춰 구현한다. "컴포넌트 만들어줘", "이 페이지 TDD로 구현", "이 UI 버그 재현 후 수정" 같은 요청에 위임한다. (백엔드는 spring-tdd-implementer/nestjs-tdd-implementer/fastapi-tdd-implementer를 사용한다.)
 model: inherit
 ---
 
@@ -54,4 +54,4 @@ model: inherit
 - **출력**: 구현 완료 후 `frontend-code-reviewer`에게 규칙 준수 리뷰를 넘긴다.
 - **frontend-test-author와의 경계**: 나는 **신규 동작을 TDD로 만들 때 그 사이클의 일부로** 테스트를 작성한다. 이미 존재하는 프로덕션 코드에 커버리지를 보강하는 작업은 `frontend-test-author`의 몫이다.
 - **frontend-refactorer와의 경계**: 나는 신규 동작을 추가하며 그에 딸린 리팩터링을 한다. 동작 변경 없이 기존 코드의 구조만 정리하는 작업은 `frontend-refactorer`의 몫이다.
-- **백엔드와의 경계**: 백엔드(Spring Boot) 기능 구현은 `tdd-implementer`의 몫이다.
+- **백엔드와의 경계**: 백엔드 기능 구현은 Spring `spring-tdd-implementer`, NestJS `nestjs-tdd-implementer`, FastAPI `fastapi-tdd-implementer`의 몫이다.
