@@ -1,13 +1,13 @@
 ---
 description: Application Service(Finder/Service) 클래스 분리, UseCase 구현, 트랜잭션 규칙 (Hexagonal)
-globs: "**/*Service.java,**/*Finder.java,**/*UseCase.java,**/*Service.kt,**/*Finder.kt,**/*UseCase.kt"
+globs: "**/*Service.java,**/*Finder.java,**/*UseCase.java"
 ---
 
 # Application Service 클래스 분리 및 트랜잭션 규칙
 
 `application/service` 패키지의 클래스 작성 규칙이다. `layered/service-layer.md`의 Finder/Service 분리, 트랜잭션 선언 규칙을 그대로 따르되, 각 클래스가 `port/in`의 UseCase 인터페이스를 구현한다는 점이 다르다.
 
-이 프로젝트가 Layered를 채택했다면 이 파일은 적용 대상이 아니다 (`layered/service-layer.md` 참조).
+이 프로젝트가 Layered를 채택했다면 이 파일은 적용 대상이 아니다 (`layered/service-layer.md` 참조). 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다. Java와 Kotlin 규칙 파일을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 언어의 규칙 파일도 프로젝트에서 제외한다 (`kotlin/hexagonal/service-layer.md` 참조).
 
 ## 1. 핵심 원칙
 

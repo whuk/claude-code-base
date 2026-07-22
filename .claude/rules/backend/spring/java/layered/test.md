@@ -7,7 +7,7 @@ globs: "**/src/test/**"
 
 테스트 작성 시 테스트 유형별 적절한 base class를 선택하고, 필요한 인프라만 로드한다.
 
-이 프로젝트가 Hexagonal(Ports & Adapters)을 채택했다면 이 파일은 적용 대상이 아니다. Domain/Application/Adapter 계층별로 테스트 전략이 세분화되므로 `hexagonal/test.md`를 참조한다.
+이 프로젝트가 Hexagonal(Ports & Adapters)을 채택했다면 이 파일은 적용 대상이 아니다. Domain/Application/Adapter 계층별로 테스트 전략이 세분화되므로 `hexagonal/test.md`를 참조한다. 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다. Java와 Kotlin 규칙 파일을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 언어의 규칙 파일도 프로젝트에서 제외한다 (`kotlin/layered/test.md` 참조).
 
 ## 1. 핵심 원칙
 

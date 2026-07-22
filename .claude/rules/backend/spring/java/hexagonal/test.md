@@ -7,7 +7,7 @@ globs: "**/src/test/**"
 
 계층별로 검증 대상과 필요한 인프라가 다르다. `layered/test.md`와 base class 표(3번)는 동일하지만, 어떤 계층에 어떤 테스트 방식을 적용할지가 Port/Adapter 경계를 기준으로 나뉜다는 점이 다르다.
 
-이 프로젝트가 Layered를 채택했다면 이 파일은 적용 대상이 아니다 (`layered/test.md` 참조).
+이 프로젝트가 Layered를 채택했다면 이 파일은 적용 대상이 아니다 (`layered/test.md` 참조). 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다. Java와 Kotlin 규칙 파일을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 언어의 규칙 파일도 프로젝트에서 제외한다 (`kotlin/hexagonal/test.md` 참조).
 
 ## 1. 핵심 원칙
 

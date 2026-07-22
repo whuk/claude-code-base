@@ -7,7 +7,7 @@ alwaysApply: true
 
 Controller, Service, Domain 계층 간의 데이터 전달 규칙을 정의한다. DDD Rich Domain 모델과 CQRS 라이트 패턴을 기반으로 한다.
 
-이 프로젝트가 Hexagonal(Ports & Adapters)을 채택했다면 이 파일은 적용 대상이 아니다. Layered와 Hexagonal을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 아키텍처 스타일의 규칙 파일은 프로젝트에서 제외한다 (`hexagonal/ports-and-adapters.md` 참조).
+이 프로젝트가 Hexagonal(Ports & Adapters)을 채택했다면 이 파일은 적용 대상이 아니다. Layered와 Hexagonal을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 아키텍처 스타일의 규칙 파일은 프로젝트에서 제외한다 (`hexagonal/ports-and-adapters.md` 참조). 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다. Java와 Kotlin 규칙 파일을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 언어의 규칙 파일도 프로젝트에서 제외한다 (`kotlin/layered/layer-communication-rules.md` 참조).
 
 ## 1. 핵심 원칙
 

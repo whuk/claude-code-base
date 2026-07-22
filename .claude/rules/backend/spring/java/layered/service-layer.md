@@ -1,13 +1,13 @@
 ---
 description: Service 계층 클래스 분리(Finder/Service) 및 트랜잭션 선언 규칙
-globs: "**/*Service.java,**/*Finder.java,**/*Service.kt,**/*Finder.kt"
+globs: "**/*Service.java,**/*Finder.java"
 ---
 
 # Service 계층 클래스 분리 및 트랜잭션 규칙
 
 서비스 기능 구현 시 Read 전용 Finder와 Write 처리 Service를 분리하고, 트랜잭션을 클래스 단위로 선언한다.
 
-이 프로젝트가 Hexagonal(Ports & Adapters)을 채택했다면 이 파일은 적용 대상이 아니다. Finder/Service가 UseCase 인터페이스를 구현하고 Port를 통해서만 영속성에 접근하는지가 핵심 차이다 (`hexagonal/service-layer.md` 참조).
+이 프로젝트가 Hexagonal(Ports & Adapters)을 채택했다면 이 파일은 적용 대상이 아니다. Finder/Service가 UseCase 인터페이스를 구현하고 Port를 통해서만 영속성에 접근하는지가 핵심 차이다 (`hexagonal/service-layer.md` 참조). 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다. Java와 Kotlin 규칙 파일을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 언어의 규칙 파일도 프로젝트에서 제외한다 (`kotlin/layered/service-layer.md` 참조).
 
 ## 1. 핵심 원칙
 

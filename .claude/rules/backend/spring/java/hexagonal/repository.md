@@ -1,13 +1,13 @@
 ---
 description: Outbound Persistence Adapter 작성 시 동적 검색 조건 처리 방식과 쿼리 작성 규칙 (Hexagonal)
-globs: "**/*PersistenceAdapter.java,**/*PersistenceAdapter.kt,**/*JpaEntity.java,**/*JpaEntity.kt,**/*JpaRepository.java,**/*JpaRepository.kt,**/*Specifications.java,**/*SqlBuilder.java"
+globs: "**/*PersistenceAdapter.java,**/*JpaEntity.java,**/*JpaRepository.java,**/*Specifications.java,**/*SqlBuilder.java"
 ---
 
 # Outbound Persistence Adapter 규칙
 
 `ports-and-adapters.md` 6.2절의 Outbound Persistence Adapter 구현 방법을 다룬다. 검색 조건 조합, 도구 선택(Escalation Ladder)은 `layered/repository.md`와 동일하되, 대상이 Domain 클래스가 아니라 `{Domain}JpaEntity`라는 점이 다르다.
 
-이 프로젝트가 Layered를 채택했다면 이 파일은 적용 대상이 아니다 (`layered/repository.md` 참조).
+이 프로젝트가 Layered를 채택했다면 이 파일은 적용 대상이 아니다 (`layered/repository.md` 참조). 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다. Java와 Kotlin 규칙 파일을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 언어의 규칙 파일도 프로젝트에서 제외한다 (`kotlin/hexagonal/repository.md` 참조).
 
 ## 1. 핵심 원칙
 

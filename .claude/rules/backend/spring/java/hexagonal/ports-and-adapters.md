@@ -1,13 +1,13 @@
 ---
 description: Hexagonal(Ports & Adapters) 패키지 구조, 의존 방향, Port/Adapter 작성 규칙
-globs: "**/port/**,**/adapter/**,**/*UseCase.java,**/*UseCase.kt,**/*Port.java,**/*Port.kt,**/*Adapter.java,**/*Adapter.kt,**/*Controller.java,**/*Controller.kt"
+globs: "**/port/**,**/adapter/**,**/*UseCase.java,**/*Port.java,**/*Adapter.java,**/*Controller.java"
 ---
 
 # Ports & Adapters 구조 규칙
 
 Controller, Application Service, Domain, Persistence 간의 의존 방향과 데이터 전달 규칙을 정의한다. `layered/layer-communication-rules.md`가 다루는 CQRS 라이트 흐름과 동일한 사상을 공유하되, Port 인터페이스를 경계로 명시적인 의존성 역전을 강제한다는 점이 다르다.
 
-이 프로젝트가 Layered를 채택했다면 이 파일은 적용 대상이 아니다 (`layered/layer-communication-rules.md` 참조).
+이 프로젝트가 Layered를 채택했다면 이 파일은 적용 대상이 아니다 (`layered/layer-communication-rules.md` 참조). 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다. Java와 Kotlin 규칙 파일을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 언어의 규칙 파일도 프로젝트에서 제외한다 (`kotlin/hexagonal/ports-and-adapters.md` 참조).
 
 ## 1. 패키지 구조
 
