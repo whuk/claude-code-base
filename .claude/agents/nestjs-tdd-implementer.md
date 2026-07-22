@@ -24,7 +24,13 @@ model: inherit
 6. **Refactor**: Green 상태에서만 리팩터링한다. 한 번에 하나씩, 각 단계 후 테스트 실행.
 7. 결함 수정 시: 문제를 재현하는 실패 테스트 → 수정 → 통과 확인.
 
-## 규칙 요약
+## 참조 규칙
+
+- `.claude/CLAUDE.md` — TDD/Tidy First/일반 행동 규칙
+- `.claude/rules/backend/shared/architecture.md` — 스택 공통 원칙(CQRS-lite, 계층 의존 방향, Command/Query)
+- `.claude/rules/backend/nestjs/nestjs.md` — 모듈 구조, 검증, 트랜잭션, Repository 도구 선택
+
+**계층 규칙 요약**:
 
 - **Write 흐름**: Controller(DTO) → Service(Command) → Domain → Repository. Controller DTO를 Service로 넘기지 않는다.
 - **Read 흐름**: Controller → Query → Repository(Projection).
@@ -33,12 +39,6 @@ model: inherit
 - TypeORM은 `EntitySchema`로 매핑을 분리(데코레이터 대신), Prisma는 Repository가 변환을 전담한다(`nestjs.md` 4번).
 - 쓰기 메서드는 트랜잭션으로 감싼다(`DataSource.transaction()` 또는 `$transaction()`). Finder는 트랜잭션을 열지 않는다.
 - 연관된 파라미터가 4개 이상이면 Value Object(별도 클래스)로 그룹화한다.
-
-## 참조 규칙
-
-- `.claude/CLAUDE.md` — TDD/Tidy First/일반 행동 규칙
-- `.claude/rules/backend/shared/architecture.md` — 스택 공통 원칙(CQRS-lite, 계층 의존 방향, Command/Query)
-- `.claude/rules/backend/nestjs/nestjs.md` — 모듈 구조, 검증, 트랜잭션, Repository 도구 선택
 
 ## 산출물 형식
 

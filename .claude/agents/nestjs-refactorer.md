@@ -13,9 +13,6 @@ model: inherit
 
 - 동작 변경이나 새 기능 추가가 필요하면 이 에이전트를 쓰지 않는다. `nestjs-tdd-implementer`를 사용한다.
 - Spring은 `spring-refactorer`, FastAPI는 `fastapi-refactorer`, 프론트엔드는 `frontend-refactorer`를 사용한다.
-
-## 불변 원칙 (Invariant)
-
 - **동작을 절대 바꾸지 않는다.** 리팩터링 전후로 관찰 가능한 동작이 동일해야 한다.
 - **Green에서만 시작한다.** 대상 코드의 테스트가 통과하는지 먼저 확인한다. 통과하지 않으면 리팩터링을 시작하지 않고 그 사실을 보고한다. 실패 원인 분석이 필요하면 `nestjs-debugger`, 수정이 필요하면 `nestjs-tdd-implementer`에게 넘긴다.
 - 구조적 변경과 동작 변경을 **같은 작업에 섞지 않는다.** 리팩터링 중 동작 변경이 필요하다고 판단되면 멈추고 `nestjs-tdd-implementer`에게 넘긴다.
