@@ -12,7 +12,7 @@ model: inherit
 ## 전제
 
 - **Layered 아키텍처를 전제로 한다.** Hexagonal(Ports & Adapters)을 선택한 프로젝트를 위한 전담 에이전트는 아직 없다.
-- 이 저장소의 실제 언어(Java 또는 Kotlin)와 빌드 도구(Gradle 또는 Maven)를 작업 시작 시 파악한다. 데이터 홀더는 Java `record` / Kotlin `data class`를 사용한다.
+- 이 저장소의 실제 언어(Java 또는 Kotlin)와 빌드 도구(Gradle 또는 Maven)를 작업 시작 시 파악한다. 데이터 홀더는 Java `record` / Kotlin `data class`를 사용하고, 규칙 참조는 해당 언어 디렉토리(`spring/java/` 또는 `spring/kotlin/`)를 따른다.
 - NestJS는 `nestjs-tdd-implementer`, FastAPI는 `fastapi-tdd-implementer`, 프론트엔드(TypeScript/Next.js/Vite)는 `frontend-tdd-implementer`를 사용한다.
 
 ## 작업 절차
@@ -31,12 +31,12 @@ model: inherit
 
 - `.claude/CLAUDE.md` — TDD/Tidy First/일반 행동 규칙
 - `.claude/rules/backend/shared/architecture.md` — 스택 공통 원칙(CQRS-lite, 계층 의존 방향, Command/Query)
-- `.claude/rules/backend/spring/layered/domain.md` — Rich Domain 작성
-- `.claude/rules/backend/spring/layered/service-layer.md` — Finder/Service 분리, 트랜잭션
-- `.claude/rules/backend/spring/layered/layer-communication-rules.md` — Command/Query, 계층 간 매핑
-- `.claude/rules/backend/spring/layered/repository.md` — Specification/QueryDSL/JdbcClient 도구 선택
-- `.claude/rules/backend/spring/api-dto.md`, `.claude/rules/backend/spring/rest-api.md` — API-first, DTO 자동생성
-- `.claude/rules/backend/spring/layered/test.md` — 테스트 base class 선택
+- `.claude/rules/backend/spring/{java|kotlin}/layered/domain.md` — Rich Domain 작성 (저장소 언어에 맞는 디렉토리를 읽는다, 전제 참조)
+- `.claude/rules/backend/spring/{java|kotlin}/layered/service-layer.md` — Finder/Service 분리, 트랜잭션
+- `.claude/rules/backend/spring/{java|kotlin}/layered/layer-communication-rules.md` — Command/Query, 계층 간 매핑
+- `.claude/rules/backend/spring/{java|kotlin}/layered/repository.md` — Specification/QueryDSL/JdbcClient 도구 선택
+- `.claude/rules/backend/spring/api-dto.md`, `.claude/rules/backend/spring/rest-api.md` — API-first, DTO 자동생성 (언어 공통)
+- `.claude/rules/backend/spring/{java|kotlin}/layered/test.md` — 테스트 base class 선택
 
 **계층 규칙 요약**:
 

@@ -11,7 +11,7 @@ model: inherit
 
 ## 전제
 
-- 작업 전 `.claude/rules/backend/spring/layered/test.md`를 반드시 읽는다(Layered 아키텍처 전제). base class 선택과 금지 패턴이 그 규칙에 정의돼 있다. Hexagonal 프로젝트에는 아직 대응하는 에이전트가 없다.
+- 작업 전 `.claude/rules/backend/spring/{java|kotlin}/layered/test.md`를 반드시 읽는다(Layered 아키텍처 전제, 저장소 언어에 맞는 디렉토리 선택). base class 선택과 금지 패턴이 그 규칙에 정의돼 있다. Hexagonal 프로젝트에는 아직 대응하는 에이전트가 없다.
 - 새 기능을 TDD(Red-Green-Refactor)로 만들면서 그 사이클의 일부로 테스트를 쓰는 작업은 `spring-tdd-implementer`의 몫이다. 그런 요청은 `spring-tdd-implementer`로 넘긴다.
 - NestJS 테스트 작성은 `nestjs-test-author`, FastAPI는 `fastapi-test-author`, 프론트엔드(TypeScript/Next.js/Vite)는 `frontend-test-author`의 몫이다.
 

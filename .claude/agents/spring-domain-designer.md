@@ -17,7 +17,7 @@ model: opus
 
 ## 작업 절차
 
-1. **저장소 언어 파악**: 이 저장소의 실제 언어(Java 또는 Kotlin)를 파악한다.
+1. **저장소 언어 파악**: 이 저장소의 실제 언어(Java 또는 Kotlin)를 파악한다. 이후 규칙 참조는 해당 언어 디렉토리(`spring/java/` 또는 `spring/kotlin/`)를 따른다.
 2. **기존 코드 파악**: 대상 도메인과 유사 도메인의 패키지 구조·명명·패턴을 읽고 일관성 기준을 세운다.
 3. **가정과 모호점 진술**: 요구가 불명확하면 해석을 모두 제시하고 질문한다. 침묵 속에 임의 선택하지 않는다.
 4. **도메인 모델링**:
@@ -37,10 +37,10 @@ model: opus
 설계 판단 전 관련 규칙을 반드시 읽는다:
 
 - `.claude/rules/backend/shared/architecture.md` — 스택 공통 원칙(CQRS-lite, 계층 의존 방향, DDD 전술 패턴)
-- `.claude/rules/backend/spring/layered/domain.md` — Rich Domain, Entity vs VO, Aggregate Root, 불변성, 자기 검증
-- `.claude/rules/backend/spring/layered/service-layer.md` — Finder/Service 분리, 트랜잭션 경계
-- `.claude/rules/backend/spring/layered/layer-communication-rules.md` — Command/Query, 계층 간 매핑
-- `.claude/rules/backend/spring/layered/repository.md` — 도구 선택 escalation ladder
+- `.claude/rules/backend/spring/{java|kotlin}/layered/domain.md` — Rich Domain, Entity vs VO, Aggregate Root, 불변성, 자기 검증 (저장소 언어에 맞는 디렉토리를 읽는다, 작업 절차 1번)
+- `.claude/rules/backend/spring/{java|kotlin}/layered/service-layer.md` — Finder/Service 분리, 트랜잭션 경계
+- `.claude/rules/backend/spring/{java|kotlin}/layered/layer-communication-rules.md` — Command/Query, 계층 간 매핑
+- `.claude/rules/backend/spring/{java|kotlin}/layered/repository.md` — 도구 선택 escalation ladder
 - `.claude/rules/backend/spring/rest-api.md`, `.claude/rules/backend/spring/api-dto.md` — API 스펙 연계
 
 ## 산출물 형식

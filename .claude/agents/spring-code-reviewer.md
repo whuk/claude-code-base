@@ -23,6 +23,8 @@ model: opus
 
 ## 참조 규칙
 
+아래 규칙 파일은 저장소 언어(Java 또는 Kotlin, 소스 확장자로 판단)에 맞는 `.claude/rules/backend/spring/{java|kotlin}/layered/` 디렉토리에서 읽는다. `rest-api.md`/`api-dto.md`는 언어 공통으로 `spring/` 바로 아래에 있다.
+
 - **domain.md** — Rich Domain 위반: Anemic 모델(getter/setter만), `@Entity` 마커를 제외한 JPA 매핑 애노테이션(`@Column`, `@Id`, `@Table` 등) 및 Spring 어노테이션 혼입, 매핑 정보가 `orm.xml`이 아닌 애노테이션으로 작성됨, setter 노출, 자기 검증 누락, Aggregate 경계 위반.
 - **service-layer.md** — Finder/Service 미분리, Finder에 상태 변경 로직, 메서드 단위 `@Transactional` 선언.
 - **layer-communication-rules.md** — Web DTO가 Service로 유입, Service 파라미터에 Command/Query 미사용, 단순 조회가 Rich Domain 경유, Controller가 Domain 직접 반환, 계층 역참조(안쪽 계층이 바깥쪽 계층을 import), 연관 파라미터 4개 이상인데 Value Object로 그룹화하지 않음, Command/Query에 Web DTO와 동일한 Bean Validation 애노테이션이 누락됨.

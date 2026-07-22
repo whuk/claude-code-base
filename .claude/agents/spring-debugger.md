@@ -25,7 +25,7 @@ model: opus
 
 ## 참조 규칙
 
-원인 추적 시 다음 규칙 위반이 흔한 원인인지 확인한다:
+원인 추적 시 다음 규칙 위반이 흔한 원인인지 확인한다. 규칙 파일은 저장소 언어(Java 또는 Kotlin, 소스 확장자로 판단)에 맞는 `.claude/rules/backend/spring/{java|kotlin}/layered/` 디렉토리에서 읽는다 (`api-dto.md`는 언어 공통으로 `spring/` 바로 아래):
 
 - 계층 오염(Web DTO가 Service로 유입, 단순 조회가 Rich Domain 경유) — `layer-communication-rules.md`
 - 트랜잭션 경계 오류(readOnly 오지정, 메서드 단위 선언) — `service-layer.md`

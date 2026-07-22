@@ -5,7 +5,7 @@ alwaysApply: true
 
 # 백엔드 공통 아키텍처 원칙
 
-Java/Spring, NestJS, FastAPI 등 어떤 백엔드 스택을 쓰든 공통으로 적용되는 원칙이다. 각 스택별 구체적 구현 방법은 `spring/`, `nestjs/`, `fastapi/` 하위 규칙을 따른다. 이 문서는 "무엇을" 지키는지를 정의하고, "어떻게" 구현하는지는 스택별 문서가 정의한다.
+Java·Kotlin/Spring, NestJS, FastAPI 등 어떤 백엔드 스택을 쓰든 공통으로 적용되는 원칙이다. 각 스택별 구체적 구현 방법은 `spring/`, `nestjs/`, `fastapi/` 하위 규칙을 따른다. 이 문서는 "무엇을" 지키는지를 정의하고, "어떻게" 구현하는지는 스택별 문서가 정의한다.
 
 ## 1. CQRS-lite 흐름 (Write / Read 분리)
 
