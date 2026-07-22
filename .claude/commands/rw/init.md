@@ -27,13 +27,22 @@ claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용
 - (백엔드 포함 시) "백엔드 스택은 무엇입니까?" → Spring Boot(Java 또는 Kotlin) / NestJS(TypeScript) / FastAPI(Python)
 - (프론트엔드 포함 시) "프론트엔드 프레임워크는?" → Next.js / Vite / Vue.js
 
-**라운드 3 — 백엔드 스택으로 "Spring Boot"를 선택한 경우에만 묻는다**:
+**라운드 3 — 라운드 2 답변에 따라 해당하는 것만 묻는다**:
+
+(백엔드 스택 "Spring Boot" 선택 시)
 - "언어는 무엇입니까?" → Java(기본) / Kotlin
 - "아키텍처 스타일은 무엇입니까?" → Layered(기본) / Hexagonal(Ports & Adapters)
 - "MongoDB도 함께 사용합니까?" → JPA만 사용(기본) / JPA + MongoDB 함께 사용
 - "Repository 조회 도구로 QueryDSL/jOOQ까지 쓸 계획이 있습니까?" → Specification까지만 사용(기본) / QueryDSL/jOOQ까지 쓸 계획 있음
 
-NestJS/FastAPI를 선택한 경우 라운드 3은 건너뛴다(해당 세부 조정은 아직 규칙에 없다).
+(백엔드 스택 "NestJS" 선택 시)
+- "ORM은 무엇을 사용합니까?" → TypeORM / Prisma
+- "입력 검증 도구는 무엇을 사용합니까?" → class-validator(기본) / Zod(nestjs-zod)
+
+(프론트엔드 "Vite" 선택 시)
+- "라우팅 라이브러리는 무엇을 사용합니까?" → TanStack Router(기본 검토 대상) / React Router
+
+FastAPI를 선택한 경우 백엔드 세부 질문은 없다(`fastapi.md`가 단일 경로만 정의한다). Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 
 ## 2단계: 삭제/편집 대상 확정
 
@@ -90,9 +99,24 @@ NestJS/FastAPI를 선택한 경우 라운드 3은 건너뛴다(해당 세부 조
 - 언어·아키텍처 스타일 답변에 따라 `.claude/rules/backend/spring/{java|kotlin}/layered/repository.md` 또는 `.claude/rules/backend/spring/{java|kotlin}/hexagonal/repository.md`에서 QueryDSL 사용 규칙, jOOQ를 SQL 빌더로 사용하는 섹션을 제거한다.
 - "도구 선택 계층" 표와 "Finder/Service 계층과의 통합" 다이어그램에 QueryDSL/jOOQ 관련 언급이 남아있으면 함께 정리해 본문과 표가 어긋나지 않도록 한다.
 
+### 백엔드 스택 "NestJS" + ORM 선택 시 — 편집 (파일 삭제 아님)
+- `.claude/rules/backend/nestjs/nestjs.md`에서 선택하지 않은 ORM 관련 내용을 제거한다: 4번(영속성)의 해당 ORM 항목, 5번(Repository 도구)·6번(트랜잭션)·10번(금지 패턴)의 해당 ORM 도구 언급.
+- Prisma를 선택한 경우 금지 패턴의 TypeORM 컬럼 데코레이터 항목(`EntitySchema` 사용)도 함께 제거한다.
+- 편집 후 각 섹션이 선택한 ORM 단일 경로로 자연스럽게 읽히는지 다시 읽어 확인한다.
+- `nestjs-*` 에이전트는 두 ORM을 조건부로 함께 언급하므로 수정하지 않는다.
+
+### 백엔드 스택 "NestJS" + 검증 도구 선택 시 — 편집 (파일 삭제 아님)
+- class-validator 선택 시: `nestjs.md` 3번에서 Zod 허용 문장("Zod 스키마 기반 검증(`nestjs-zod`)도 허용하되 ... 통일한다")을 제거한다.
+- Zod 선택 시: `nestjs.md` 3번을 `nestjs-zod` 기준으로 조정한다 — class-validator 기본 문장을 Zod 스키마 기반 검증으로 바꾸고, 다중 진입점 방어 항목의 `validateOrReject()` 언급을 Command 생성 시점의 Zod 스키마 `parse()` 호출로 대체한다.
+- **Zod 선택 시 `nestjs-*` 에이전트는 수정하지 않는다.** `nestjs-tdd-implementer`/`nestjs-code-reviewer`/`nestjs-domain-designer`는 class-validator 전제로 작성돼 있다. 3단계 보고 시 이 사실을 사용자에게 명시적으로 알린다: "nestjs 에이전트들은 class-validator 전제입니다. Zod 기준으로 활용하려면 에이전트를 별도로 조정해야 합니다."
+
+### 프론트엔드 "Vite" + 라우팅 라이브러리 선택 시 — 편집 (파일 삭제 아님)
+- `.claude/rules/frontend/vite.md` 3번(라우팅)에서 선택하지 않은 라이브러리 항목을 제거하고, 선택한 라이브러리를 확정 문장으로 바꾼다. "둘 중 하나를 프로젝트 시작 시점에 고정한다" 문장은 선택이 끝났으므로 제거한다.
+- 5번(금지 패턴)의 "라우팅 라이브러리를 프로젝트 중간에 이유 없이 교체하지 않는다"는 그대로 둔다.
+
 ## 3단계: 확인 후 실행
 
-1. 삭제/편집 대상 전체 목록을 사용자에게 보여주고 진행 여부를 확인받는다. Hexagonal을 선택한 경우 위 "`spring-*` 에이전트는 삭제/수정하지 않는다" 안내를, Vue.js를 선택한 경우 "`frontend-*` 에이전트는 삭제/수정하지 않는다" 안내를 함께 보여준다.
+1. 삭제/편집 대상 전체 목록을 사용자에게 보여주고 진행 여부를 확인받는다. Hexagonal을 선택한 경우 위 "`spring-*` 에이전트는 삭제/수정하지 않는다" 안내를, Vue.js를 선택한 경우 "`frontend-*` 에이전트는 삭제/수정하지 않는다" 안내를, NestJS + Zod를 선택한 경우 "nestjs 에이전트들은 class-validator 전제" 안내를 함께 보여준다.
 2. 확인되면 파일 삭제는 `git rm`으로, 내용 편집은 Edit로 수행한다.
 3. 자동으로 커밋하지 않는다. 변경 결과를 요약해 보고하고, 사용자가 요청할 때만 커밋한다.
 
@@ -103,3 +127,4 @@ NestJS/FastAPI를 선택한 경우 라운드 3은 건너뛴다(해당 세부 조
 - 질문받지 않은 조합을 임의로 판단해서 처리하지 않는다.
 - Hexagonal을 선택했다고 해서 Layered 전제로 작성된 `spring-*` 에이전트를 임의로 고치거나 이름을 바꾸지 않는다(별도 작업).
 - Vue.js를 선택했다고 해서 Next.js/Vite 전제로 작성된 `frontend-*` 에이전트를 임의로 고치거나 이름을 바꾸지 않는다(별도 작업).
+- Zod를 선택했다고 해서 class-validator 전제로 작성된 `nestjs-*` 에이전트를 임의로 고치지 않는다(별도 작업).
