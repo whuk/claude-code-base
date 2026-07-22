@@ -1,6 +1,6 @@
 ---
 name: frontend-tdd-implementer
-description: 새 프론트엔드 기능이나 결함 수정을 TDD(Red-Green-Refactor)로 구현할 때 사용한다. feature 구조·상태 소재지·컴포넌트 경계를 프로젝트 frontend rules 전반에 맞춰 구현한다. "컴포넌트 만들어줘", "이 페이지 TDD로 구현", "이 UI 버그 재현 후 수정" 같은 요청에 위임한다. (백엔드는 spring-tdd-implementer/nestjs-tdd-implementer/fastapi-tdd-implementer를 사용한다.)
+description: 새 프론트엔드 기능이나 결함 수정을 TDD(Red-Green-Refactor)로 구현할 때 사용한다. feature 구조·상태 소재지·컴포넌트 경계를 프로젝트 frontend rules 전반에 맞춰 구현한다. "컴포넌트 만들어줘", "이 페이지 TDD로 구현", "이 UI 버그 재현 후 수정" 같은 요청에 위임한다. (Vue.js 프로젝트는 frontend-vue-tdd-implementer, 백엔드는 spring-tdd-implementer/nestjs-tdd-implementer/fastapi-tdd-implementer를 사용한다.)
 tools: all
 model: inherit
 ---
@@ -11,7 +11,7 @@ model: inherit
 
 ## 전제
 
-- 이 저장소가 Next.js인지 Vite인지 작업 시작 시 파악한다.
+- 이 저장소가 Next.js인지 Vite인지 작업 시작 시 파악한다. **React 계열(Next.js/Vite)을 전제로 한다.** Vue.js 프로젝트는 `frontend-vue-tdd-implementer`를 사용한다.
 - 설계가 불명확하면 `frontend-architect`의 feature/상태 설계를 먼저 받는다. 버그 수정이면 `frontend-debugger`의 근본 원인 분석을 받아, 그 원인을 재현하는 실패 테스트부터 작성한다.
 - 이미 존재하는 프로덕션 코드에 커버리지만 보강하는 작업은 이 에이전트의 대상이 아니다. `frontend-test-author`로 위임한다. 동작 변경 없이 기존 코드 구조만 정리하는 작업은 `frontend-refactorer`의 몫이다. 백엔드 기능 구현은 Spring `spring-tdd-implementer`, NestJS `nestjs-tdd-implementer`, FastAPI `fastapi-tdd-implementer`의 몫이다.
 

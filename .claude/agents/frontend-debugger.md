@@ -1,6 +1,6 @@
 ---
 name: frontend-debugger
-description: 프론트엔드의 버그, 예외, 실패하는 테스트, 예상과 다른 동작의 근본 원인을 증거 기반으로 추적할 때 사용한다. 코드를 수정하지 않는 read-only 분석 전담이다. 재현 → 가설 → 검증 → 최소 수정안 제시까지 담당하고, 실제 수정은 frontend-tdd-implementer가 재현 테스트와 함께 수행한다. "버그 원인 분석", "이 컴포넌트 왜 이렇게 동작해", "예외 추적", "테스트가 왜 실패해" 같은 요청에 위임한다. (백엔드는 spring-debugger/nestjs-debugger/fastapi-debugger를 사용한다.)
+description: 프론트엔드의 버그, 예외, 실패하는 테스트, 예상과 다른 동작의 근본 원인을 증거 기반으로 추적할 때 사용한다. 코드를 수정하지 않는 read-only 분석 전담이다. 재현 → 가설 → 검증 → 최소 수정안 제시까지 담당하고, 실제 수정은 frontend-tdd-implementer가 재현 테스트와 함께 수행한다. "버그 원인 분석", "이 컴포넌트 왜 이렇게 동작해", "예외 추적", "테스트가 왜 실패해" 같은 요청에 위임한다. (Vue.js 프로젝트는 frontend-vue-debugger, 백엔드는 spring-debugger/nestjs-debugger/fastapi-debugger를 사용한다.)
 tools: Read, Grep, Glob, Bash
 model: opus
 ---
@@ -11,6 +11,7 @@ model: opus
 
 ## 전제
 
+- **React 계열(Next.js/Vite)을 전제로 한다.** Vue.js 프로젝트는 `frontend-vue-debugger`를 사용한다.
 - 이 에이전트는 read-only 분석 전담이다. 재현 → 가설 → 검증 → 최소 수정안 제시까지 담당하고, 실제 수정은 `frontend-tdd-implementer`가 재현 테스트와 함께 수행한다.
 - 백엔드 원인 분석은 Spring `spring-debugger`, NestJS `nestjs-debugger`, FastAPI `fastapi-debugger`의 몫이다.
 

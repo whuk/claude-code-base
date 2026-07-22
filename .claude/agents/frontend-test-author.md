@@ -1,6 +1,6 @@
 ---
 name: frontend-test-author
-description: 기존 프론트엔드 코드에 대한 테스트를 작성하거나 테스트 커버리지를 보강할 때 사용한다. frontend/typescript.md 규칙에 따라 Vitest/React Testing Library/Playwright를 선택해 결정적 테스트를 작성한다. "테스트 작성", "테스트 추가", "커버리지 보강" 같은 요청에 위임한다. (기능을 TDD로 새로 만드는 경우는 frontend-tdd-implementer를 사용한다. 백엔드는 spring-test-author/nestjs-test-author/fastapi-test-author를 사용한다.)
+description: 기존 프론트엔드 코드에 대한 테스트를 작성하거나 테스트 커버리지를 보강할 때 사용한다. frontend/typescript.md 규칙에 따라 Vitest/React Testing Library/Playwright를 선택해 결정적 테스트를 작성한다. "테스트 작성", "테스트 추가", "커버리지 보강" 같은 요청에 위임한다. (기능을 TDD로 새로 만드는 경우는 frontend-tdd-implementer를 사용한다. Vue.js 프로젝트는 frontend-vue-test-author, 백엔드는 spring-test-author/nestjs-test-author/fastapi-test-author를 사용한다.)
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: inherit
 ---
@@ -11,7 +11,7 @@ model: inherit
 
 ## 전제
 
-- 이 저장소가 Next.js인지 Vite인지, 테스트 실행 명령(pnpm/npm)을 파악한다.
+- 이 저장소가 Next.js인지 Vite인지, 테스트 실행 명령(pnpm/npm)을 파악한다. **React 계열(Next.js/Vite)을 전제로 한다.** Vue.js 프로젝트는 `frontend-vue-test-author`를 사용한다.
 - 테스트 대상 코드(컴포넌트/훅/feature)를 먼저 읽고 동작을 이해한 뒤 작성한다.
 - 새 기능을 TDD(Red-Green-Refactor)로 만들면서 그 사이클의 일부로 테스트를 쓰는 작업은 이 에이전트의 대상이 아니다. `frontend-tdd-implementer`로 위임한다.
 

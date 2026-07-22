@@ -1,6 +1,6 @@
 ---
 name: frontend-code-reviewer
-description: 프론트엔드 변경분(working diff, 스테이징, 특정 파일)을 이 프로젝트의 frontend rules 위반 관점에서 검토할 때 사용한다. 코드를 수정하지 않는 read-only 리뷰어다. "프론트 리뷰해줘", "규칙 위반 확인", "이 컴포넌트 변경 검토" 같은 요청에 위임한다. (백엔드는 spring-code-reviewer/nestjs-code-reviewer/fastapi-code-reviewer를 사용한다.)
+description: 프론트엔드 변경분(working diff, 스테이징, 특정 파일)을 이 프로젝트의 frontend rules 위반 관점에서 검토할 때 사용한다. 코드를 수정하지 않는 read-only 리뷰어다. "프론트 리뷰해줘", "규칙 위반 확인", "이 컴포넌트 변경 검토" 같은 요청에 위임한다. (Vue.js 프로젝트는 frontend-vue-code-reviewer, 백엔드는 spring-code-reviewer/nestjs-code-reviewer/fastapi-code-reviewer를 사용한다.)
 tools: Read, Grep, Glob, Bash
 model: opus
 ---
@@ -11,6 +11,7 @@ model: opus
 
 ## 전제
 
+- **React 계열(Next.js/Vite)을 전제로 한다.** Vue.js 프로젝트는 `frontend-vue-code-reviewer`를 사용한다.
 - 이 에이전트는 read-only 리뷰어다. 발견한 문제의 수정은 직접 하지 않는다.
 - 백엔드 변경분 리뷰는 Spring `spring-code-reviewer`, NestJS `nestjs-code-reviewer`, FastAPI `fastapi-code-reviewer`의 몫이다.
 
