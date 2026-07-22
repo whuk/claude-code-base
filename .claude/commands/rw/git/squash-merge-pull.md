@@ -4,6 +4,8 @@ argument-hint: "squash merge할 PR 번호 (예: #123 또는 123, 선택)"
 user-invocable: true
 ---
 
+# /rw:git:squash-merge-pull — PR squash merge 및 main 동기화
+
 GitHub PR을 squash merge하고 로컬 main 브랜치를 최신 상태로 동기화합니다.
 
 ## 1단계: 대상 PR 결정
@@ -34,7 +36,7 @@ GitHub PR을 squash merge하고 로컬 main 브랜치를 최신 상태로 동기
 - 삭제된 리모트 브랜치에 대응하는 로컬 브랜치가 있으면 `git branch -d`로 정리합니다
 - `git fetch --prune`으로 리모트 추적 브랜치를 정리합니다
 
-## 7단계: 결과 보고
+## 결과 보고
 
 - 머지된 PR 정보 (번호, 제목)
 - 현재 브랜치와 최신 커밋 정보

@@ -4,6 +4,8 @@ argument-hint: "새로 만들 브랜치명 (영어 소문자·숫자·하이픈�
 user-invocable: true
 ---
 
+# /rw:git:commit-and-push — 변경사항 커밋 및 push
+
 현재 작업 디렉토리의 변경사항을 의미 있는 단위로 commit 하고 remote 에 push 합니다. PR 생성·머지는 수행하지 않습니다. 보호 브랜치(`main`, `master`, `develop`, `dev`)에서 직접 작업 중인 경우 새 브랜치로 분기할지 사용자에게 확인합니다.
 
 ## 1단계: 변경사항 수집 및 사전 검증
@@ -79,7 +81,7 @@ user-invocable: true
 2. push 가 거부된 경우(non-fast-forward 등) 강제 push 를 자동으로 시도하지 마세요. 원인을 사용자에게 보고하고 처리 방법을 확인받으세요.
 3. 보호 브랜치(`main`, `master`, `develop`, `dev`)에 push 하는 경우 절대 `--force` / `--force-with-lease` 를 사용하지 마세요. 사용자가 명시적으로 요청해도 위험을 한 번 더 경고하세요.
 
-## 6단계: 결과 보고
+## 결과 보고
 
 다음을 간결하게 보고하세요:
 
