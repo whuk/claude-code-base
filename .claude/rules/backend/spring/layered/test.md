@@ -17,20 +17,20 @@ globs: "**/src/test/**"
 
 ## 2. 테스트 유형별 base class 선택
 
-### 순수 단위 테스트 (base class 불필요)
+### 2.1. 순수 단위 테스트 (base class 불필요)
 
 - `@ExtendWith(MockitoExtension.class)` 사용. Spring 컨텍스트를 로드하지 않는다.
 - Service, Validator, 도메인 로직 등 외부 의존성 없이 검증 가능한 테스트에 사용한다.
 - jOOQ SqlBuilder 테스트가 이 유형에 해당한다. `DSL.using(SQLDialect.H2)`로 테스트용 SQL을 생성하고, 프로덕션 방언(`POSTGRES` 등)으로도 SQL 문자열을 검증하여 방언 간 차이를 확인한다.
 
-### JPA 통합 테스트 (MongoDB 불필요)
+### 2.2. JPA 통합 테스트 (MongoDB 불필요)
 
 - **Repository 테스트**: `JpaIntegrationTestBase`를 상속한다.
 - **Controller/Web 테스트**: `JpaWebIntegrationTestBase`를 상속한다.
 - H2 데이터베이스만 로드하고 Embedded MongoDB를 시작하지 않는다.
 - Terms, System 등 JPA 엔티티만 사용하는 도메인의 테스트에 해당한다.
 
-### MongoDB 통합 테스트 (전체 컨텍스트)
+### 2.3. MongoDB 통합 테스트 (전체 컨텍스트)
 
 - **Repository 테스트**: `IntegrationTestBase`를 상속한다.
 - **Controller/Web 테스트**: `WebIntegrationTestBase`를 상속한다.

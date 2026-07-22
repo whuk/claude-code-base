@@ -126,5 +126,14 @@ REST API의 URI, HTTP 메서드, 상태 코드, 요청/응답 본문, 버전 관
 - 요청/응답 예시(`example` 또는 `examples`)를 포함하여 스펙만으로 API 동작을 이해할 수 있도록 한다.
 - 별도 정의가 없는 한 스펙 파일이 500줄을 초과하면 도메인별로 분할하고 `$ref`로 연결한다.
 - 이 규칙에서 정의한 페이지네이션 응답 구조, Problem Details 에러 응답 등 공통 패턴은 `components/schemas`에 한 번 정의하고 재사용한다.
-- 필드 제약조건은 스펙 단계에서 명시한다: 필수 여부(`required`), 길이(`minLength`/`maxLength`), 패턴(`pattern`), 범위(`minimum`/`maximum`), 형식(`format: email`, `format: date-time` 등). 코드 생성 시 Bean Validation 애노테이션(`@NotNull`, `@Size`, `@Pattern`, `@Min`/`@Max` 등)으로 변환되는 근거가 된다 (`api-dto.md` 3번, `layer-communication-rules.md` 8.5절 참조).
+- 필드 제약조건은 스펙 단계에서 명시한다: 필수 여부(`required`), 길이(`minLength`/`maxLength`), 패턴(`pattern`), 범위(`minimum`/`maximum`), 형식(`format: email`, `format: date-time` 등). 코드 생성 시 Bean Validation 애노테이션(`@NotNull`, `@Size`, `@Pattern`, `@Min`/`@Max` 등)으로 변환되는 근거가 된다 (`api-dto.md` 3번, `layer-communication-rules.md` 7.5절 참조).
 - 제너레이터가 `format`을 특정 애노테이션(`@Email` 등)으로 자동 변환하지 못하는 경우, `pattern`으로 정규식을 직접 명시하여 보완한다.
+
+## 9. 금지 패턴
+
+- URI에 동사를 포함하지 않는다. 행위는 HTTP 메서드로 표현한다.
+- URI에 trailing slash를 사용하지 않는다.
+- URI에 파일 확장자를 포함하지 않는다.
+- 부분 수정에 PUT을 사용하지 않는다. PATCH를 사용한다.
+- 응답에 불필요한 envelope 래퍼 객체(`{ "data": ... }` 등)를 사용하지 않는다.
+- 400(구문 오류)과 422(비즈니스 규칙 위반)를 혼용하지 않는다.

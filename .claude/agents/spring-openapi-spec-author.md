@@ -31,7 +31,7 @@ model: inherit
 ## OpenAPI 작성 규칙
 
 - 스키마 이름 PascalCase, 재사용 스키마는 `components/schemas`에 전역 정의 후 `$ref`. 인라인 최소화.
-- 연관된 필드가 4개 이상이면 인라인 나열하지 않고 별도 스키마로 분리해 `$ref`로 참조한다 (`layer-communication-rules.md` 8번, Value Object 그룹화).
+- 연관된 필드가 4개 이상이면 인라인 나열하지 않고 별도 스키마로 분리해 `$ref`로 참조한다 (`layer-communication-rules.md` 7번, Value Object 그룹화).
 - 필드 제약조건(`required`, `minLength`/`maxLength`, `pattern`, `minimum`/`maximum`, `format`)을 명시해 Bean Validation 애노테이션이 자동 생성되도록 한다. 제너레이터가 `format`을 애노테이션으로 변환하지 못하면 `pattern`으로 보완한다 (`rest-api.md` 8번).
 - 모든 엔드포인트에 `operationId` 명시(생성 메서드명이 됨).
 - 요청/응답 `example` 포함.

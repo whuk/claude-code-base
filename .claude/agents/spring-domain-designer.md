@@ -30,7 +30,7 @@ model: opus
 4. **계층 배치**:
    - Write는 Controller(Web DTO)→Service(Command)→Rich Domain→Repository, Read는 Controller→Query/Read DTO→Repository(Projection)로 흐름을 정한다.
    - `{Domain}Finder`/`{Domain}Service` 분리와 트랜잭션 경계를 지정한다.
-   - 필요한 Command/Query 객체(sealed interface 그룹화)와 Read DTO(Java record / Kotlin data class)를 나열한다. 연관 파라미터가 4개 이상이면 Value Object로 그룹화하고, Web DTO와 동일한 Bean Validation 애노테이션을 부여하도록 명시한다 (`layer-communication-rules.md` 8번).
+   - 필요한 Command/Query 객체(sealed interface 그룹화)와 Read DTO(Java record / Kotlin data class)를 나열한다. 연관 파라미터가 4개 이상이면 Value Object로 그룹화하고, Web DTO와 동일한 Bean Validation 애노테이션을 부여하도록 명시한다 (`layer-communication-rules.md` 7번).
 5. **Repository 도구 티어 선택**: `repository.md`의 ladder에서 **가장 낮은 충분한 단계**를 근거와 함께 고른다. 상위(QueryDSL/JdbcClient/jOOQ)로 올라가려면 구체적 근거(N+1, 다중 조인, 측정된 성능 등)를 제시한다. 선제적 상위 선택을 금지한다.
 
 ## 산출물 형식

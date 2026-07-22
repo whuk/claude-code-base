@@ -188,14 +188,6 @@ public class JooqConfig {
 - 단일 DB 프로젝트의 단순 쿼리는 plain SQL 문자열을 허용한다.
 - jOOQ 코드 생성(테이블 메타데이터 클래스)은 선택사항이다. SQL 빌더 전용 사용 시 문자열 테이블/컬럼명으로 충분하다. 코드 생성을 사용하는 경우, 생성된 클래스는 빌드 출력 디렉토리에 배치하고 버전 관리에 포함하지 않는다.
 
-### 7.6. 금지 패턴
-
-- JPA로 충분한 표준 CRUD에 JdbcClient를 사용하지 않는다.
-- jOOQ에서 `query.fetch()` 등으로 쿼리를 직접 실행하지 않는다. 실행은 JdbcClient만 담당한다.
-- `DSLContext`에 `DataSource`를 주입하지 않는다. 빌더 전용 인스턴스만 사용한다.
-- Finder/Service 클래스에 SQL 생성 로직을 배치하지 않는다. `{Domain}SqlBuilder` 또는 `{Domain}JdbcRepository`에만 위치시킨다.
-- 쓰기(Command) 흐름에서 도메인 검증을 우회하기 위해 JdbcClient를 사용하지 않는다. 벌크 작업은 예외이며, 도메인 검증 우회 사유를 명시적으로 문서화한다.
-
 ## 8. Finder/Service 계층과의 통합
 
 `service-layer.md`의 Finder/Service 분리 규칙에 따라 다음과 같이 통합한다.
@@ -222,3 +214,11 @@ Finder/Service
 - **JdbcClient Repository 테스트**: `JpaIntegrationTestBase`를 상속한다. 동일한 DataSource(H2)를 사용한다.
 - **jOOQ SqlBuilder 테스트**: 순수 단위 테스트로 작성한다. Spring 컨텍스트를 로드하지 않는다. `DSL.using(SQLDialect.H2)`로 테스트용 SQL을 생성하고, 프로덕션 방언과의 차이는 방언별 SQL 문자열 검증으로 확인한다.
 - **N+1 검증**: QueryDSL/JPA 통합 테스트에서 Hibernate Statistics 또는 DataSource 프록시(`datasource-proxy` 등)를 사용하여 쿼리 카운트를 어서션한다.
+
+## 10. 금지 패턴
+
+- JPA로 충분한 표준 CRUD에 JdbcClient를 사용하지 않는다.
+- jOOQ에서 `query.fetch()` 등으로 쿼리를 직접 실행하지 않는다. 실행은 JdbcClient만 담당한다.
+- `DSLContext`에 `DataSource`를 주입하지 않는다. 빌더 전용 인스턴스만 사용한다.
+- Finder/Service 클래스에 SQL 생성 로직을 배치하지 않는다. `{Domain}SqlBuilder` 또는 `{Domain}JdbcRepository`에만 위치시킨다.
+- 쓰기(Command) 흐름에서 도메인 검증을 우회하기 위해 JdbcClient를 사용하지 않는다. 벌크 작업은 예외이며, 도메인 검증 우회 사유를 명시적으로 문서화한다.

@@ -51,13 +51,7 @@ Controller, Service, Domain 계층 간의 데이터 전달 규칙을 정의한�
 - **Query 흐름 (조회):**
   - Read DTO(`record`/`data class`)를 직접 반환한다. Domain 객체를 반환하지 않는다.
 
-## 6. 금지 패턴
-
-- Service 메서드에 Web DTO를 파라미터로 받지 않는다.
-- 단순 조회 시 Rich Domain 객체를 경유하지 않는다.
-- Controller에서 Domain 객체를 직접 반환하지 않는다.
-
-## 7. 전체 계층 의존 방향 (Hexagonal 스타일)
+## 6. 전체 계층 의존 방향 (Hexagonal 스타일)
 
 Controller/Service뿐 아니라 Repository, Domain(JPA 영속성 매핑을 겸함, `domain.md` 9번 참조)을 포함한 전체 계층의 의존 방향을 정의한다.
 
@@ -68,23 +62,23 @@ Controller/Service뿐 아니라 Repository, Domain(JPA 영속성 매핑을 겸�
 - Domain 클래스가 JPA 엔티티 역할을 겸하므로(`domain.md` 9번), 별도의 Entity 계층이나 Entity ↔ Domain 간 변환 책임은 존재하지 않는다.
 - `service-layer.md`, `repository.md` 등 개별 rule 파일에 정의된 더 좁은 범위의 캡슐화 규칙(예: SqlBuilder는 JdbcRepository를 통해서만 접근하고 Finder/Service에서 직접 사용하지 않는다)은 이 규칙보다 우선한다.
 
-### 7.1. 금지 패턴 (역참조)
+### 6.1. 금지 패턴 (역참조)
 
 - Domain 패키지가 Repository, Service, Controller 패키지의 클래스를 import 하지 않는다.
 - Repository 패키지가 Service, Controller 패키지의 클래스를 import 하지 않는다.
 - Service(Finder/Service) 패키지가 Controller 패키지의 클래스(Web DTO 등)를 import 하지 않는다 (1번 원칙과 동일).
 
-## 8. 파라미터 그룹화 (Value Object) 규칙
+## 7. 파라미터 그룹화 (Value Object) 규칙
 
 API 스펙부터 Domain까지 전 계층에 걸쳐 적용되는 공통 규칙이다. 각 계층은 자신의 표현 방식으로 이 규칙을 구현하되, 그룹화 기준은 동일하게 공유한다.
 
-### 8.1. 트리거 기준
+### 7.1. 트리거 기준
 
 - 하나의 엔드포인트, 메서드, 생성자가 받는 **의미적으로 연관된 파라미터가 4개 이상**이면, 원시 값(String, int 등)을 개별 나열하지 않고 하나의 Value Object로 묶는다.
 - 서로 연관 없는 파라미터가 우연히 4개 이상인 경우는 그룹화 대상이 아니다. 판단 기준은 항상 "함께 하나의 개념을 이루는가"이다 (예: `street`, `city`, `zipCode`, `country` → `Address`).
 - 연관된 값이 3개 이하라도 여러 곳에서 재사용되는 개념이면 Value Object로 추출하는 것을 권장한다 (강제 아님).
 
-### 8.2. 계층별 적용 방식
+### 7.2. 계층별 적용 방식
 
 | 계층 | 위치 | 적용 방법 |
 |---|---|---|
@@ -94,12 +88,12 @@ API 스펙부터 Domain까지 전 계층에 걸쳐 적용되는 공통 규칙이
 | Domain | 생성자 / 상태 변경 메서드 | Value Object를 파라미터로 받는다 (`domain.md` 3번·4번과 일치) |
 | Repository | Specification / 검색 조건 객체 | `{Domain}SearchQuery` 등의 필드로 포함하고, Specification은 Value Object 단위로 조건을 조립한다 |
 
-### 8.3. 계층 간 재사용 금지
+### 7.3. 계층 간 재사용 금지
 
 - 각 계층은 이름이 같아도 **자신만의 타입으로 별도 정의**한다. Web 계층의 `AddressRequest`(생성 코드)와 Domain의 `Address`(Rich VO)는 다른 클래스다.
-- Web DTO의 Value Object를 Service/Domain 계층에 그대로 전달하지 않는다. 계층 경계를 넘을 때는 반드시 변환한다 (1번, 7번 원칙과 동일).
+- Web DTO의 Value Object를 Service/Domain 계층에 그대로 전달하지 않는다. 계층 경계를 넘을 때는 반드시 변환한다 (1번, 6번 원칙과 동일).
 
-### 8.4. 예시
+### 7.4. 예시
 
 ```yaml
 # openapi.yaml
@@ -139,7 +133,7 @@ public record CreateUserRequest(
 ```
 
 ```java
-// Command — Web DTO와 동일한 제약조건 유지 (다중 진입점 방어, 8.5 참조)
+// Command — Web DTO와 동일한 제약조건 유지 (다중 진입점 방어, 7.5 참조)
 public record Address(
     @NotBlank @Size(max = 100) String street,
     @NotBlank @Size(max = 50) String city,
@@ -169,7 +163,7 @@ public class User {
 }
 ```
 
-### 8.5. 검증 책임 분리 (다중 진입점 방어)
+### 7.5. 검증 책임 분리 (다중 진입점 방어)
 
 - Command/Query를 포함한 모든 계층의 record에 Bean Validation 애노테이션을 붙인다. Service가 Controller 외의 경로(배치, 메시지 컨슈머, 다른 서비스의 내부 호출 등)로 호출될 수 있어, Web DTO 검증만으로는 방어되지 않는 진입점이 있기 때문이다.
 - Service 클래스에는 `@Validated`를, Command/Query 파라미터에는 `@Valid`를 선언하여 메서드 호출 시점에 자동으로 검증되도록 한다.
@@ -177,3 +171,9 @@ public class User {
 - 이 중복은 의도된 것이다: Controller를 거치지 않는 진입 경로를 방어하기 위함이며 제거 대상이 아니다.
 - Bean Validation은 형식/구문 검증(필수값, 길이, 패턴 등)까지만 담당한다. Web 계층 실패는 400 Bad Request, Service 계층에서 발생한 `ConstraintViolationException`은 GlobalExceptionHandler에서 400으로 매핑한다 (`rest-api.md` 3번).
 - 비즈니스 규칙 검증(잔액 부족, 중복 가입 등)은 여전히 Domain 객체의 자기 검증(`domain.md` 5번)이 전담한다. 실패 시 422 Unprocessable Entity.
+
+## 8. 금지 패턴
+
+- Service 메서드에 Web DTO를 파라미터로 받지 않는다.
+- 단순 조회 시 Rich Domain 객체를 경유하지 않는다.
+- Controller에서 Domain 객체를 직접 반환하지 않는다.
