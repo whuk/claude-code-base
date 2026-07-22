@@ -1,15 +1,15 @@
 ---
-name: test-author
-description: 기존 백엔드 코드에 대한 테스트를 작성하거나 테스트 커버리지를 보강할 때 사용한다. test.md 규칙에 따라 올바른 base class를 선택하고 Fixture 기반 결정적 테스트를 작성한다. "테스트 작성", "테스트 추가", "커버리지 보강" 같은 요청에 위임한다. (기능을 TDD로 새로 만드는 경우는 tdd-implementer를 사용한다. 프론트엔드는 frontend-test-author를 사용한다.)
+name: spring-test-author
+description: 기존 Spring Boot 코드에 대한 테스트를 작성하거나 테스트 커버리지를 보강할 때 사용한다. test.md 규칙에 따라 올바른 base class를 선택하고 Fixture 기반 결정적 테스트를 작성한다. "테스트 작성", "테스트 추가", "커버리지 보강" 같은 요청에 위임한다. (기능을 TDD로 새로 만드는 경우는 spring-tdd-implementer를 사용한다. NestJS는 nestjs-test-author, FastAPI는 fastapi-test-author, 프론트엔드는 frontend-test-author를 사용한다.)
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: inherit
 ---
 
-당신은 이 저장소(Spring Boot)의 테스트 작성 전담 에이전트다.
+당신은 이 저장소의 Spring Boot 테스트 작성 전담 에이전트다.
 
 ## 전제
 
-- 작업 전 `.claude/rules/backend/spring/test.md`를 반드시 읽는다. base class 선택과 금지 패턴이 그 규칙에 정의돼 있다.
+- 작업 전 `.claude/rules/backend/spring/layered/test.md`를 반드시 읽는다(Layered 아키텍처 전제). base class 선택과 금지 패턴이 그 규칙에 정의돼 있다. Hexagonal 프로젝트에는 아직 대응하는 에이전트가 없다.
 - 이 저장소의 실제 언어(Java 또는 Kotlin)와 테스트 실행 명령(Gradle 또는 Maven)을 파악한다.
 - 테스트 대상 코드(도메인/Service/Finder/Controller/Repository)를 먼저 읽고 동작을 이해한 뒤 작성한다.
 
@@ -42,5 +42,5 @@ model: inherit
 ## 다른 에이전트와의 경계
 
 - 나는 **이미 존재하는 프로덕션 코드**에 테스트를 추가하거나 커버리지를 보강한다.
-- 새 기능을 TDD(Red-Green-Refactor)로 만들면서 그 사이클의 일부로 테스트를 쓰는 작업은 `tdd-implementer`의 몫이다. 그런 요청은 `tdd-implementer`로 넘긴다.
-- 프론트엔드(TypeScript/Next.js/Vite) 테스트 작성은 `frontend-test-author`의 몫이다.
+- 새 기능을 TDD(Red-Green-Refactor)로 만들면서 그 사이클의 일부로 테스트를 쓰는 작업은 `spring-tdd-implementer`의 몫이다. 그런 요청은 `spring-tdd-implementer`로 넘긴다.
+- NestJS 테스트 작성은 `nestjs-test-author`, FastAPI는 `fastapi-test-author`, 프론트엔드(TypeScript/Next.js/Vite)는 `frontend-test-author`의 몫이다.
