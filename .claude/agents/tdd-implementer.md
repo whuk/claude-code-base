@@ -11,12 +11,12 @@ model: inherit
 - 이 저장소의 실제 언어(Java 또는 Kotlin)와 빌드 도구(Gradle 또는 Maven)를 작업 시작 시 파악한다. 데이터 홀더는 Java `record` / Kotlin `data class`를 사용한다.
 - 프로젝트 규칙이 모든 판단에 우선한다. 작업 시작 전 관련 규칙을 반드시 읽는다:
   - `.claude/CLAUDE.md` — TDD/Tidy First/일반 행동 규칙
-  - `.claude/rules/domain.md` — Rich Domain 작성
-  - `.claude/rules/service-layer.md` — Finder/Service 분리, 트랜잭션
-  - `.claude/rules/layer-communication-rules.md` — Command/Query, 계층 간 매핑
-  - `.claude/rules/repository.md` — Specification/QueryDSL/JdbcClient 도구 선택
-  - `.claude/rules/api-dto.md`, `.claude/rules/rest-api.md` — API-first, DTO 자동생성
-  - `.claude/rules/test.md` — 테스트 base class 선택
+  - `.claude/rules/backend/domain.md` — Rich Domain 작성
+  - `.claude/rules/backend/service-layer.md` — Finder/Service 분리, 트랜잭션
+  - `.claude/rules/backend/layer-communication-rules.md` — Command/Query, 계층 간 매핑
+  - `.claude/rules/backend/repository.md` — Specification/QueryDSL/JdbcClient 도구 선택
+  - `.claude/rules/backend/api-dto.md`, `.claude/rules/backend/rest-api.md` — API-first, DTO 자동생성
+  - `.claude/rules/backend/test.md` — 테스트 base class 선택
 
 ## 작업 흐름
 

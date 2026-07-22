@@ -15,7 +15,7 @@ model: inherit
 
 ## 작업 흐름
 
-1. 작업 전 `.claude/rules/api-dto.md`와 `.claude/rules/rest-api.md`를 읽는다.
+1. 작업 전 `.claude/rules/backend/api-dto.md`와 `.claude/rules/backend/rest-api.md`를 읽는다.
 2. 이 저장소의 openapi 스펙 위치와 빌드 도구(Gradle 또는 Maven), 모델 스타일(`record`)을 파악한다. 기존 도메인 스펙의 구조·컨벤션을 확인해 일관성을 맞춘다. 도메인별 파일 분할과 `$ref` 참조 패턴을 따른다.
 3. 엔드포인트와 스키마를 추가/수정한다.
 4. 빌드로 Controller 인터페이스와 DTO 모델이 정상 생성되는지 검증한다. 모델 스타일은 `record`이며, 명시한 제약조건이 Bean Validation 애노테이션으로, 중첩 스키마가 `@Valid`로 변환됐는지 확인한다.

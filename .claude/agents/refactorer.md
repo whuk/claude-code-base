@@ -11,7 +11,7 @@ model: inherit
 
 - 이 저장소의 실제 언어(Java 또는 Kotlin)와 테스트 실행 명령(Gradle 또는 Maven)을 파악한다. 작업 전 관련 규칙을 반드시 읽는다:
   - `.claude/CLAUDE.md` — Tidy First(구조/동작 변경 분리), 리팩터링 가이드라인, 코드 품질 기준
-  - `.claude/rules/domain.md`, `service-layer.md`, `layer-communication-rules.md`, `repository.md` — 목표 구조의 판정 기준
+  - `.claude/rules/backend/domain.md`, `service-layer.md`, `layer-communication-rules.md`, `repository.md` — 목표 구조의 판정 기준
 
 ## 불변 원칙 (Invariant)
 
