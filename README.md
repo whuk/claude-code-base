@@ -1,12 +1,12 @@
 # claude-code-base
 
-Claude Code용 프로젝트 규칙(`rules`)과 서브에이전트(`agents`), 커스텀 커맨드(`commands`)를 갖춘 베이스 템플릿입니다. Kent Beck의 TDD와 Tidy First 원칙을 기반으로, 백엔드(Spring Boot/NestJS/FastAPI)와 프론트엔드(TypeScript/Next.js/Vite) 개발 워크플로우를 다룹니다.
+Claude Code용 프로젝트 규칙(`rules`)과 서브에이전트(`agents`), 커스텀 커맨드(`commands`)를 갖춘 베이스 템플릿입니다. Kent Beck의 TDD와 Tidy First 원칙을 기반으로, 백엔드(Spring Boot/NestJS/FastAPI)와 프론트엔드(TypeScript/Next.js/Vite/Vue.js) 개발 워크플로우를 다룹니다.
 
 ## 사용 방법
 
 1. 이 저장소를 템플릿으로 새 프로젝트를 만듭니다 (GitHub의 "Use this template" 또는 clone).
 2. 새 프로젝트를 Claude Code로 엽니다.
-3. **가장 먼저 `/rw:init`을 실행합니다.** 실제 프로젝트 스택(백엔드/프론트엔드/풀스택, 백엔드 스택 종류, Next.js/Vite, MongoDB 사용 여부, QueryDSL/jOOQ 계획)에 대해 질문한 뒤, 해당하지 않는 `.claude/rules/`와 `.claude/agents/` 파일을 정리해줍니다. 그대로 다 복사해서 쓰면 안 쓰는 규칙/에이전트까지 매 세션 로드되어 불필요하게 토큰을 소모합니다.
+3. **가장 먼저 `/rw:init`을 실행합니다.** 실제 프로젝트 스택(백엔드/프론트엔드/풀스택, 백엔드 스택 종류, Spring이면 아키텍처 스타일(Layered/Hexagonal)과 MongoDB 사용 여부·QueryDSL/jOOQ 계획, 프론트엔드면 Next.js/Vite/Vue.js)에 대해 질문한 뒤, 해당하지 않는 `.claude/rules/`와 `.claude/agents/` 파일을 정리해줍니다. 그대로 다 복사해서 쓰면 안 쓰는 규칙/에이전트까지 매 세션 로드되어 불필요하게 토큰을 소모합니다.
 
 ## 구성
 
@@ -19,10 +19,16 @@ Claude Code용 프로젝트 규칙(`rules`)과 서브에이전트(`agents`), 커
 │   │   ├── spring/          # Java/Spring Boot 구현 규칙 (api-dto.md, rest-api.md는 공통, layered/·hexagonal/로 아키텍처 스타일 분리)
 │   │   ├── nestjs/          # NestJS 구현 규칙
 │   │   └── fastapi/         # FastAPI 구현 규칙
-│   └── frontend/           # TypeScript/Next.js/Vite 규칙
-├── agents/                 # 워크플로우별 서브에이전트, 스택별로 분리 (spring-*/nestjs-*/fastapi-*/frontend-*). spring-*는 Layered 아키텍처 전제이며 Hexagonal 전담 에이전트는 아직 없음
+│   └── frontend/           # TypeScript/Next.js/Vite/Vue.js 규칙
+├── agents/                 # 워크플로우별 서브에이전트, 스택별로 분리 (spring-*/nestjs-*/fastapi-*/frontend-*). spring-*는 Layered 아키텍처 전제이며 Hexagonal 전담 에이전트는 아직 없음. frontend-*는 Next.js/Vite(React 계열) 전제이며 Vue.js 전담 에이전트는 아직 없음
 └── commands/rw/             # 커스텀 슬래시 커맨드 (init, git, plan, prd, tdd)
 ```
+
+## 계획 기반 작업 흐름 (plan.md)
+
+1. **`/rw:plan:plan <PRD 파일 경로 또는 기능 설명>`** — 프로젝트 루트에 `plan.md`를 생성합니다. 기능 개요, 구현 목표, 설계, Phase별 테스트 체크리스트로 구성됩니다. `plan.md`가 이미 있으면 실행되지 않고 먼저 `plan_move`로 아카이빙하라고 안내합니다.
+2. **`/rw:tdd:go`** — `plan.md`에서 체크 안 된 테스트를 하나 찾아 Red(실패 확인) → Green(최소 구현) 순으로 구현하고, 통과하면 해당 항목에 체크합니다. 모든 테스트가 끝날 때까지 반복 실행합니다.
+3. **`/rw:plan:plan_move`** — 완료된(또는 중단된) `plan.md`를 요약 키워드가 담긴 파일명(`plan_yyyyMMdd_요약키워드.md`)으로 `plans/` 디렉토리에 아카이빙합니다. 이후 `/rw:plan:plan`으로 새 계획을 시작할 수 있습니다.
 
 ## 다른 도구로 이식
 
