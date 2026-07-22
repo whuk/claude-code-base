@@ -5,7 +5,7 @@ globs: "**/*.controller.ts,**/*.service.ts,**/*.module.ts,**/*.entity.ts,**/*.re
 
 # NestJS 규칙
 
-`shared/architecture.md`의 공통 원칙을 전제로, NestJS 고유 구현 방법만 다룬다. NestJS는 애초에 Angular/Spring 스타일 구조(데코레이터, DI, 모듈)에서 설계됐기 때문에, Java/Spring 규칙(`spring/`)과 사상을 거의 그대로 공유한다.
+`shared/architecture.md`의 공통 원칙과 `shared/rest-api.md`의 REST 설계 규약(URI, 상태 코드, 페이지네이션, 에러 형식)을 전제로, NestJS 고유 구현 방법만 다룬다. NestJS는 애초에 Angular/Spring 스타일 구조(데코레이터, DI, 모듈)에서 설계됐기 때문에, Java/Spring 규칙(`spring/`)과 사상을 거의 그대로 공유한다.
 
 ## 1. 모듈/계층 구조
 
@@ -46,18 +46,26 @@ globs: "**/*.controller.ts,**/*.service.ts,**/*.module.ts,**/*.entity.ts,**/*.re
 
 ## 7. API 스펙
 
-- 가능하면 `openapi.yaml`을 먼저 정의하고 코드/DTO를 생성하는 spec-first를 유지한다(`shared/architecture.md`의 단일 소스 원칙과 `spring/api-dto.md`의 사상을 그대로 따른다).
+- 가능하면 `openapi.yaml`을 먼저 정의하고 코드/DTO를 생성하는 spec-first를 유지한다(`shared/architecture.md`의 단일 소스 원칙과 `spring/api-dto.md`의 사상을 그대로 따른다). 스펙 작성 규약(스키마 명명, `$ref`, `operationId`, 제약조건 명시)은 `shared/rest-api.md` 8번을 따른다.
 - 이 codegen 경로(예: openapi-generator의 TypeScript/NestJS 대상 템플릿)가 팀 환경에서 검증되지 않았다면, `@nestjs/swagger` 데코레이터 기반 code-first로 시작하는 것을 예외적으로 허용한다. 이 경우 CI에서 생성된 OpenAPI 문서를 아티팩트로 남겨 프론트엔드와의 계약이 암묵적으로 깨지지 않는지 추적한다.
 
 ## 8. 테스트
 
 - 단위 테스트: Jest. `@nestjs/testing`의 `Test.createTestingModule()`로 필요한 프로바이더만 로드한다(전체 애플리케이션 컨텍스트를 올리지 않는다).
+- Service/Finder 단위 테스트에서 Repository 등 하위 의존성은 custom provider(`{ provide: OrderRepository, useValue: mock }`)로 대체한다. 실제 DB 접근 없이 오케스트레이션 로직만 검증하고, 실제 영속성 동작(매핑, 쿼리 조합)은 통합 테스트에서 검증한다.
 - 통합/E2E 테스트: Supertest로 HTTP 요청을 검증한다.
 - `Thread.sleep` 상당의 시간 기반 동기화(임의 `setTimeout` 대기)를 사용하지 않는다. 결정적 데이터는 Fixture/Factory로 생성한다.
 
-## 9. 금지 패턴
+## 9. 에러 응답 (RFC 9457)
+
+- 에러 응답은 `shared/rest-api.md` 4번의 Problem Details 형식을 따른다. 전역 Exception Filter(`APP_FILTER`로 등록)에서 매핑하고, Controller에서 에러 응답 객체를 직접 조립하지 않는다.
+- `ValidationPipe` 검증 실패(`BadRequestException`)는 400 + Problem Details로 변환하고, 필드별 오류를 `errors` 배열로 포함한다. Service 진입점 검증(3번 다중 진입점 방어)에서 발생한 검증 예외도 같은 필터에서 400으로 매핑한다.
+- 도메인 예외(비즈니스 규칙 위반)는 공통 도메인 예외 클래스를 기준으로 같은 필터에서 422 Problem Details로 매핑한다. Domain/Service 계층에서 `HttpException` 계열(NestJS 웹 계층 타입)을 직접 던지지 않는다 — 안쪽 계층이 바깥 계층 타입을 참조하는 역방향 의존이다(`shared/architecture.md` 3번).
+
+## 10. 금지 패턴
 
 - Controller DTO를 Service 메서드 파라미터로 그대로 사용하지 않는다.
 - Domain 클래스에 TypeORM 컬럼 데코레이터(`@Column`, `@OneToMany` 등)를 직접 붙이지 않는다(`EntitySchema` 사용).
 - Finder 프로바이더에 상태 변경 메서드를 포함하지 않는다.
 - 동적 검색 조건을 원시 SQL/QueryBuilder 문자열로 나열하지 않는다(5번 기준 도구 사용).
+- Domain/Service 계층에서 `HttpException` 계열을 직접 던지지 않는다(9번).

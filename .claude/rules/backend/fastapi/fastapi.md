@@ -5,7 +5,7 @@ globs: "**/routers/**,**/schemas/**,**/*_service.py,**/*_repository.py"
 
 # FastAPI 규칙
 
-`shared/architecture.md`의 공통 원칙을 전제로 하되, Python/FastAPI 생태계 관례에 맞게 무게를 덜어낸다. FastAPI는 가볍고 명시적인 스타일을 지향하므로, Aggregate Root·Specification 패턴 같은 Java 스타일 DDD 장치를 강제하지 않는다. **Rich Domain 원칙(`shared/architecture.md` 6번)은 권장이지 필수가 아니다** — 도메인 로직이 단순하면 트랜잭션 스크립트 스타일(라우터 → 서비스 함수 → ORM)도 허용한다.
+`shared/architecture.md`의 공통 원칙과 `shared/rest-api.md`의 REST 설계 규약(URI, 상태 코드, 페이지네이션, 에러 형식)을 전제로 하되, Python/FastAPI 생태계 관례에 맞게 무게를 덜어낸다. FastAPI는 가볍고 명시적인 스타일을 지향하므로, Aggregate Root·Specification 패턴 같은 Java 스타일 DDD 장치를 강제하지 않는다. **Rich Domain 원칙(`shared/architecture.md` 6번)은 권장이지 필수가 아니다** — 도메인 로직이 단순하면 트랜잭션 스크립트 스타일(라우터 → 서비스 함수 → ORM)도 허용한다.
 
 ## 1. 프로젝트 구조
 
@@ -40,17 +40,32 @@ globs: "**/routers/**,**/schemas/**,**/*_service.py,**/*_repository.py"
 
 - FastAPI는 spec-first가 아니라 **code-first가 프레임워크의 정체성 자체**다. Pydantic 모델과 라우터 타입 힌트에서 OpenAPI 스펙(`/openapi.json`)이 자동 생성되는 것이 FastAPI를 쓰는 핵심 이유이므로, `spring/api-dto.md`처럼 yaml을 먼저 작성하고 코드를 생성하는 절차를 강제하지 않는다.
 - 단일 소스 원칙(`shared/architecture.md`의 근본 취지: 프론트-백엔드 스펙 불일치 방지)은 방향을 바꿔서 달성한다: FastAPI가 자동 생성한 `/openapi.json`을 신뢰 가능한 단일 소스로 취급하고, 프론트엔드 타입 생성(`openapi-typescript` 등)이 이 산출물을 소비한다.
-- Pydantic 모델에 `Field(description=...)`, `examples=...`를 채워서 생성된 스펙만으로 API 동작을 이해할 수 있게 한다(`spring/rest-api.md`의 예시 포함 원칙과 동일한 목표를 코드 쪽에서 달성).
+- Pydantic 모델에 `Field(description=...)`, `examples=...`를 채워서 생성된 스펙만으로 API 동작을 이해할 수 있게 한다(`shared/rest-api.md` 8번의 예시 포함 원칙과 동일한 목표를 코드 쪽에서 달성).
 
 ## 7. 테스트
 
 - `pytest` + `httpx.AsyncClient`(또는 `TestClient`)로 라우터를 테스트한다.
+- 라우터 테스트에서 DB 세션 등 의존성 대체는 `app.dependency_overrides`를 사용한다(FastAPI의 공식 테스트 대체 메커니즘). 서비스 내부를 몽키패칭하지 않고 `Depends` 경계에서 대체하며, fixture 종료 시 `dependency_overrides.clear()`로 원복한다.
 - 순수 도메인/서비스 로직은 FastAPI 앱을 띄우지 않고 함수/클래스 단위로 직접 테스트한다.
 - `time.sleep`으로 순서를 보장하지 않는다. `pytest` fixture로 결정적 테스트 데이터를 만든다.
 - DB가 필요한 테스트는 트랜잭션을 테스트마다 롤백하거나 격리된 스키마를 사용해 테스트 간 상태가 새지 않게 한다.
 
-## 8. 금지 패턴
+## 8. 에러 응답 (RFC 9457)
+
+- 에러 응답은 `shared/rest-api.md` 4번의 Problem Details 형식을 따른다. 전역 예외 핸들러(`app.exception_handler`)에서 매핑하고, 라우터/서비스에서 에러 응답 JSON을 직접 조립하지 않는다.
+- **FastAPI 기본값 주의**: FastAPI는 요청 검증 실패(`RequestValidationError`) 시 기본으로 422를 반환하지만, 이 프로젝트 규약(`shared/rest-api.md` 3번)은 형식/구문 오류를 400으로 구분한다. `RequestValidationError` 전역 핸들러를 등록해 400 + Problem Details(`errors` 배열 포함)로 재매핑한다.
+- 도메인 예외(비즈니스 규칙 위반)는 공통 도메인 예외 타입 기준의 전역 핸들러에서 422 Problem Details로 매핑한다. Service/Domain 계층에서 `HTTPException`을 직접 던지지 않는다 — 안쪽 계층이 웹 계층 타입을 참조하는 역방향 의존이다(`shared/architecture.md` 3번).
+
+## 9. async 규율 (이벤트 루프 보호)
+
+- `async def` 라우터/서비스에서 동기 블로킹 호출을 하지 않는다: 동기 DB 드라이버(psycopg2 등), `requests`, `time.sleep`, 대용량 동기 파일 I/O. 이벤트 루프가 멈춰 해당 요청뿐 아니라 서버 전체 처리량이 무너진다.
+- I/O 스택을 async로 통일한다: DB는 `AsyncSession` + async 드라이버(asyncpg, aiosqlite 등 — 5번 트랜잭션 규칙과 동일 전제), HTTP 클라이언트는 `httpx.AsyncClient`, 대기는 `asyncio.sleep`.
+- async 버전이 없는 동기 전용 라이브러리를 써야 하면 해당 엔드포인트를 `def`로 선언해 FastAPI의 스레드풀 실행에 맡기거나, `run_in_threadpool`로 감싼다. `async def` 안에서 동기 블로킹 호출을 섞는 것이 최악의 조합이다.
+
+## 10. 금지 패턴
 
 - Router 스키마를 검증 없이 그대로 ORM 모델에 매핑해 저장하지 않는다(Repository/Service를 거치지 않고 직접 커밋).
 - 세션을 Service 함수 내부에서 직접 생성하지 않는다(`Depends`로 주입).
 - 비즈니스 규칙 검증(형식이 아닌 규칙 위반)을 Pydantic validator에 넣지 않는다 — 형식 검증은 Pydantic, 비즈니스 검증은 Domain의 몫이다(`shared/architecture.md` 5번).
+- Service/Domain 계층에서 `HTTPException`을 직접 던지지 않는다(8번).
+- `async def` 라우터/서비스에서 동기 블로킹 I/O(동기 DB 드라이버, `requests`, `time.sleep`)를 호출하지 않는다(9번).

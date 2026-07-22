@@ -60,6 +60,7 @@ Java/Spring, NestJS, FastAPI 등 어떤 백엔드 스택을 쓰든 공통으로 
 
 ## 9. REST API 설계 원칙 (HTTP 계층을 노출하는 경우)
 
+- 상세 규약(상태 코드 전체, Problem Details 스키마, 페이지네이션 응답 구조, 정렬/필터 문법, 멱등성 키, OpenAPI 작성 규칙)은 `shared/rest-api.md`에 정의한다. 아래는 요약이며, 표현이 어긋나면 `shared/rest-api.md`가 우선한다.
 - URI: 복수 명사, kebab-case, 동사 금지(복잡한 검색은 `POST /{resource}/search` 예외), trailing slash 금지, 중첩 2단계 이하.
 - HTTP 메서드: GET(조회)/POST(생성)/PUT(전체 교체)/PATCH(부분 수정)/DELETE(삭제). 부분 수정에 PUT을 쓰지 않는다.
 - 상태 코드: 201(생성, `Location` 헤더 포함)/204(본문 없음)/400(구문 오류)/422(비즈니스 규칙 위반). 400과 422를 명확히 구분한다.
