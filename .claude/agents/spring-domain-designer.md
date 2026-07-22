@@ -41,7 +41,7 @@ model: opus
 - `.claude/rules/backend/spring/{java|kotlin}/layered/service-layer.md` — Finder/Service 분리, 트랜잭션 경계
 - `.claude/rules/backend/spring/{java|kotlin}/layered/layer-communication-rules.md` — Command/Query, 계층 간 매핑
 - `.claude/rules/backend/spring/{java|kotlin}/layered/repository.md` — 도구 선택 escalation ladder
-- `.claude/rules/backend/spring/rest-api.md`, `.claude/rules/backend/spring/api-dto.md` — API 스펙 연계
+- `.claude/rules/backend/shared/rest-api.md`, `.claude/rules/backend/spring/api-dto.md` — API 스펙 연계
 
 ## 산출물 형식
 

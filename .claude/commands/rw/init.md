@@ -48,16 +48,16 @@ NestJS/FastAPI를 선택한 경우 라운드 3은 건너뛴다(해당 세부 조
 - `.claude/agents/nestjs-*.md`(7개), `.claude/agents/fastapi-*.md`(7개)
 
 ### 백엔드 스택 "Spring Boot" + 언어 "Java" 선택 시 — 삭제
-- `.claude/rules/backend/spring/kotlin/` 전체 (`spring/java/`, `spring/api-dto.md`, `spring/rest-api.md`는 유지)
+- `.claude/rules/backend/spring/kotlin/` 전체 (`spring/java/`, `spring/api-dto.md`는 유지)
 
 ### 백엔드 스택 "Spring Boot" + 언어 "Kotlin" 선택 시 — 삭제
-- `.claude/rules/backend/spring/java/` 전체 (`spring/kotlin/`, `spring/api-dto.md`, `spring/rest-api.md`는 유지)
+- `.claude/rules/backend/spring/java/` 전체 (`spring/kotlin/`, `spring/api-dto.md`는 유지)
 
 ### 백엔드 스택 "Spring Boot" + 아키텍처 스타일 "Layered" 선택 시 — 삭제
-- 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/hexagonal/` 전체 (`spring/{java|kotlin}/layered/`, `spring/api-dto.md`, `spring/rest-api.md`는 유지)
+- 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/hexagonal/` 전체 (`spring/{java|kotlin}/layered/`, `spring/api-dto.md`는 유지)
 
 ### 백엔드 스택 "Spring Boot" + 아키텍처 스타일 "Hexagonal" 선택 시 — 삭제
-- 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/layered/` 전체 (`spring/{java|kotlin}/hexagonal/`, `spring/api-dto.md`, `spring/rest-api.md`는 유지)
+- 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/layered/` 전체 (`spring/{java|kotlin}/hexagonal/`, `spring/api-dto.md`는 유지)
 - **`spring-*` 에이전트는 삭제/수정하지 않는다.** `spring-domain-designer`/`spring-tdd-implementer`/`spring-refactorer`/`spring-test-author`/`spring-code-reviewer`/`spring-debugger`는 Layered 구조(Domain이 JPA 엔티티를 겸함, Controller→Service→Repository→Domain을 직접 참조)를 전제로 작성돼 있어 Hexagonal의 Port/Adapter 구조와 맞지 않을 수 있다(`spring-style-checker`, `spring-openapi-spec-author`는 아키텍처 스타일과 무관해 그대로 둬도 된다). 3단계 보고 시 이 사실을 사용자에게 명시적으로 알린다: "Layered 전제인 6개 에이전트(spring-domain-designer/tdd-implementer/refactorer/test-author/code-reviewer/debugger)는 Hexagonal 규칙과 맞지 않을 수 있습니다. Port/Adapter 구조를 인식하는 전담 에이전트는 별도로 만들어야 합니다."
 
 ### 백엔드 포함 + "NestJS" 선택 시 — 삭제

@@ -82,7 +82,7 @@ API 스펙부터 Domain까지 전 계층에 걸쳐 적용되는 공통 규칙이
 
 | 계층 | 위치 | 적용 방법 |
 |---|---|---|
-| OpenAPI 스펙 | `openapi.yaml` | 연관 필드를 `components/schemas`에 별도 스키마로 정의하고 `$ref`로 참조한다 (`rest-api.md` 8번과 동일). 인라인으로 4개 이상 필드를 나열하지 않는다 |
+| OpenAPI 스펙 | `openapi.yaml` | 연관 필드를 `components/schemas`에 별도 스키마로 정의하고 `$ref`로 참조한다 (`shared/rest-api.md` 8번과 동일). 인라인으로 4개 이상 필드를 나열하지 않는다 |
 | Web DTO | 자동 생성 Request/Response `data class` | 스펙의 `$ref` 구조가 그대로 중첩 `data class`로 생성된다 (`api-dto.md` 3번) |
 | Command/Query | Service 입력 객체 | Web DTO의 중첩 필드를 그대로 옮기지 않고, Command/Query 전용 Value Object로 재정의해서 포함한다 (`toCommand()`/Mapper에서 변환) |
 | Domain | 생성자 / 상태 변경 메서드 | Value Object를 파라미터로 받는다 (`domain.md` 3번·4번과 일치) |
@@ -172,7 +172,7 @@ class User private constructor(
 - Service 클래스에는 `@Validated`를, Command/Query 파라미터에는 `@Valid`를 선언하여 메서드 호출 시점에 자동으로 검증되도록 한다.
 - Web DTO와 Command/Query의 제약조건 값(길이, 패턴, 범위 등)은 동일하게 유지한다. Web DTO는 `openapi.yaml`에서 자동 생성되므로, Command/Query 쪽 제약조건은 스펙이 바뀔 때 수동으로 동기화한다.
 - 이 중복은 의도된 것이다: Controller를 거치지 않는 진입 경로를 방어하기 위함이며 제거 대상이 아니다.
-- Bean Validation은 형식/구문 검증(필수값, 길이, 패턴 등)까지만 담당한다. Web 계층 실패는 400 Bad Request, Service 계층에서 발생한 `ConstraintViolationException`은 GlobalExceptionHandler에서 400으로 매핑한다 (`rest-api.md` 3번).
+- Bean Validation은 형식/구문 검증(필수값, 길이, 패턴 등)까지만 담당한다. Web 계층 실패는 400 Bad Request, Service 계층에서 발생한 `ConstraintViolationException`은 GlobalExceptionHandler에서 400으로 매핑한다 (`shared/rest-api.md` 3번).
 - 비즈니스 규칙 검증(잔액 부족, 중복 가입 등)은 여전히 Domain 객체의 자기 검증(`domain.md` 5번)이 전담한다. 실패 시 422 Unprocessable Entity.
 
 ## 8. 금지 패턴

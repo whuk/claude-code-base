@@ -35,7 +35,7 @@ model: inherit
 - `.claude/rules/backend/spring/{java|kotlin}/layered/service-layer.md` — Finder/Service 분리, 트랜잭션
 - `.claude/rules/backend/spring/{java|kotlin}/layered/layer-communication-rules.md` — Command/Query, 계층 간 매핑
 - `.claude/rules/backend/spring/{java|kotlin}/layered/repository.md` — Specification/QueryDSL/JdbcClient 도구 선택
-- `.claude/rules/backend/spring/api-dto.md`, `.claude/rules/backend/spring/rest-api.md` — API-first, DTO 자동생성 (언어 공통)
+- `.claude/rules/backend/spring/api-dto.md`, `.claude/rules/backend/shared/rest-api.md` — API-first, DTO 자동생성 (언어 공통)
 - `.claude/rules/backend/spring/{java|kotlin}/layered/test.md` — 테스트 base class 선택
 
 **계층 규칙 요약**:

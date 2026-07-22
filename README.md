@@ -15,8 +15,8 @@ Claude Code용 프로젝트 규칙(`rules`)과 서브에이전트(`agents`), 커
 ├── CLAUDE.md              # 전체 개발 방법론 (TDD, Tidy First, 일반 행동 규칙)
 ├── rules/
 │   ├── backend/
-│   │   ├── shared/          # 스택 공통 아키텍처 원칙 (CQRS-lite, 계층 의존 방향, DDD 전술 패턴)
-│   │   ├── spring/          # Spring Boot 구현 규칙 (api-dto.md, rest-api.md는 공통, java/·kotlin/으로 언어 분리 후 각 언어 아래 layered/·hexagonal/로 아키텍처 스타일 분리)
+│   │   ├── shared/          # 스택 공통 아키텍처 원칙 (CQRS-lite, 계층 의존 방향, DDD 전술 패턴)과 REST API 규약 (rest-api.md)
+│   │   ├── spring/          # Spring Boot 구현 규칙 (api-dto.md는 공통, java/·kotlin/으로 언어 분리 후 각 언어 아래 layered/·hexagonal/로 아키텍처 스타일 분리)
 │   │   ├── nestjs/          # NestJS 구현 규칙
 │   │   └── fastapi/         # FastAPI 구현 규칙
 │   └── frontend/           # TypeScript/Next.js/Vite/Vue.js 규칙
