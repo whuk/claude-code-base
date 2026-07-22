@@ -34,25 +34,26 @@ NestJS/FastAPI를 선택한 경우 라운드 3은 건너뛴다(해당 세부 조
 
 ### 백엔드 미포함 시 — 삭제
 - `.claude/rules/backend/` 전체
-- `.claude/agents/domain-designer.md`, `tdd-implementer.md`, `refactorer.md`, `test-author.md`, `code-reviewer.md`, `debugger.md`, `java-style-checker.md`, `openapi-spec-author.md`
+- 모든 백엔드 에이전트: `.claude/agents/spring-*.md`(8개), `.claude/agents/nestjs-*.md`(7개), `.claude/agents/fastapi-*.md`(7개)
 
 ### 백엔드 포함 + "Spring Boot" 선택 시 — 삭제
 - `.claude/rules/backend/nestjs/`, `.claude/rules/backend/fastapi/` 전체 (`spring/`, `shared/`는 유지)
+- `.claude/agents/nestjs-*.md`(7개), `.claude/agents/fastapi-*.md`(7개)
 
 ### 백엔드 스택 "Spring Boot" + 아키텍처 스타일 "Layered" 선택 시 — 삭제
 - `.claude/rules/backend/spring/hexagonal/` 전체 (`spring/layered/`, `spring/api-dto.md`, `spring/rest-api.md`는 유지)
 
 ### 백엔드 스택 "Spring Boot" + 아키텍처 스타일 "Hexagonal" 선택 시 — 삭제
 - `.claude/rules/backend/spring/layered/` 전체 (`spring/hexagonal/`, `spring/api-dto.md`, `spring/rest-api.md`는 유지)
-- **에이전트는 삭제/수정하지 않는다.** 현재 `domain-designer`/`tdd-implementer`/`refactorer`/`test-author`/`code-reviewer`/`debugger`/`java-style-checker`/`openapi-spec-author`는 Layered 구조(Domain이 JPA 엔티티를 겸함, Controller→Service→Repository→Domain을 직접 참조)를 전제로 작성돼 있어 Hexagonal의 Port/Adapter 구조와 맞지 않을 수 있다. 3단계 보고 시 이 사실을 사용자에게 명시적으로 알린다: "이 에이전트들은 아직 Layered 전제로 작성돼 있습니다. Hexagonal 규칙 정리는 끝났지만, Port/Adapter 구조를 인식하는 전담 에이전트는 별도로 만들어야 합니다."
+- **`spring-*` 에이전트는 삭제/수정하지 않는다.** `spring-domain-designer`/`spring-tdd-implementer`/`spring-refactorer`/`spring-test-author`/`spring-code-reviewer`/`spring-debugger`는 Layered 구조(Domain이 JPA 엔티티를 겸함, Controller→Service→Repository→Domain을 직접 참조)를 전제로 작성돼 있어 Hexagonal의 Port/Adapter 구조와 맞지 않을 수 있다(`spring-style-checker`, `spring-openapi-spec-author`는 아키텍처 스타일과 무관해 그대로 둬도 된다). 3단계 보고 시 이 사실을 사용자에게 명시적으로 알린다: "Layered 전제인 6개 에이전트(spring-domain-designer/tdd-implementer/refactorer/test-author/code-reviewer/debugger)는 Hexagonal 규칙과 맞지 않을 수 있습니다. Port/Adapter 구조를 인식하는 전담 에이전트는 별도로 만들어야 합니다."
 
 ### 백엔드 포함 + "NestJS" 선택 시 — 삭제
 - `.claude/rules/backend/spring/`, `.claude/rules/backend/fastapi/` 전체 (`nestjs/`, `shared/`는 유지)
-- **에이전트는 삭제/수정하지 않는다.** 현재 `domain-designer`/`tdd-implementer`/`refactorer`/`test-author`/`code-reviewer`/`debugger`/`java-style-checker`/`openapi-spec-author` 8개는 전부 Spring 전용으로 작성돼 있어 NestJS 규칙을 참조하지 않는다. 3단계 보고 시 이 사실을 사용자에게 명시적으로 알린다: "이 에이전트들은 아직 Spring 전용입니다. NestJS 규칙 정리는 끝났지만, 이를 실제로 활용하는 전담 에이전트는 별도로 만들어야 합니다."
+- `.claude/agents/spring-*.md`(8개), `.claude/agents/fastapi-*.md`(7개)
 
 ### 백엔드 포함 + "FastAPI" 선택 시 — 삭제
 - `.claude/rules/backend/spring/`, `.claude/rules/backend/nestjs/` 전체 (`fastapi/`, `shared/`는 유지)
-- NestJS와 동일한 이유로 **에이전트는 삭제/수정하지 않고**, 3단계 보고 시 같은 안내를 한다("FastAPI 규칙 정리는 끝났지만, 이를 활용하는 전담 에이전트는 별도로 만들어야 합니다").
+- `.claude/agents/spring-*.md`(8개), `.claude/agents/nestjs-*.md`(7개)
 
 ### 프론트엔드 미포함 시 — 삭제
 - `.claude/rules/frontend/` 전체
@@ -74,7 +75,7 @@ NestJS/FastAPI를 선택한 경우 라운드 3은 건너뛴다(해당 세부 조
 
 ## 3단계: 확인 후 실행
 
-1. 삭제/편집 대상 전체 목록을 사용자에게 보여주고 진행 여부를 확인받는다. NestJS/FastAPI 또는 Hexagonal을 선택한 경우 위 "에이전트는 삭제/수정하지 않는다" 안내도 함께 보여준다.
+1. 삭제/편집 대상 전체 목록을 사용자에게 보여주고 진행 여부를 확인받는다. Hexagonal을 선택한 경우 위 "`spring-*` 에이전트는 삭제/수정하지 않는다" 안내도 함께 보여준다.
 2. 확인되면 파일 삭제는 `git rm`으로, 내용 편집은 Edit로 수행한다.
 3. 자동으로 커밋하지 않는다. 변경 결과를 요약해 보고하고, 사용자가 요청할 때만 커밋한다.
 
@@ -83,5 +84,4 @@ NestJS/FastAPI를 선택한 경우 라운드 3은 건너뛴다(해당 세부 조
 - 사용자 확인 없이 바로 삭제/편집을 실행하지 않는다.
 - 원본 템플릿 저장소에서 실행해 원본을 훼손하지 않는다(0단계 참조).
 - 질문받지 않은 조합을 임의로 판단해서 처리하지 않는다.
-- NestJS/FastAPI를 선택했다고 해서 Spring 전용 에이전트를 임의로 고치거나 이름을 바꾸지 않는다(별도 작업).
-- Hexagonal을 선택했다고 해서 Layered 전제로 작성된 에이전트를 임의로 고치거나 이름을 바꾸지 않는다(별도 작업).
+- Hexagonal을 선택했다고 해서 Layered 전제로 작성된 `spring-*` 에이전트를 임의로 고치거나 이름을 바꾸지 않는다(별도 작업).

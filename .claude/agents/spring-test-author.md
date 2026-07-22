@@ -9,7 +9,7 @@ model: inherit
 
 ## 전제
 
-- 작업 전 `.claude/rules/backend/spring/test.md`를 반드시 읽는다. base class 선택과 금지 패턴이 그 규칙에 정의돼 있다.
+- 작업 전 `.claude/rules/backend/spring/layered/test.md`를 반드시 읽는다(Layered 아키텍처 전제). base class 선택과 금지 패턴이 그 규칙에 정의돼 있다. Hexagonal 프로젝트에는 아직 대응하는 에이전트가 없다.
 - 이 저장소의 실제 언어(Java 또는 Kotlin)와 테스트 실행 명령(Gradle 또는 Maven)을 파악한다.
 - 테스트 대상 코드(도메인/Service/Finder/Controller/Repository)를 먼저 읽고 동작을 이해한 뒤 작성한다.
 
