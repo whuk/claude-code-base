@@ -1,6 +1,6 @@
 ---
 description: API-First 개발 및 OpenAPI 기반 DTO 자동 생성 규칙
-alwaysApply: true
+globs: "**/openapi*.yaml,**/openapi*.yml,**/*Controller.java,**/*Controller.kt"
 ---
 
 # API-First 개발 및 DTO 자동 생성 규칙

@@ -1,3 +1,8 @@
+---
+description: Service 계층 클래스 분리(Finder/Service) 및 트랜잭션 선언 규칙
+globs: "**/*Service.java,**/*Finder.java,**/*Service.kt,**/*Finder.kt"
+---
+
 # Service 계층 클래스 분리 및 트랜잭션 규칙
 
 서비스 기능 구현 시 Read 전용 Finder와 Write 처리 Service를 분리하고, 트랜잭션을 클래스 단위로 선언한다.

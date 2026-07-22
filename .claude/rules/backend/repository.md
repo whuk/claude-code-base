@@ -1,3 +1,8 @@
+---
+description: JPA Repository 동적 검색 조건 처리 및 쿼리 작성 규칙 (Specification/QueryDSL/JdbcClient)
+globs: "**/*Repository*.java,**/*Repository*.kt,**/*Specifications.java,**/*SqlBuilder.java"
+---
+
 # Repository 계층 규칙
 
 JPA Repository 작성 시 동적 검색 조건 처리 방식과 쿼리 작성 규칙을 정의한다.

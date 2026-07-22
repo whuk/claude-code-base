@@ -1,6 +1,6 @@
 ---
 description: REST API 설계 원칙 및 OpenAPI 스펙 작성 규칙
-alwaysApply: true
+globs: "**/openapi*.yaml,**/openapi*.yml,**/*Controller.java,**/*Controller.kt"
 ---
 
 # REST API 설계 및 OpenAPI 스펙 작성 규칙
