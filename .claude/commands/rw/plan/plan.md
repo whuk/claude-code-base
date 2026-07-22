@@ -8,11 +8,11 @@ argument를 기반으로 작업 계획을 수립하여 프로젝트 루트에 pl
 
 1. `$ARGUMENTS`가 비어있으면 다음 메시지를 출력하고 **중단**한다:
    > argument가 비어 있습니다. 구현할 기능 설명 텍스트 또는 PRD 파일 경로를 반드시 입력해 주세요.
-   > 예: `/plan PRD2.md` 또는 `/plan 사용자 인증 기능 구현`
+   > 예: `/rw:plan:plan PRD2.md` 또는 `/rw:plan:plan 사용자 인증 기능 구현`
 
 2. 프로젝트 루트에 `plan.md`가 이미 존재하는지 확인한다. 존재하면 다음 메시지를 출력하고 **중단**한다:
    > 프로젝트 루트에 plan.md가 이미 존재합니다.
-   > `/plan_move`를 실행하여 기존 plan.md를 아카이빙한 후 다시 `/plan` 명령을 실행해 주세요.
+   > `/rw:plan:plan_move`를 실행하여 기존 plan.md를 아카이빙한 후 다시 `/rw:plan:plan` 명령을 실행해 주세요.
 
 ## Argument 해석
 

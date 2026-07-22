@@ -45,7 +45,7 @@ argument-hint: "새 브랜치명 (선택). 입력 시 해당 이름으로 브랜
 2. 커밋 메시지 형식:
    - 첫 줄: 50자 내외, 동사 원형으로 시작, "왜"를 우선해 작성
    - 본문(필요 시): 한 줄 비우고 80자 폭으로 줄바꿈. 변경 동기와 영향을 1~3줄로 설명
-   - 마지막에 `Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>` trailer 포함
+   - 마지막에 `Co-Authored-By: {현재 실행 중인 Claude 모델명} <noreply@anthropic.com>` trailer 포함 (특정 버전을 고정 기재하지 않는다)
 3. 변경 범위가 크고 논리적으로 분리되는 경우 사용자에게 알리고 다중 커밋으로 분할할지 확인하세요. 기본은 단일 커밋입니다.
 
 ## 4단계: Staging + Commit 수행
@@ -63,7 +63,7 @@ argument-hint: "새 브랜치명 (선택). 입력 시 해당 이름으로 브랜
 
    <body 옵션>
 
-   Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+   Co-Authored-By: <현재 실행 중인 Claude 모델명> <noreply@anthropic.com>
    EOF
    )"
    ```

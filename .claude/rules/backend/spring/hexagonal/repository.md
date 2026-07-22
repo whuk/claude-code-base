@@ -33,6 +33,7 @@ globs: "**/*PersistenceAdapter.java,**/*PersistenceAdapter.kt,**/*JpaEntity.java
 
 ```java
 public interface OrderCommandPort {
+    Optional<Order> findDomainById(OrderId id);
     Long save(Order order);
     void delete(OrderId id);
 }
@@ -52,6 +53,12 @@ public class OrderPersistenceAdapter implements OrderCommandPort, OrderQueryPort
     }
 
     @Override
+    public Optional<Order> findDomainById(OrderId id) {
+        return jpaRepository.findById(id.value())
+            .map(OrderPersistenceMapper::toDomain);
+    }
+
+    @Override
     public Long save(Order order) {
         OrderJpaEntity entity = OrderPersistenceMapper.toEntity(order);
         return jpaRepository.save(entity).getId();
@@ -65,7 +72,7 @@ public class OrderPersistenceAdapter implements OrderCommandPort, OrderQueryPort
 }
 ```
 
-- Command 메서드는 Domain 객체를 받아 `{Domain}JpaEntity`로 변환 후 저장한다. 반환 타입은 `layered/layer-communication-rules.md` 5번과 동일하게 생성은 ID, 수정/삭제는 `void`.
+- Command 메서드는 Domain 객체를 받아 `{Domain}JpaEntity`로 변환 후 저장한다. 반환 타입은 `layered/layer-communication-rules.md` 5번과 동일하게 생성은 ID, 수정/삭제는 `void`. 기존 Aggregate 조회가 필요하면 `findDomainById`로 Domain 객체를 직접 반환한다(`ports-and-adapters.md` 4번).
 - Query 메서드는 Domain 객체를 경유하지 않고 Read DTO(`record`)로 직접 매핑해 반환한다(`layered/layer-communication-rules.md` 3.2절과 동일한 CQRS 원칙).
 - 변환 로직은 Adapter 내부 private 메서드 또는 `{Domain}PersistenceMapper`(정적 유틸 클래스)에 위치시킨다. Domain, Port 인터페이스에는 절대 두지 않는다.
 

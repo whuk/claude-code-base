@@ -23,7 +23,7 @@ Next.js, Vite, Vue 등 프레임워크와 무관하게 TypeScript 프론트엔�
 
 - 기능 단위(`features/{feature}/`)로 코드를 묶는다. 각 feature 폴더 내부에 `api/`, `components/`, `hooks/`(Vue는 `composables/`), `stores/`, `types/` 등 필요한 하위 구조를 둔다.
 - 의존 방향은 **`shared → features → app`** 한 방향이다. `shared`는 `features`를 import 할 수 없고, **feature끼리도 서로 직접 import 하지 않는다.** 공유가 필요해지면 해당 로직을 `shared`로 끌어올린다.
-- 이 원칙은 백엔드 `layer-communication-rules.md` 7번(계층 역참조 금지, 스킵 레벨 허용)과 동일한 사상이다.
+- 이 원칙은 백엔드 `shared/architecture.md` 3번(계층 역참조 금지, 스킵 레벨 허용)과 동일한 사상이다.
 - 라우팅 구조와 feature 폴더를 어떻게 매핑할지는 프레임워크마다 다르므로 `nextjs.md`/`vite.md`/`vue.md`를 따른다.
 
 ## 4. 상태관리: 서버 상태와 클라이언트 상태 분리

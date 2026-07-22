@@ -60,4 +60,4 @@ globs: "**/*.controller.ts,**/*.service.ts,**/*.module.ts,**/*.entity.ts,**/*.re
 - Controller DTO를 Service 메서드 파라미터로 그대로 사용하지 않는다.
 - Domain 클래스에 TypeORM 컬럼 데코레이터(`@Column`, `@OneToMany` 등)를 직접 붙이지 않는다(`EntitySchema` 사용).
 - Finder 프로바이더에 상태 변경 메서드를 포함하지 않는다.
-- 동적 검색 조건을 원시 SQL/QueryBuilder 문자열로 나열하지 않는다(3-4번 기준 도구 사용).
+- 동적 검색 조건을 원시 SQL/QueryBuilder 문자열로 나열하지 않는다(5번 기준 도구 사용).

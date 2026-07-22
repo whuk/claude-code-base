@@ -1,6 +1,6 @@
 ---
 name: fastapi-domain-designer
-description: FastAPI 기능을 구현하기 전에 도메인 모델과 계층 배치를 설계할 때 사용한다. Entity/Value Object 식별(단순하면 생략 가능), 라우터/서비스/리포지토리 구조, Repository 도구 선택(SQLAlchemy), Command/Query 흐름 결정을 담당하는 read-only 설계 전담이다. 코드를 작성하지 않고 설계안을 산출하며, 구현은 fastapi-tdd-implementer가 이어받는다. "도메인 설계", "이 기능 어떻게 모델링", "구조 잡아줘" 같은 요청에 위임한다. (Spring은 spring-domain-designer, NestJS는 nestjs-domain-designer를 사용한다.)
+description: FastAPI 기능을 구현하기 전에 도메인 모델과 계층 배치를 설계할 때 사용한다. Entity/Value Object 식별(단순하면 생략 가능), 라우터/서비스/리포지토리 구조, Repository 도구 선택(SQLAlchemy), Command/Query 흐름 결정을 담당하는 read-only 설계 전담이다. 코드를 작성하지 않고 설계안을 산출하며, 구현은 fastapi-tdd-implementer가 이어받는다. "도메인 설계", "이 기능 어떻게 모델링", "구조 잡아줘" 같은 요청에 위임한다. (Spring은 spring-domain-designer, NestJS는 nestjs-domain-designer, 프론트엔드는 frontend-architect를 사용한다.)
 tools: Read, Grep, Glob, Bash
 model: opus
 ---

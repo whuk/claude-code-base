@@ -5,7 +5,7 @@ Kent Beck의 테스트 주도 개발(TDD)과 Tidy First 원칙에 따라 개발�
 
 ## 시작하기
 
-이 저장소는 claude-code-base 템플릿입니다. 이 템플릿을 복사해서 새 프로젝트를 시작했다면, 다른 작업을 하기 전에 먼저 `/rw:init`을 실행하세요. 실제 프로젝트 스택(백엔드/프론트엔드, Next.js/Vite, MongoDB 사용 여부 등)에 대해 질문한 뒤, 해당하지 않는 `.claude/rules/`와 `.claude/agents/` 파일을 정리해줍니다. 이미 `/rw:init`을 실행했거나 이 저장소가 템플릿 원본이라면 건너뛰어도 됩니다.
+이 저장소는 claude-code-base 템플릿입니다. 이 템플릿을 복사해서 새 프로젝트를 시작했다면, 다른 작업을 하기 전에 먼저 `/rw:init`을 실행하세요. 실제 프로젝트 스택(백엔드/프론트엔드/풀스택, 백엔드 스택 종류(Spring Boot/NestJS/FastAPI), Spring이면 아키텍처 스타일(Layered/Hexagonal)과 MongoDB 사용 여부·QueryDSL/jOOQ 계획, 프론트엔드면 Next.js/Vite)에 대해 질문한 뒤, 해당하지 않는 `.claude/rules/`와 `.claude/agents/` 파일을 정리해줍니다. 이미 `/rw:init`을 실행했거나 이 저장소가 템플릿 원본이라면 건너뛰어도 됩니다.
 
 ## 개발 방법론
 

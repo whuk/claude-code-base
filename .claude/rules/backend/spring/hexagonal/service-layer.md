@@ -56,16 +56,14 @@ public class OrderFinder implements OrderQueryUseCase {
 public class OrderService implements OrderCommandUseCase {
 
     private final OrderCommandPort orderCommandPort;
-    private final OrderQueryPort orderQueryPort;
 
-    public OrderService(OrderCommandPort orderCommandPort, OrderQueryPort orderQueryPort) {
+    public OrderService(OrderCommandPort orderCommandPort) {
         this.orderCommandPort = orderCommandPort;
-        this.orderQueryPort = orderQueryPort;
     }
 
     @Override
     public void cancel(OrderCommand.Cancel command) {
-        Order order = orderQueryPort.findDomainById(command.orderId())
+        Order order = orderCommandPort.findDomainById(command.orderId())
             .orElseThrow(() -> new OrderNotFoundException(command.orderId()));
         order.cancel();
         orderCommandPort.save(order);
@@ -75,7 +73,7 @@ public class OrderService implements OrderCommandUseCase {
 
 - 클래스명: `{Domain}Service` (예: `OrderService`, `UserService`)
 - 구현 인터페이스: `{Domain}CommandUseCase`
-- 의존: `{Domain}CommandPort`가 기본이며, 상태 변경을 위해 기존 Domain 객체 조회가 필요하면 `{Domain}QueryPort`도 함께 주입받을 수 있다. 이때 `{Domain}QueryPort`에는 Read DTO 반환 메서드와 별개로 Domain 객체를 그대로 반환하는 조회 메서드(예: `findDomainById`)를 둘 수 있다 — Command 흐름 내부에서만 사용하고 Controller/Finder로 노출하지 않는다.
+- 의존: `{Domain}CommandPort`만 주입받는다. 상태 변경을 위해 기존 Domain 객체 조회가 필요하면 `{Domain}CommandPort`에 함께 선언된 `findDomainById` 등의 조회 메서드를 사용한다(`ports-and-adapters.md` 4번). `{Domain}QueryPort`는 Read DTO만 반환하므로 이 목적에 사용하지 않는다.
 
 ## 4. 금지 패턴
 

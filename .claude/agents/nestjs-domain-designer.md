@@ -1,6 +1,6 @@
 ---
 name: nestjs-domain-designer
-description: NestJS 기능을 구현하기 전에 DDD Rich Domain 모델과 모듈/계층 배치를 설계할 때 사용한다. Entity/Value Object 식별, Finder/Service 프로바이더 구조, Repository 도구 선택(TypeORM/Prisma), Command/Query 흐름 결정을 담당하는 read-only 설계 전담이다. 코드를 작성하지 않고 설계안을 산출하며, 구현은 nestjs-tdd-implementer가 이어받는다. "도메인 설계", "이 기능 어떻게 모델링", "모듈 구조 잡아줘" 같은 요청에 위임한다. (Spring은 spring-domain-designer, FastAPI는 fastapi-domain-designer를 사용한다.)
+description: NestJS 기능을 구현하기 전에 DDD Rich Domain 모델과 모듈/계층 배치를 설계할 때 사용한다. Entity/Value Object 식별, Finder/Service 프로바이더 구조, Repository 도구 선택(TypeORM/Prisma), Command/Query 흐름 결정을 담당하는 read-only 설계 전담이다. 코드를 작성하지 않고 설계안을 산출하며, 구현은 nestjs-tdd-implementer가 이어받는다. "도메인 설계", "이 기능 어떻게 모델링", "모듈 구조 잡아줘" 같은 요청에 위임한다. (Spring은 spring-domain-designer, FastAPI는 fastapi-domain-designer, 프론트엔드는 frontend-architect를 사용한다.)
 tools: Read, Grep, Glob, Bash
 model: opus
 ---

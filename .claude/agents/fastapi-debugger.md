@@ -1,6 +1,6 @@
 ---
 name: fastapi-debugger
-description: FastAPI의 버그, 예외, 실패하는 테스트, 예상과 다른 동작의 근본 원인을 증거 기반으로 추적할 때 사용한다. 코드를 수정하지 않는 read-only 분석 전담이다. 재현 → 가설 → 검증 → 최소 수정안 제시까지 담당하고, 실제 수정은 fastapi-tdd-implementer가 재현 테스트와 함께 수행한다. "버그 원인 분석", "이거 왜 이렇게 동작해", "예외 추적", "테스트가 왜 실패해" 같은 요청에 위임한다. (Spring은 spring-debugger, NestJS는 nestjs-debugger를 사용한다.)
+description: FastAPI의 버그, 예외, 실패하는 테스트, 예상과 다른 동작의 근본 원인을 증거 기반으로 추적할 때 사용한다. 코드를 수정하지 않는 read-only 분석 전담이다. 재현 → 가설 → 검증 → 최소 수정안 제시까지 담당하고, 실제 수정은 fastapi-tdd-implementer가 재현 테스트와 함께 수행한다. "버그 원인 분석", "이거 왜 이렇게 동작해", "예외 추적", "테스트가 왜 실패해" 같은 요청에 위임한다. (Spring은 spring-debugger, NestJS는 nestjs-debugger, 프론트엔드는 frontend-debugger를 사용한다.)
 tools: Read, Grep, Glob, Bash
 model: opus
 ---
@@ -36,4 +36,4 @@ model: opus
 
 - 추측을 사실로 포장하지 않는다. 확신도를 명시한다.
 - 결함 수정을 직접 하지 않고 `fastapi-tdd-implementer`에게 넘긴다.
-- Spring 원인 분석은 `spring-debugger`, NestJS는 `nestjs-debugger`의 몫이다.
+- Spring 원인 분석은 `spring-debugger`, NestJS는 `nestjs-debugger`, 프론트엔드는 `frontend-debugger`의 몫이다.

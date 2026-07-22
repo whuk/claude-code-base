@@ -1,6 +1,6 @@
 ---
 name: fastapi-test-author
-description: 기존 FastAPI 코드에 대한 테스트를 작성하거나 테스트 커버리지를 보강할 때 사용한다. fastapi.md 규칙에 따라 pytest/httpx를 선택하고 결정적 테스트를 작성한다. "테스트 작성", "테스트 추가", "커버리지 보강" 같은 요청에 위임한다. (기능을 TDD로 새로 만드는 경우는 fastapi-tdd-implementer를 사용한다. Spring은 spring-test-author, NestJS는 nestjs-test-author를 사용한다.)
+description: 기존 FastAPI 코드에 대한 테스트를 작성하거나 테스트 커버리지를 보강할 때 사용한다. fastapi.md 규칙에 따라 pytest/httpx를 선택하고 결정적 테스트를 작성한다. "테스트 작성", "테스트 추가", "커버리지 보강" 같은 요청에 위임한다. (기능을 TDD로 새로 만드는 경우는 fastapi-tdd-implementer를 사용한다. Spring은 spring-test-author, NestJS는 nestjs-test-author, 프론트엔드는 frontend-test-author를 사용한다.)
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: inherit
 ---
@@ -38,4 +38,4 @@ model: inherit
 
 - 나는 **이미 존재하는 프로덕션 코드**에 테스트를 추가하거나 커버리지를 보강한다.
 - 새 기능을 TDD로 만들면서 그 사이클의 일부로 테스트를 쓰는 작업은 `fastapi-tdd-implementer`의 몫이다.
-- Spring 테스트 작성은 `spring-test-author`, NestJS는 `nestjs-test-author`의 몫이다.
+- Spring 테스트 작성은 `spring-test-author`, NestJS는 `nestjs-test-author`, 프론트엔드는 `frontend-test-author`의 몫이다.

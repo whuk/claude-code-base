@@ -1,6 +1,6 @@
 ---
 description: Hexagonal(Ports & Adapters) 패키지 구조, 의존 방향, Port/Adapter 작성 규칙
-alwaysApply: true
+globs: "**/port/**,**/adapter/**,**/*UseCase.java,**/*UseCase.kt,**/*Port.java,**/*Port.kt,**/*Adapter.java,**/*Adapter.kt,**/*Controller.java,**/*Controller.kt"
 ---
 
 # Ports & Adapters 구조 규칙
@@ -56,7 +56,7 @@ adapter/
 ## 4. 아웃바운드 포트 (port/out)
 
 - Application Service/Finder가 영속성에 접근하기 위해 호출하는 인터페이스다. Persistence Adapter가 이를 구현한다.
-- `{Domain}CommandPort`: 저장(`save`)/삭제(`delete`) 메서드를 선언한다. 반환 타입은 Domain 객체 또는 식별자로 제한하고, JPA 관련 타입(`{Domain}JpaEntity`, `Page`, `Specification` 등)을 시그니처에 노출하지 않는다.
+- `{Domain}CommandPort`: 저장(`save`)/삭제(`delete`) 메서드를 선언한다. 상태 변경을 위해 기존 Aggregate를 먼저 조회해야 하는 경우, Domain 객체를 반환하는 조회 메서드(`findDomainById` 등, `{Domain}QueryPort`의 Read DTO 반환 메서드와 이름이 겹치지 않게 한다)도 함께 선언할 수 있다 — Command 흐름 내부(Application Service)에서만 사용하고 Controller/Finder에는 노출하지 않는다. 반환 타입은 Domain 객체 또는 식별자로 제한하고, JPA 관련 타입(`{Domain}JpaEntity`, `Page`, `Specification` 등)을 시그니처에 노출하지 않는다.
 - `{Domain}QueryPort`: 조회 메서드를 선언한다. 반환 타입은 Read 전용 객체(`record`)로 제한한다.
 - Port 인터페이스는 `application/port/out` 패키지에 위치하며, `jakarta.persistence.*`, `org.springframework.data.jpa.*` 등 영속성 프레임워크 타입을 import 하지 않는다.
 

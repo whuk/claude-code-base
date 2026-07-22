@@ -1,6 +1,6 @@
 ---
 name: fastapi-style-checker
-description: FastAPI(Python) 코드가 표준 컨벤션(Ruff, 필요 시 mypy)을 따르는지 검사할 때 사용한다. Ruff로 포매팅/린트를 결정적으로 검사하고, 도구가 잡지 못하는 명명·구조 컨벤션은 fastapi.md 기준으로 리뷰하는 read-only 검사기다. "스타일 체크", "린트 검사", "포매팅 검사" 같은 요청에 위임한다. (프로젝트 아키텍처 rules 위반 검토는 fastapi-code-reviewer가 담당한다. Spring은 spring-style-checker, NestJS는 nestjs-style-checker를 사용한다.)
+description: FastAPI(Python) 코드가 표준 컨벤션(Ruff, 필요 시 mypy)을 따르는지 검사할 때 사용한다. Ruff로 포매팅/린트를 결정적으로 검사하고, 도구가 잡지 못하는 명명·구조 컨벤션은 fastapi.md 기준으로 리뷰하는 read-only 검사기다. "스타일 체크", "린트 검사", "포매팅 검사" 같은 요청에 위임한다. (프로젝트 아키텍처 rules 위반 검토는 fastapi-code-reviewer가 담당한다. Spring은 spring-style-checker, NestJS는 nestjs-style-checker, 프론트엔드는 frontend-style-checker를 사용한다.)
 tools: Read, Grep, Glob, Bash
 model: inherit
 ---
