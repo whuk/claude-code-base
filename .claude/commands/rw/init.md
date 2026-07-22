@@ -19,7 +19,7 @@ claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용
 
 **라운드 2 — 라운드 1 답변에 따라 해당하는 것만 함께 묻는다**:
 - (백엔드 포함 시) "백엔드 스택은 무엇입니까?" → Spring Boot(Java) / NestJS(TypeScript) / FastAPI(Python)
-- (프론트엔드 포함 시) "프론트엔드 프레임워크는?" → Next.js / Vite
+- (프론트엔드 포함 시) "프론트엔드 프레임워크는?" → Next.js / Vite / Vue.js
 
 **라운드 3 — 백엔드 스택으로 "Spring Boot"를 선택한 경우에만 묻는다**:
 - "아키텍처 스타일은 무엇입니까?" → Layered(기본) / Hexagonal(Ports & Adapters)
@@ -60,10 +60,14 @@ NestJS/FastAPI를 선택한 경우 라운드 3은 건너뛴다(해당 세부 조
 - `.claude/agents/frontend-*.md` (7개 전부: architect, code-reviewer, debugger, refactorer, style-checker, tdd-implementer, test-author)
 
 ### 프론트엔드 포함 + Next.js 선택 시 — 삭제
-- `.claude/rules/frontend/vite.md`
+- `.claude/rules/frontend/vite.md`, `.claude/rules/frontend/vue.md`
 
 ### 프론트엔드 포함 + Vite 선택 시 — 삭제
-- `.claude/rules/frontend/nextjs.md`
+- `.claude/rules/frontend/nextjs.md`, `.claude/rules/frontend/vue.md`
+
+### 프론트엔드 포함 + Vue.js 선택 시 — 삭제
+- `.claude/rules/frontend/nextjs.md`, `.claude/rules/frontend/vite.md`
+- **`frontend-*` 에이전트는 삭제/수정하지 않는다.** `frontend-architect`/`frontend-tdd-implementer`/`frontend-code-reviewer`/`frontend-debugger`는 현재 Next.js/Vite(React 계열) 전제로 작성돼 있어 Vue.js 규칙(Composition API, Pinia, Vue Router 등)을 참조하지 않는다. 3단계 보고 시 이 사실을 사용자에게 명시적으로 알린다: "frontend 에이전트들은 아직 Next.js/Vite 전용입니다. Vue.js 규칙 정리는 끝났지만, 이를 실제로 활용하는 전담 에이전트는 별도로 만들어야 합니다."
 
 ### 백엔드 스택 "Spring Boot" + "JPA만" 선택 시 — 편집 (파일 삭제 아님)
 - 아키텍처 스타일 답변에 따라 `.claude/rules/backend/spring/layered/test.md` 또는 `.claude/rules/backend/spring/hexagonal/test.md`에서 MongoDB 관련 내용을 제거한다: base class 표에서 `IntegrationTestBase`(MongoDB Repository/Persistence Adapter 통합), `WebIntegrationTestBase`(MongoDB Controller/Web Adapter) 행을 삭제하고, MongoDB 통합 테스트 관련 문단을 제거해 JPA 전용 안내만 남긴다.
@@ -75,7 +79,7 @@ NestJS/FastAPI를 선택한 경우 라운드 3은 건너뛴다(해당 세부 조
 
 ## 3단계: 확인 후 실행
 
-1. 삭제/편집 대상 전체 목록을 사용자에게 보여주고 진행 여부를 확인받는다. Hexagonal을 선택한 경우 위 "`spring-*` 에이전트는 삭제/수정하지 않는다" 안내도 함께 보여준다.
+1. 삭제/편집 대상 전체 목록을 사용자에게 보여주고 진행 여부를 확인받는다. Hexagonal을 선택한 경우 위 "`spring-*` 에이전트는 삭제/수정하지 않는다" 안내를, Vue.js를 선택한 경우 "`frontend-*` 에이전트는 삭제/수정하지 않는다" 안내를 함께 보여준다.
 2. 확인되면 파일 삭제는 `git rm`으로, 내용 편집은 Edit로 수행한다.
 3. 자동으로 커밋하지 않는다. 변경 결과를 요약해 보고하고, 사용자가 요청할 때만 커밋한다.
 
@@ -85,3 +89,4 @@ NestJS/FastAPI를 선택한 경우 라운드 3은 건너뛴다(해당 세부 조
 - 원본 템플릿 저장소에서 실행해 원본을 훼손하지 않는다(0단계 참조).
 - 질문받지 않은 조합을 임의로 판단해서 처리하지 않는다.
 - Hexagonal을 선택했다고 해서 Layered 전제로 작성된 `spring-*` 에이전트를 임의로 고치거나 이름을 바꾸지 않는다(별도 작업).
+- Vue.js를 선택했다고 해서 Next.js/Vite 전제로 작성된 `frontend-*` 에이전트를 임의로 고치거나 이름을 바꾸지 않는다(별도 작업).
