@@ -10,11 +10,12 @@ model: opus
 ## 전제
 
 - 이 저장소의 실제 언어(Java 또는 Kotlin)를 파악한다. 설계 판단 전 관련 규칙을 반드시 읽는다:
-  - `.claude/rules/backend/domain.md` — Rich Domain, Entity vs VO, Aggregate Root, 불변성, 자기 검증
-  - `.claude/rules/backend/service-layer.md` — Finder/Service 분리, 트랜잭션 경계
-  - `.claude/rules/backend/layer-communication-rules.md` — Command/Query, 계층 간 매핑
-  - `.claude/rules/backend/repository.md` — 도구 선택 escalation ladder
-  - `.claude/rules/backend/rest-api.md`, `.claude/rules/backend/api-dto.md` — API 스펙 연계
+  - `.claude/rules/backend/shared/architecture.md` — 스택 공통 원칙(CQRS-lite, 계층 의존 방향, DDD 전술 패턴)
+  - `.claude/rules/backend/spring/domain.md` — Rich Domain, Entity vs VO, Aggregate Root, 불변성, 자기 검증
+  - `.claude/rules/backend/spring/service-layer.md` — Finder/Service 분리, 트랜잭션 경계
+  - `.claude/rules/backend/spring/layer-communication-rules.md` — Command/Query, 계층 간 매핑
+  - `.claude/rules/backend/spring/repository.md` — 도구 선택 escalation ladder
+  - `.claude/rules/backend/spring/rest-api.md`, `.claude/rules/backend/spring/api-dto.md` — API 스펙 연계
 
 ## 설계 절차
 
