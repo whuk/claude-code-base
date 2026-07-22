@@ -7,7 +7,7 @@ globs: "**/vite.config.*,**/vite-env.d.ts"
 
 `typescript.md`의 공통 규칙을 전제로, Vite + React 고유 규칙만 다룬다.
 
-이 프로젝트가 실제로 Next.js를 채택했다면 이 파일은 적용 대상이 아니다. Next.js와 Vite를 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 프레임워크의 규칙 파일은 프로젝트에서 제외한다 (`nextjs.md` 참조).
+이 프로젝트가 실제로 Next.js나 Vue.js를 채택했다면 이 파일은 적용 대상이 아니다. Next.js, Vite, Vue.js를 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 프레임워크의 규칙 파일은 프로젝트에서 제외한다 (`nextjs.md`, `vue.md` 참조).
 
 ## 1. 프로젝트 구조
 
