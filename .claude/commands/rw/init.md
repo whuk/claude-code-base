@@ -22,6 +22,7 @@ claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용
 - (프론트엔드 포함 시) "프론트엔드 프레임워크는?" → Next.js / Vite
 
 **라운드 3 — 백엔드 스택으로 "Spring Boot"를 선택한 경우에만 묻는다**:
+- "아키텍처 스타일은 무엇입니까?" → Layered(기본) / Hexagonal(Ports & Adapters)
 - "MongoDB도 함께 사용합니까?" → JPA만 사용(기본) / JPA + MongoDB 함께 사용
 - "Repository 조회 도구로 QueryDSL/jOOQ까지 쓸 계획이 있습니까?" → Specification까지만 사용(기본) / QueryDSL/jOOQ까지 쓸 계획 있음
 
@@ -37,6 +38,13 @@ NestJS/FastAPI를 선택한 경우 라운드 3은 건너뛴다(해당 세부 조
 
 ### 백엔드 포함 + "Spring Boot" 선택 시 — 삭제
 - `.claude/rules/backend/nestjs/`, `.claude/rules/backend/fastapi/` 전체 (`spring/`, `shared/`는 유지)
+
+### 백엔드 스택 "Spring Boot" + 아키텍처 스타일 "Layered" 선택 시 — 삭제
+- `.claude/rules/backend/spring/hexagonal/` 전체 (`spring/layered/`, `spring/api-dto.md`, `spring/rest-api.md`는 유지)
+
+### 백엔드 스택 "Spring Boot" + 아키텍처 스타일 "Hexagonal" 선택 시 — 삭제
+- `.claude/rules/backend/spring/layered/` 전체 (`spring/hexagonal/`, `spring/api-dto.md`, `spring/rest-api.md`는 유지)
+- **에이전트는 삭제/수정하지 않는다.** 현재 `domain-designer`/`tdd-implementer`/`refactorer`/`test-author`/`code-reviewer`/`debugger`/`java-style-checker`/`openapi-spec-author`는 Layered 구조(Domain이 JPA 엔티티를 겸함, Controller→Service→Repository→Domain을 직접 참조)를 전제로 작성돼 있어 Hexagonal의 Port/Adapter 구조와 맞지 않을 수 있다. 3단계 보고 시 이 사실을 사용자에게 명시적으로 알린다: "이 에이전트들은 아직 Layered 전제로 작성돼 있습니다. Hexagonal 규칙 정리는 끝났지만, Port/Adapter 구조를 인식하는 전담 에이전트는 별도로 만들어야 합니다."
 
 ### 백엔드 포함 + "NestJS" 선택 시 — 삭제
 - `.claude/rules/backend/spring/`, `.claude/rules/backend/fastapi/` 전체 (`nestjs/`, `shared/`는 유지)
@@ -57,16 +65,16 @@ NestJS/FastAPI를 선택한 경우 라운드 3은 건너뛴다(해당 세부 조
 - `.claude/rules/frontend/nextjs.md`
 
 ### 백엔드 스택 "Spring Boot" + "JPA만" 선택 시 — 편집 (파일 삭제 아님)
-- `.claude/rules/backend/spring/test.md`에서 MongoDB 관련 내용을 제거한다: base class 표에서 `IntegrationTestBase`(MongoDB Repository 통합), `WebIntegrationTestBase`(MongoDB Controller/Web) 행을 삭제하고, MongoDB 통합 테스트 관련 문단을 제거해 JPA 전용 안내만 남긴다.
+- 아키텍처 스타일 답변에 따라 `.claude/rules/backend/spring/layered/test.md` 또는 `.claude/rules/backend/spring/hexagonal/test.md`에서 MongoDB 관련 내용을 제거한다: base class 표에서 `IntegrationTestBase`(MongoDB Repository/Persistence Adapter 통합), `WebIntegrationTestBase`(MongoDB Controller/Web Adapter) 행을 삭제하고, MongoDB 통합 테스트 관련 문단을 제거해 JPA 전용 안내만 남긴다.
 - Edit 도구로 신중하게 처리하고, 편집 후 표/문단이 자연스럽게 이어지는지 다시 읽어 확인한다.
 
 ### 백엔드 스택 "Spring Boot" + "Specification까지만" 선택 시 — 편집 (파일 삭제 아님)
-- `.claude/rules/backend/spring/repository.md`에서 6번(QueryDSL 사용 규칙), 7.5번(jOOQ를 SQL 빌더로 사용) 섹션을 제거한다.
-- 5번 "도구 선택 계층" 표와 8번 "Finder/Service 계층과의 통합" 다이어그램에 QueryDSL/jOOQ 관련 언급이 남아있으면 함께 정리해 본문과 표가 어긋나지 않도록 한다.
+- 아키텍처 스타일 답변에 따라 `.claude/rules/backend/spring/layered/repository.md` 또는 `.claude/rules/backend/spring/hexagonal/repository.md`에서 QueryDSL 사용 규칙, jOOQ를 SQL 빌더로 사용하는 섹션을 제거한다.
+- "도구 선택 계층" 표와 "Finder/Service 계층과의 통합" 다이어그램에 QueryDSL/jOOQ 관련 언급이 남아있으면 함께 정리해 본문과 표가 어긋나지 않도록 한다.
 
 ## 3단계: 확인 후 실행
 
-1. 삭제/편집 대상 전체 목록을 사용자에게 보여주고 진행 여부를 확인받는다. NestJS/FastAPI를 선택한 경우 위 "에이전트는 삭제/수정하지 않는다" 안내도 함께 보여준다.
+1. 삭제/편집 대상 전체 목록을 사용자에게 보여주고 진행 여부를 확인받는다. NestJS/FastAPI 또는 Hexagonal을 선택한 경우 위 "에이전트는 삭제/수정하지 않는다" 안내도 함께 보여준다.
 2. 확인되면 파일 삭제는 `git rm`으로, 내용 편집은 Edit로 수행한다.
 3. 자동으로 커밋하지 않는다. 변경 결과를 요약해 보고하고, 사용자가 요청할 때만 커밋한다.
 
@@ -76,3 +84,4 @@ NestJS/FastAPI를 선택한 경우 라운드 3은 건너뛴다(해당 세부 조
 - 원본 템플릿 저장소에서 실행해 원본을 훼손하지 않는다(0단계 참조).
 - 질문받지 않은 조합을 임의로 판단해서 처리하지 않는다.
 - NestJS/FastAPI를 선택했다고 해서 Spring 전용 에이전트를 임의로 고치거나 이름을 바꾸지 않는다(별도 작업).
+- Hexagonal을 선택했다고 해서 Layered 전제로 작성된 에이전트를 임의로 고치거나 이름을 바꾸지 않는다(별도 작업).
