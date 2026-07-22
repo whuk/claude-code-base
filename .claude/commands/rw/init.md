@@ -1,3 +1,9 @@
+---
+description: "claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용하고, 해당하지 않는 rules/agents 파일을 정리한다."
+argument-hint: "없음"
+user-invocable: true
+---
+
 # /rw:init — 템플릿 선별 초기화
 
 claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용한다. 스택에 대해 질문한 뒤, 답변에 맞지 않는 `.claude/rules/`와 `.claude/agents/` 파일을 제거하거나 정리한다.
