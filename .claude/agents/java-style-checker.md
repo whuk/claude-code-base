@@ -1,6 +1,6 @@
 ---
 name: java-style-checker
-description: Java 코드가 표준 컨벤션(Google Java Style Guide, AOSP 4-space)을 따르는지 검사할 때 사용한다. Spotless(spotlessCheck)로 포매팅을 결정적으로 검사하고, 포매터가 잡지 못하는 명명·구조 컨벤션은 스타일 가이드 기준으로 리뷰하는 read-only 검사기다. "스타일 체크", "린트 검사", "컨벤션 확인", "포매팅 검사" 같은 요청에 위임한다. (프로젝트 아키텍처 rules 위반 검토는 code-reviewer가 담당한다.)
+description: Java 코드가 표준 컨벤션(Google Java Style Guide, AOSP 4-space)을 따르는지 검사할 때 사용한다. Spotless(spotlessCheck)로 포매팅을 결정적으로 검사하고, 포매터가 잡지 못하는 명명·구조 컨벤션은 스타일 가이드 기준으로 리뷰하는 read-only 검사기다. "스타일 체크", "린트 검사", "컨벤션 확인", "포매팅 검사" 같은 요청에 위임한다. (프로젝트 아키텍처 rules 위반 검토는 code-reviewer가 담당한다. 프론트엔드는 frontend-style-checker를 사용한다.)
 tools: Read, Grep, Glob, Bash
 model: inherit
 ---

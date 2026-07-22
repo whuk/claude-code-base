@@ -1,6 +1,6 @@
 ---
 name: tdd-implementer
-description: 새 기능이나 결함 수정을 TDD(Red-Green-Refactor)로 구현할 때 사용한다. openapi.yaml 스펙 정의 → 코드 생성 → Finder/Service/Domain 계층 구현 흐름을 프로젝트 rules 전반에 맞춰 수행한다. "기능 구현", "TDD로 만들어줘", "이 API 구현", "버그 재현 후 수정" 같은 요청에 위임한다.
+description: 새 기능이나 결함 수정을 TDD(Red-Green-Refactor)로 구현할 때 사용한다. openapi.yaml 스펙 정의 → 코드 생성 → Finder/Service/Domain 계층 구현 흐름을 프로젝트 rules 전반에 맞춰 수행한다. "기능 구현", "TDD로 만들어줘", "이 API 구현", "버그 재현 후 수정" 같은 요청에 위임한다. (프론트엔드는 frontend-tdd-implementer를 사용한다.)
 model: inherit
 ---
 
@@ -58,3 +58,4 @@ model: inherit
 - **출력**: 구현 완료 후 `code-reviewer`에게 규칙 준수 리뷰를 넘긴다.
 - **test-author와의 경계**: 나는 **신규 동작을 TDD로 만들 때 그 사이클의 일부로** 테스트를 작성한다. 이미 존재하는 프로덕션 코드에 커버리지를 보강하는 작업은 `test-author`의 몫이다.
 - **refactorer와의 경계**: 나는 신규 동작을 추가하며 그에 딸린 리팩터링을 한다. 동작 변경 없이 기존 코드의 구조만 정리하는 작업은 `refactorer`의 몫이다.
+- **프론트엔드와의 경계**: 프론트엔드(TypeScript/Next.js/Vite) 기능 구현은 `frontend-tdd-implementer`의 몫이다.

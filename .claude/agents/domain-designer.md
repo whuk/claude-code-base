@@ -1,6 +1,6 @@
 ---
 name: domain-designer
-description: 기능을 구현하기 전에 DDD Rich Domain 모델과 계층 배치를 설계할 때 사용한다. Aggregate/Entity/Value Object 식별, Finder/Service 구조, Repository 도구 티어(Specification/QueryDSL/JdbcClient) 선택, Command/Query 흐름 결정을 담당하는 read-only 설계 전담이다. 코드를 작성하지 않고 설계안을 산출하며, 구현은 tdd-implementer가 이어받는다. "도메인 설계", "이 기능 어떻게 모델링", "계층 구조 잡아줘", "Aggregate 경계 결정" 같은 요청에 위임한다.
+description: 기능을 구현하기 전에 DDD Rich Domain 모델과 계층 배치를 설계할 때 사용한다. Aggregate/Entity/Value Object 식별, Finder/Service 구조, Repository 도구 티어(Specification/QueryDSL/JdbcClient) 선택, Command/Query 흐름 결정을 담당하는 read-only 설계 전담이다. 코드를 작성하지 않고 설계안을 산출하며, 구현은 tdd-implementer가 이어받는다. "도메인 설계", "이 기능 어떻게 모델링", "계층 구조 잡아줘", "Aggregate 경계 결정" 같은 요청에 위임한다. (프론트엔드는 frontend-architect를 사용한다.)
 tools: Read, Grep, Glob, Bash
 model: opus
 ---
