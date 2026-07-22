@@ -7,6 +7,8 @@ globs: "**/*Repository*.java,**/*Repository*.kt,**/*Specifications.java,**/*SqlB
 
 JPA Repository 작성 시 동적 검색 조건 처리 방식과 쿼리 작성 규칙을 정의한다.
 
+이 프로젝트가 Hexagonal(Ports & Adapters)을 채택했다면 이 파일은 적용 대상이 아니다. Repository가 Domain 클래스를 직접 다루는지(Layered) Port 뒤의 Adapter가 별도 JpaEntity를 다루는지(Hexagonal)가 핵심 차이다 (`hexagonal/repository.md` 참조).
+
 ## 1. 핵심 원칙
 
 - 검색(조회) 조건이 동적으로 조합되는 경우, `@Query` 어노테이션을 사용하지 않고 **JPA Specification**을 사용한다.
