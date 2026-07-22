@@ -1,5 +1,7 @@
 ---
-argument-hint: "<PRD 파일 경로 또는 구현할 기능 설명 텍스트>"
+description: "argument를 기반으로 작업 계획을 수립하여 프로젝트 루트에 plan.md를 생성한다."
+argument-hint: "<PRD 파일 경로 또는 구현할 기능 설명 텍스트> (필수)"
+user-invocable: true
 ---
 
 argument를 기반으로 작업 계획을 수립하여 프로젝트 루트에 plan.md를 생성한다.
@@ -69,4 +71,9 @@ argument 내용 + 코드베이스 분석 결과를 종합하여 프로젝트 루
 - 테스트 작성 항목을 포함한다. TDD 사이클에 따라 테스트가 구현보다 먼저 온다.
 - 프로젝트의 .claude/rules/ 에 정의된 규칙(계층 분리, DDD, Service/Finder 분리 등)을 준수하는 설계를 반영한다.
 
-$ARGUMENTS - 필수: 구현할 기능 설명 텍스트 또는 PRD 파일 경로
+## 하지 말아야 할 것
+
+- argument가 비어 있는데 임의로 진행하기 (사전 검증에서 반드시 중단)
+- 프로젝트 루트에 plan.md가 이미 존재하는데 덮어쓰기 (`/rw:plan:plan_move`로 먼저 아카이빙 안내)
+- 존재하지 않는 파일 경로를 임의로 무시하고 진행하기
+- 프로젝트의 .claude/rules/ 규칙(계층 분리, DDD, Service/Finder 분리 등)을 무시한 설계를 반영하기

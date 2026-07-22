@@ -1,5 +1,7 @@
 ---
-argument-hint: "새 브랜치명 (선택). 입력 시 해당 이름으로 브랜치를 만들고 거기에 commit/push 합니다."
+description: "현재 작업 디렉토리의 변경사항을 의미 있는 단위로 commit 하고 remote 에 push 한다. PR 생성·머지는 수행하지 않는다."
+argument-hint: "새로 만들 브랜치명 (영어 소문자·숫자·하이픈·슬래시, 선택). 입력 시 해당 이름으로 브랜치를 만들고 거기에 commit/push 합니다."
+user-invocable: true
 ---
 
 현재 작업 디렉토리의 변경사항을 의미 있는 단위로 commit 하고 remote 에 push 합니다. PR 생성·머지는 수행하지 않습니다. 보호 브랜치(`main`, `master`, `develop`, `dev`)에서 직접 작업 중인 경우 새 브랜치로 분기할지 사용자에게 확인합니다.
@@ -97,5 +99,3 @@ argument-hint: "새 브랜치명 (선택). 입력 시 해당 이름으로 브랜
 - `--no-verify` / `--no-gpg-sign` 등 안전장치 우회 (사용자 명시 요청 시 한정)
 - 변경사항이 없는데 빈 커밋 만들기
 - 현재 브랜치에 commit 후 다른 브랜치로 checkout 하여 push 하기 (요청 흐름 외 부수 작업 금지)
-
-$ARGUMENTS - 선택 사항: 새로 만들 브랜치명 (영어 소문자·숫자·하이픈·슬래시). 입력 시 해당 이름으로 분기 후 commit/push 합니다.

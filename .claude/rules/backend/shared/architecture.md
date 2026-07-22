@@ -65,3 +65,12 @@ Java/Spring, NestJS, FastAPI 등 어떤 백엔드 스택을 쓰든 공통으로 
 - 상태 코드: 201(생성, `Location` 헤더 포함)/204(본문 없음)/400(구문 오류)/422(비즈니스 규칙 위반). 400과 422를 명확히 구분한다.
 - 에러 응답은 RFC 9457 Problem Details 형식(`type`/`title`/`status`/`detail`/`instance`)을 따른다.
 - 페이지네이션(오프셋/커서), 정렬(`-` 접두사), 필터(`min/max{Field}`), 버전 관리(URI path)는 스택 무관하게 동일한 규약을 따른다.
+
+## 10. 금지 패턴
+
+- getter/setter만 있는 Anemic Domain 모델을 사용하지 않는다. Domain 객체에 setter를 노출하지 않는다.
+- 안쪽 계층(Domain, Repository)이 자신보다 바깥쪽 계층(Service, Controller/Handler)을 참조하지 않는다.
+- Service 진입점에서 원시 타입을 개별 나열하지 않는다. Command/Query 객체로 그룹화한다.
+- Query(조회) 흐름에서 Domain 객체를 직접 반환하지 않는다. Read 전용 객체를 반환한다.
+- 조회 전용 컴포넌트에 상태 변경 로직을 포함하지 않는다.
+- 측정된 성능 병목 등 구체적 근거 없이 선제적으로 상위 단계 Repository 도구를 사용하지 않는다.

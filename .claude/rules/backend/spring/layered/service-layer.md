@@ -23,13 +23,13 @@ globs: "**/*Service.java,**/*Finder.java,**/*Service.kt,**/*Finder.kt"
 
 ## 3. 클래스 구조 예시
 
-### Finder (조회 전용)
+### 3.1. Finder (조회 전용)
 
 - 클래스명: `{Domain}Finder` (예: `OrderFinder`, `UserFinder`)
 - 역할: 조회 로직, 존재 여부 확인, 목록/상세 조회
 - `layer-communication-rules.md`의 Query 흐름(3.2절)에 대응한다.
 
-### Service (상태 변경)
+### 3.2. Service (상태 변경)
 
 - 클래스명: `{Domain}Service` (예: `OrderService`, `UserService`)
 - 역할: 생성, 수정, 삭제 등 비즈니스 로직 실행

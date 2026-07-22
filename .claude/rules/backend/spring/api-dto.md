@@ -22,7 +22,7 @@ globs: "**/openapi*.yaml,**/openapi*.yml,**/*Controller.java,**/*Controller.kt"
 - 빌드 도구(Gradle 또는 Maven)에 OpenAPI Generator 플러그인을 연동하여, 빌드 시점에 Controller 인터페이스와 DTO 모델을 자동 생성한다.
 - 제너레이터 설정에서 모델 스타일을 반드시 `record`로 지정하여, 불변 객체 특성을 살리고 보일러플레이트를 최소화한다.
 - 제너레이터 설정에서 `useBeanValidation`(또는 동등 옵션)을 활성화하여, 스펙의 제약조건(`rest-api.md` 8번)이 Bean Validation 애노테이션으로 자동 생성되도록 한다. 애노테이션을 코드에 직접 추가하지 않는다.
-- 중첩 스키마(Value Object, `layer-communication-rules.md` 8번 참조)를 참조하는 필드는 제너레이터가 자동으로 `@Valid`를 붙여 계층 검증(cascading validation)이 되도록 한다.
+- 중첩 스키마(Value Object, `layer-communication-rules.md` 7번 참조)를 참조하는 필드는 제너레이터가 자동으로 `@Valid`를 붙여 계층 검증(cascading validation)이 되도록 한다.
 - Controller가 구현하는 생성된 인터페이스의 `@RequestBody` 파라미터에 `@Valid`가 포함되어 있는지 확인한다. 누락된 경우에만 Controller 구현체에서 보완한다.
 
 ## 4. 개발 흐름
@@ -36,3 +36,10 @@ globs: "**/openapi*.yaml,**/openapi*.yml,**/*Controller.java,**/*Controller.kt"
 
 - API 스펙 변경 시 소스 코드를 직접 수정하지 않는다. `openapi.yaml`을 먼저 수정하고 재빌드하여 코드를 덮어씌운다.
 - 동적 필드 등 OpenAPI 스펙으로 표현하기 어려운 특수한 입출력이 필요한 경우에만 예외적으로 DTO 수동 작성을 허용한다.
+
+## 6. 금지 패턴
+
+- 웹 계층의 Request/Response DTO 및 Controller 인터페이스를 수동으로 작성하지 않는다.
+- 소스 코드에 Swagger 관련 애노테이션을 직접 붙여 스펙을 역방향으로 문서화하지 않는다.
+- Bean Validation 애노테이션을 코드에 직접 추가하지 않는다(제너레이터 설정으로 자동 생성).
+- API 스펙 변경 시 소스 코드를 먼저 수정하지 않는다. `openapi.yaml`을 먼저 수정하고 재빌드한다.
