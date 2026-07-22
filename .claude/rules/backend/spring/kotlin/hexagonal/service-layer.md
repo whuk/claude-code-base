@@ -26,7 +26,7 @@ globs: "**/*Service.kt,**/*Finder.kt,**/*UseCase.kt"
 
 ## 3. 클래스 구조 예시
 
-### Finder (조회 전용)
+### 3.1. Finder (조회 전용)
 
 ```kotlin
 @Transactional(readOnly = true)
@@ -44,7 +44,7 @@ class OrderFinder(
 - 구현 인터페이스: `{Domain}QueryUseCase`
 - 의존: `{Domain}QueryPort`만 주입받는다.
 
-### Service (상태 변경)
+### 3.2. Service (상태 변경)
 
 ```kotlin
 @Transactional

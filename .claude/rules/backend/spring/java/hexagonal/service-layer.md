@@ -25,7 +25,7 @@ globs: "**/*Service.java,**/*Finder.java,**/*UseCase.java"
 
 ## 3. 클래스 구조 예시
 
-### Finder (조회 전용)
+### 3.1. Finder (조회 전용)
 
 ```java
 @Transactional(readOnly = true)
@@ -49,7 +49,7 @@ public class OrderFinder implements OrderQueryUseCase {
 - 구현 인터페이스: `{Domain}QueryUseCase`
 - 의존: `{Domain}QueryPort`만 주입받는다.
 
-### Service (상태 변경)
+### 3.2. Service (상태 변경)
 
 ```java
 @Transactional
