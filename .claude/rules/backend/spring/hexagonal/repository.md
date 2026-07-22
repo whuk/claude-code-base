@@ -1,0 +1,104 @@
+---
+description: Outbound Persistence Adapter 작성 시 동적 검색 조건 처리 방식과 쿼리 작성 규칙 (Hexagonal)
+globs: "**/*PersistenceAdapter.java,**/*PersistenceAdapter.kt,**/*JpaEntity.java,**/*JpaEntity.kt,**/*JpaRepository.java,**/*JpaRepository.kt,**/*Specifications.java,**/*SqlBuilder.java"
+---
+
+# Outbound Persistence Adapter 규칙
+
+`ports-and-adapters.md` 6.2절의 Outbound Persistence Adapter 구현 방법을 다룬다. 검색 조건 조합, 도구 선택(Escalation Ladder)은 `layered/repository.md`와 동일하되, 대상이 Domain 클래스가 아니라 `{Domain}JpaEntity`라는 점이 다르다.
+
+이 프로젝트가 Layered를 채택했다면 이 파일은 적용 대상이 아니다 (`layered/repository.md` 참조).
+
+## 1. 핵심 원칙
+
+- `{Domain}JpaEntity`는 Domain과 분리된 순수 영속성 클래스다. Domain 클래스와 달리 표준 JPA 애노테이션(`@Entity`, `@Table`, `@Id`, `@Column`, `@OneToMany` 등)을 직접 사용한다 — `layered/domain.md` 9번의 `orm.xml` 분리가 필요 없다. JpaEntity는 어차피 Domain에 노출되지 않으므로 애노테이션 유무가 Domain 순수성에 영향을 주지 않는다.
+- 검색(조회) 조건이 동적으로 조합되는 경우, `@Query` 대신 **JPA Specification**을 사용한다. `{Domain}JpaRepository`가 `JpaSpecificationExecutor<{Domain}JpaEntity>`를 상속한다.
+- Specification 메서드는 `{Domain}JpaEntity` 기준 조건 조립만 담당하며, 도메인별 전용 클래스에 `static` 메서드로 그룹화한다 (예: `OrderJpaEntitySpecifications`).
+
+## 2. 도구 선택 계층 (Escalation Ladder)
+
+`layered/repository.md` 5번과 동일한 사다리를 사용하되, 적용 대상이 `{Domain}JpaEntity`로 바뀐다.
+
+| Level | 도구 | 사용 조건 |
+|-------|------|-----------|
+| 0 | Query Derivation | 정적 조건 2개 이하의 단순 조회 |
+| 1 | JPA Specification | 동적 검색 조건 조합 (기본값) |
+| 2 | QueryDSL | N+1 fetch join + 페이지네이션, 3개 이상 엔티티 조인, 타입 안전 DTO 프로젝션, 복잡한 서브쿼리 |
+| 3 | JdbcClient + jOOQ | 대량 벌크 처리, 리포팅/집계, 측정된 JPA 성능 병목, JPQL/QueryDSL로 표현 불가한 네이티브 SQL |
+
+- Level 3까지는 측정된 근거 없이 선제적으로 올라가지 않는다(`layered/repository.md`와 동일한 제약).
+- QueryDSL Q-class는 `{Domain}JpaEntity`에 대해 생성된다. `{Domain}JpaEntity`에 `@Entity`가 표준 애노테이션으로 남아 있으므로 APT 기반 Q-class 생성이 별도 설정 없이 그대로 동작한다(`layered/repository.md` 6.1절과 달리 orm.xml 우회가 필요 없다).
+
+## 3. PersistenceAdapter 구조
+
+```java
+public interface OrderCommandPort {
+    Long save(Order order);
+    void delete(OrderId id);
+}
+
+public interface OrderQueryPort {
+    Optional<OrderReadDto> findById(OrderId id);
+    List<OrderReadDto> search(OrderSearchQuery query);
+}
+
+@Component
+public class OrderPersistenceAdapter implements OrderCommandPort, OrderQueryPort {
+
+    private final OrderJpaRepository jpaRepository;
+
+    public OrderPersistenceAdapter(OrderJpaRepository jpaRepository) {
+        this.jpaRepository = jpaRepository;
+    }
+
+    @Override
+    public Long save(Order order) {
+        OrderJpaEntity entity = OrderPersistenceMapper.toEntity(order);
+        return jpaRepository.save(entity).getId();
+    }
+
+    @Override
+    public Optional<OrderReadDto> findById(OrderId id) {
+        return jpaRepository.findById(id.value())
+            .map(OrderPersistenceMapper::toReadDto);
+    }
+}
+```
+
+- Command 메서드는 Domain 객체를 받아 `{Domain}JpaEntity`로 변환 후 저장한다. 반환 타입은 `layered/layer-communication-rules.md` 5번과 동일하게 생성은 ID, 수정/삭제는 `void`.
+- Query 메서드는 Domain 객체를 경유하지 않고 Read DTO(`record`)로 직접 매핑해 반환한다(`layered/layer-communication-rules.md` 3.2절과 동일한 CQRS 원칙).
+- 변환 로직은 Adapter 내부 private 메서드 또는 `{Domain}PersistenceMapper`(정적 유틸 클래스)에 위치시킨다. Domain, Port 인터페이스에는 절대 두지 않는다.
+
+## 4. N+1 방지 도구
+
+`layered/repository.md` 6.4절과 동일한 우선순위를 따른다: `@EntityGraph` → QueryDSL `fetchJoin()` → `@BatchSize`/`hibernate.default_batch_fetch_size` → DTO Projection. 모두 `{Domain}JpaEntity`/`{Domain}JpaRepository` 내부에서만 적용하며, Adapter 경계 밖으로 로딩 전략이 새어나가지 않게 한다.
+
+## 5. Finder/Service 계층과의 통합
+
+```
+{Domain}Service / {Domain}Finder (application/service)
+    |  (port/out 인터페이스에만 의존)
+    +---> {Domain}CommandPort / {Domain}QueryPort
+              |
+              +---> {Domain}PersistenceAdapter (adapter/out/persistence)
+                        |
+                        +---> {Domain}JpaRepository — JPA (Specification + QueryDSL)
+                        +---> {Domain}JdbcRepository — 성능 최적화 쿼리 (JdbcClient, 선택)
+                                  |
+                                  +---> {Domain}SqlBuilder (jOOQ, 선택)
+```
+
+- Application Service/Finder는 Port 인터페이스 타입으로만 의존을 선언한다. 어떤 Adapter 구현체가 주입되는지 알 필요가 없다(Spring이 DI로 연결).
+- JdbcClient/jOOQ를 예외적으로 쓰는 경우도 `{Domain}QueryPort`/`{Domain}CommandPort`를 구현하는 별도 Adapter(또는 같은 Adapter 내부 분기)로 캡슐화하고, Port 밖으로 JDBC 관련 타입을 노출하지 않는다.
+
+## 6. 테스트
+
+- Persistence Adapter 테스트는 `layered/test.md`와 동일한 base class(`JpaIntegrationTestBase` 등)를 상속한다. 차이는 검증 대상이 Domain이 아니라 `{Domain}JpaEntity`/`OrderPersistenceMapper` 변환 결과라는 점이다.
+- Port 인터페이스 자체는 테스트 대상이 아니다(인터페이스이므로). Adapter 구현체와 매퍼 로직을 테스트한다.
+
+## 7. 금지 패턴
+
+- `{Domain}JpaEntity`를 Port 인터페이스나 Application Service 반환 타입으로 노출하지 않는다.
+- Domain 클래스에 `{Domain}JpaEntity` 변환 메서드를 두지 않는다(`domain.md` 2번, 변환은 Adapter/Mapper 전담).
+- 동적 검색 조건을 `@Query` 문자열로 나열하지 않는다.
+- Application Service/Finder에서 `{Domain}PersistenceAdapter`, `{Domain}JpaRepository`를 직접 타입으로 주입받지 않는다. 반드시 `port/out` 인터페이스로만 주입받는다.

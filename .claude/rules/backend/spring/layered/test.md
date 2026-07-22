@@ -7,6 +7,8 @@ globs: "**/src/test/**"
 
 테스트 작성 시 테스트 유형별 적절한 base class를 선택하고, 필요한 인프라만 로드한다.
 
+이 프로젝트가 Hexagonal(Ports & Adapters)을 채택했다면 이 파일은 적용 대상이 아니다. Domain/Application/Adapter 계층별로 테스트 전략이 세분화되므로 `hexagonal/test.md`를 참조한다.
+
 ## 1. 핵심 원칙
 
 - 테스트에 필요한 **최소한의 ApplicationContext**만 로드한다. 모든 테스트가 전체 컨텍스트를 올릴 필요는 없다.

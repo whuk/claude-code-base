@@ -7,6 +7,8 @@ globs: "**/*Service.java,**/*Finder.java,**/*Service.kt,**/*Finder.kt"
 
 서비스 기능 구현 시 Read 전용 Finder와 Write 처리 Service를 분리하고, 트랜잭션을 클래스 단위로 선언한다.
 
+이 프로젝트가 Hexagonal(Ports & Adapters)을 채택했다면 이 파일은 적용 대상이 아니다. Finder/Service가 UseCase 인터페이스를 구현하고 Port를 통해서만 영속성에 접근하는지가 핵심 차이다 (`hexagonal/service-layer.md` 참조).
+
 ## 1. 핵심 원칙
 
 - 하나의 도메인 영역에 대해 **Finder 클래스**와 **Service 클래스**를 분리하여 작성한다.
