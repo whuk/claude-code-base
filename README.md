@@ -20,7 +20,7 @@ Claude Code용 프로젝트 규칙(`rules`)과 서브에이전트(`agents`), 커
 │   │   ├── nestjs/          # NestJS 구현 규칙
 │   │   └── fastapi/         # FastAPI 구현 규칙
 │   └── frontend/           # TypeScript/Next.js/Vite/Vue.js 규칙
-├── agents/                 # 워크플로우별 서브에이전트, 스택별로 분리 (spring-*/nestjs-*/fastapi-*/frontend-*). spring-*는 Layered 아키텍처 전제이며 Hexagonal 전담 에이전트는 아직 없음. frontend-*는 Next.js/Vite(React 계열) 전제이며 Vue.js 전담 에이전트는 아직 없음
+├── agents/                 # 워크플로우별 서브에이전트, 스택별로 분리 (spring-*/nestjs-*/fastapi-*/frontend-*). Spring은 Layered 전제인 spring-*와 Hexagonal 전담인 spring-hexagonal-*을 아키텍처 스타일별로 제공. frontend-*는 Next.js/Vite(React 계열) 전제이며 Vue.js 전담 에이전트는 아직 없음
 └── commands/rw/             # 커스텀 슬래시 커맨드 (init, git, plan, prd, tdd)
 ```
 

@@ -1,6 +1,6 @@
 ---
 name: spring-refactorer
-description: 이미 동작하는(테스트가 통과하는) 기존 Spring Boot 코드의 구조를 개선할 때 사용한다. 중복 제거, 메서드/클래스 추출, 이름 변경, 복잡도 감소 등 동작을 바꾸지 않는 순수 구조적 변경(Tidy First)을 담당한다. 새 기능 추가 없이 "이 코드 정리해줘", "중복 제거", "이 클래스 쪼개줘", "리팩터링해줘" 같은 요청에 위임한다. 동작 변경이 필요하면 spring-tdd-implementer가 담당한다. (NestJS는 nestjs-refactorer, FastAPI는 fastapi-refactorer, 프론트엔드는 frontend-refactorer를 사용한다.)
+description: 이미 동작하는(테스트가 통과하는) 기존 Spring Boot 코드의 구조를 개선할 때 사용한다. 중복 제거, 메서드/클래스 추출, 이름 변경, 복잡도 감소 등 동작을 바꾸지 않는 순수 구조적 변경(Tidy First)을 담당한다. 새 기능 추가 없이 "이 코드 정리해줘", "중복 제거", "이 클래스 쪼개줘", "리팩터링해줘" 같은 요청에 위임한다. 동작 변경이 필요하면 spring-tdd-implementer가 담당한다. (NestJS는 nestjs-refactorer, FastAPI는 fastapi-refactorer, 프론트엔드는 frontend-refactorer를 사용한다. Hexagonal 아키텍처를 선택한 Spring 프로젝트는 spring-hexagonal-refactorer를 사용한다.)
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: inherit
 ---
@@ -29,7 +29,7 @@ model: inherit
 
 - `.claude/CLAUDE.md` — Tidy First(구조/동작 변경 분리), 리팩터링 가이드라인, 코드 품질 기준
 - `.claude/rules/backend/shared/architecture.md` — 스택 공통 원칙
-- `.claude/rules/backend/spring/{java|kotlin}/layered/domain.md`, `service-layer.md`, `layer-communication-rules.md`, `repository.md` — 목표 구조의 판정 기준(Spring, Layered 아키텍처 전제. 저장소 언어에 맞는 디렉토리를 읽는다. Hexagonal 프로젝트에는 아직 대응하는 에이전트가 없다)
+- `.claude/rules/backend/spring/{java|kotlin}/layered/domain.md`, `service-layer.md`, `layer-communication-rules.md`, `repository.md` — 목표 구조의 판정 기준(Spring, Layered 아키텍처 전제. 저장소 언어에 맞는 디렉토리를 읽는다. Hexagonal 프로젝트는 `spring-hexagonal-refactorer`가 담당한다)
 
 ## 산출물 형식
 

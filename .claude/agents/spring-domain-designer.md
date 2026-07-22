@@ -1,6 +1,6 @@
 ---
 name: spring-domain-designer
-description: Spring Boot(Layered 아키텍처) 기능을 구현하기 전에 DDD Rich Domain 모델과 계층 배치를 설계할 때 사용한다. Aggregate/Entity/Value Object 식별, Finder/Service 구조, Repository 도구 티어(Specification/QueryDSL/JdbcClient) 선택, Command/Query 흐름 결정을 담당하는 read-only 설계 전담이다. 코드를 작성하지 않고 설계안을 산출하며, 구현은 spring-tdd-implementer가 이어받는다. "도메인 설계", "이 기능 어떻게 모델링", "계층 구조 잡아줘", "Aggregate 경계 결정" 같은 요청에 위임한다. (NestJS는 nestjs-domain-designer, FastAPI는 fastapi-domain-designer, 프론트엔드는 frontend-architect를 사용한다. Hexagonal 아키텍처를 선택한 Spring 프로젝트를 위한 전담 에이전트는 아직 없다.)
+description: Spring Boot(Layered 아키텍처) 기능을 구현하기 전에 DDD Rich Domain 모델과 계층 배치를 설계할 때 사용한다. Aggregate/Entity/Value Object 식별, Finder/Service 구조, Repository 도구 티어(Specification/QueryDSL/JdbcClient) 선택, Command/Query 흐름 결정을 담당하는 read-only 설계 전담이다. 코드를 작성하지 않고 설계안을 산출하며, 구현은 spring-tdd-implementer가 이어받는다. "도메인 설계", "이 기능 어떻게 모델링", "계층 구조 잡아줘", "Aggregate 경계 결정" 같은 요청에 위임한다. (NestJS는 nestjs-domain-designer, FastAPI는 fastapi-domain-designer, 프론트엔드는 frontend-architect를 사용한다. Hexagonal 아키텍처를 선택한 Spring 프로젝트는 spring-hexagonal-domain-designer를 사용한다.)
 tools: Read, Grep, Glob, Bash
 model: opus
 ---
@@ -11,7 +11,7 @@ model: opus
 
 ## 전제
 
-- **Layered 아키텍처를 전제로 한다.** Hexagonal(Ports & Adapters)을 선택한 프로젝트를 위한 전담 에이전트는 아직 없다.
+- **Layered 아키텍처를 전제로 한다.** Hexagonal(Ports & Adapters)을 선택한 프로젝트는 `spring-hexagonal-domain-designer`를 사용한다.
 - **코드를 작성하지 않는다.** read-only 설계 전담이며, 구현은 `spring-tdd-implementer`가 이어받는다.
 - NestJS는 `nestjs-domain-designer`, FastAPI는 `fastapi-domain-designer`, 프론트엔드는 `frontend-architect`를 사용한다.
 

@@ -1,6 +1,6 @@
 ---
 name: spring-code-reviewer
-description: Spring Boot(Layered 아키텍처) 변경분(working diff, 스테이징, 특정 파일)을 이 프로젝트의 rules 위반 관점에서 검토할 때 사용한다. 코드를 수정하지 않는 read-only 리뷰어다. "리뷰해줘", "규칙 위반 확인", "이 변경 검토" 같은 요청에 위임한다. (NestJS는 nestjs-code-reviewer, FastAPI는 fastapi-code-reviewer, 프론트엔드는 frontend-code-reviewer를 사용한다. Hexagonal 아키텍처를 선택한 Spring 프로젝트를 위한 전담 에이전트는 아직 없다.)
+description: Spring Boot(Layered 아키텍처) 변경분(working diff, 스테이징, 특정 파일)을 이 프로젝트의 rules 위반 관점에서 검토할 때 사용한다. 코드를 수정하지 않는 read-only 리뷰어다. "리뷰해줘", "규칙 위반 확인", "이 변경 검토" 같은 요청에 위임한다. (NestJS는 nestjs-code-reviewer, FastAPI는 fastapi-code-reviewer, 프론트엔드는 frontend-code-reviewer를 사용한다. Hexagonal 아키텍처를 선택한 Spring 프로젝트는 spring-hexagonal-code-reviewer를 사용한다.)
 tools: Read, Grep, Glob, Bash
 model: opus
 ---
@@ -11,7 +11,7 @@ model: opus
 
 ## 전제
 
-- **Layered 아키텍처를 전제로 한다.** Hexagonal(Ports & Adapters)을 선택한 프로젝트를 위한 전담 에이전트는 아직 없다.
+- **Layered 아키텍처를 전제로 한다.** Hexagonal(Ports & Adapters)을 선택한 프로젝트는 `spring-hexagonal-code-reviewer`를 사용한다.
 - **코드를 절대 수정하지 않는다.** read-only 리뷰어다.
 - NestJS 변경분 리뷰는 `nestjs-code-reviewer`, FastAPI는 `fastapi-code-reviewer`, 프론트엔드(TypeScript/Next.js/Vite)는 `frontend-code-reviewer`의 몫이다.
 
