@@ -5,7 +5,7 @@ Kent Beck의 테스트 주도 개발(TDD)과 Tidy First 원칙에 따라 개발�
 
 ## 1. 시작하기
 
-이 저장소는 claude-code-base 템플릿입니다. 이 템플릿을 복사해서 새 프로젝트를 시작했다면, 다른 작업을 하기 전에 먼저 `/rw:init`을 실행하세요. 실제 프로젝트 스택(백엔드/프론트엔드/풀스택, 백엔드 스택 종류(Spring Boot/NestJS/FastAPI), Spring이면 언어(Java/Kotlin)·아키텍처 스타일(Layered/Hexagonal)·MongoDB 사용 여부·QueryDSL/jOOQ 계획, NestJS면 ORM(TypeORM/Prisma)과 검증 도구(class-validator/Zod), 프론트엔드면 Next.js/Vite/Vue.js와 Vite의 라우팅 라이브러리)에 대해 질문한 뒤, 해당하지 않는 `.claude/rules/`와 `.claude/agents/` 파일을 정리해줍니다. 이미 `/rw:init`을 실행했거나 이 저장소가 템플릿 원본이라면 건너뛰어도 됩니다.
+이 저장소는 claude-code-base 템플릿입니다. 이 템플릿을 복사해서 새 프로젝트를 시작했다면, 다른 작업을 하기 전에 먼저 `/rw:init`을 실행하세요. 실제 프로젝트 스택(백엔드/프론트엔드/풀스택, 백엔드 스택 종류(Spring Boot/NestJS/FastAPI), Spring이면 언어(Java/Kotlin)·아키텍처 스타일(Layered/Hexagonal)·MongoDB 사용 여부·QueryDSL/jOOQ 계획, NestJS면 ORM(TypeORM/Prisma)과 검증 도구(class-validator/Zod), 프론트엔드면 Next.js/Vite/Vue.js와 Vite의 라우팅 라이브러리)에 대해 질문한 뒤, 해당하지 않는 `.claude/rules/`와 `.claude/agents/` 파일을 정리해줍니다. 이미 `/rw:init`을 실행했거나 이 저장소가 템플릿 원본이라면 건너뛰어도 됩니다. 상호 배타적인 rules 파일(Java/Kotlin, Layered/Hexagonal, Next.js/Vite/Vue 등)은 frontmatter의 glob 설정만으로는 배제되지 않을 수 있으므로, `/rw:init`으로 실제 스택에 맞지 않는 파일을 정리하는 것이 전제입니다.
 
 ## 2. 개발 방법론
 
@@ -62,9 +62,9 @@ Kent Beck의 테스트 주도 개발(TDD)과 Tidy First 원칙에 따라 개발�
 2. 통과시키기 위한 최소한의 코드를 구현하세요
 3. 테스트를 실행하여 통과를 확인하세요 (Green)
 4. 필요한 구조적 변경을 수행하세요 (Tidy First), 각 변경 후 테스트를 실행하세요
-5. 구조적 변경을 별도로 커밋하세요
+5. 구조적 변경을 동작 변경과 별도의 커밋 단위로 분리하세요 (커밋 실행 자체는 3번 커밋 규율을 따릅니다 — 사용자가 요청할 때만)
 6. 다음 작은 기능 증분에 대한 테스트를 추가하세요
-7. 기능이 완성될 때까지 반복하며, 동작 변경과 구조적 변경을 별도로 커밋하세요
+7. 기능이 완성될 때까지 반복하며, 동작 변경과 구조적 변경을 별도의 커밋 단위로 유지하세요
 
 ## 7. 일반 행동 규칙
 

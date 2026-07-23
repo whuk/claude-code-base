@@ -6,7 +6,7 @@ user-invocable: true
 
 # /rw:tdd:go — 다음 미완료 테스트 TDD 구현
 
-plan.md에서 다음 미완료 테스트(체크 표시가 없는 테스트) 하나를 찾아 TDD 사이클(Red-Green)로 구현합니다.
+plan.md에서 다음 미완료 테스트(체크 표시가 없는 테스트) 하나를 찾아 TDD 사이클(Red-Green)로 구현합니다. CLAUDE.md의 TDD 사이클(Red-Green-Refactor) 중 Refactor 단계는 이 커맨드의 범위 밖입니다 — 필요하면 Green 확인 후 별도 작업으로 수행합니다.
 
 ## 1단계: 대상 테스트 선정
 
