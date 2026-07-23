@@ -32,10 +32,12 @@ claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용
 (백엔드 스택 "Spring Boot" 선택 시)
 - "언어는 무엇입니까?" → Java(기본) / Kotlin
 - "아키텍처 스타일은 무엇입니까?" → Layered(기본) / Hexagonal(Ports & Adapters)
-- "영속성 도구는 무엇입니까?" → JPA(ORM, 기본) / SQL-first(JdbcClient + jOOQ, ORM 미사용)
+- (언어 "Java" 선택 시) "웹 스택은 무엇입니까?" → Spring MVC(서블릿, 기본) / WebFlux(리액티브). WebFlux 규칙은 현재 Java 전용이므로 Kotlin 선택 시 이 질문은 묻지 않고 MVC로 간주한다
+- (웹 스택이 "Spring MVC"인 경우에만) "영속성 도구는 무엇입니까?" → JPA(ORM, 기본) / SQL-first(JdbcClient + jOOQ, ORM 미사용). WebFlux 선택 시 영속성은 R2DBC로 고정되므로 이 질문과 아래 JPA 세부 질문 2개를 묻지 않는다
 - (영속성 도구 "JPA" 선택 시) "MongoDB도 함께 사용합니까?" → JPA만 사용(기본) / JPA + MongoDB 함께 사용
 - (영속성 도구 "JPA" 선택 시) "Repository 조회 도구로 QueryDSL/jOOQ까지 쓸 계획이 있습니까?" → Specification까지만 사용(기본) / QueryDSL/jOOQ까지 쓸 계획 있음
-- "주 관계형 데이터베이스(RDB)는 무엇입니까?" → PostgreSQL(기본) / MySQL / MariaDB / 그 외 유명 DB(Oracle·SQL Server·SQLite 등, "Other"로 직접 입력). 옵션 설명에 PostgreSQL/MySQL이 가장 자주 사용되는 선택지임을 표기한다.
+- (웹 스택 "WebFlux" 선택 시) "리액티브 MongoDB도 함께 사용합니까?" → R2DBC만 사용(기본) / R2DBC + 리액티브 MongoDB 함께 사용
+- "주 관계형 데이터베이스(RDB)는 무엇입니까?" → PostgreSQL(기본) / MySQL / MariaDB / 그 외 유명 DB(Oracle·SQL Server·SQLite 등, "Other"로 직접 입력). 옵션 설명에 PostgreSQL/MySQL이 가장 자주 사용되는 선택지임을 표기한다. 웹 스택과 무관하게 묻는다(WebFlux면 jOOQ 방언과 R2DBC 드라이버 선택의 기준이 된다).
 
 (백엔드 스택 "NestJS" 선택 시)
 - "영속성 도구는 무엇을 사용합니까?" → TypeORM / Prisma / 사용 안 함(SQL-first, Kysely)
@@ -80,12 +82,24 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 - 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/layered/` 전체 (`spring/{java|kotlin}/hexagonal/`, 아키텍처 공통인 `spring/{java|kotlin}/repository-tools.md`, `spring/api-dto.md`는 유지)
 - Layered 전제 에이전트 6개: `.claude/agents/spring-domain-designer.md`, `spring-tdd-implementer.md`, `spring-refactorer.md`, `spring-test-author.md`, `spring-code-reviewer.md`, `spring-debugger.md` (`spring-hexagonal-*` 6개와, 아키텍처 스타일과 무관한 `spring-style-checker`/`spring-openapi-spec-author`는 유지)
 
+### 백엔드 스택 "Spring Boot" + 언어 "Java" + 웹 스택 "Spring MVC" 선택 시 — 삭제
+- `.claude/rules/backend/spring/java/webflux.md`, `.claude/rules/backend/spring/java/repository-r2dbc.md` (WebFlux 전용 규칙. 언어 "Kotlin" 선택 시에는 `spring/java/` 전체 삭제에 이미 포함되므로 별도 처리가 없다)
+
+### 백엔드 스택 "Spring Boot" + 웹 스택 "WebFlux" 선택 시 — 삭제 + 편집
+- 영속성 질문(JPA/SQL-first)을 묻지 않았으므로 JPA/SQL-first의 삭제·편집 케이스와 MongoDB(JPA용)/QueryDSL 편집 케이스는 적용하지 않는다.
+- 선택한 아키텍처의 `.claude/rules/backend/spring/java/{layered|hexagonal}/repository.md`와 `.claude/rules/backend/spring/java/repository-tools.md`, `.claude/rules/backend/spring/java/repository-sql.md`를 삭제한다 (`repository-r2dbc.md`가 대체한다).
+- Layered면 `spring/java/layered/domain.md`를 편집한다: 2번(인프라 비종속)의 `@Entity` 마커 허용·orm.xml 분리 문장을 순수 Domain 기준(영속성 애노테이션 전면 금지)으로 수정하고, 9번(JPA 영속성 매핑) 섹션을 삭제하며, 마지막 금지 패턴의 orm.xml 항목과 도입부의 SQL-first/WebFlux 안내 문장을 정리한다. 편집 후 번호와 문맥이 자연스럽게 이어지는지 다시 읽어 확인한다.
+- Hexagonal이면 추가 편집이 없다 (`ports-and-adapters.md`·`hexagonal/domain.md`의 `{Domain}JpaEntity` 언급은 `repository-r2dbc.md` 2번의 대체 규정이 우선한다).
+- `test.md`는 편집하지 않는다 — base class 표의 `Jpa*` 접두사는 `webflux.md` 8번의 대체 규정(`R2dbc*` 접두사, WebTestClient)으로 갈음한다.
+- (리액티브 MongoDB "R2DBC만 사용" 선택 시) `repository-r2dbc.md`에서 7번(리액티브 MongoDB 병용) 섹션과 8번(테스트)의 리액티브 MongoDB 문장을 제거한다. 편집 후 섹션 번호가 끊기지 않고 이어지도록 후속 섹션 번호를 당겨 정리한다.
+- `spring-*` 에이전트는 웹 스택(MVC/WebFlux)을 조건부로 함께 언급하므로 수정하지 않는다.
+
 ### 백엔드 스택 "Spring Boot" + 영속성 도구 "JPA" 선택 시 — 삭제
 - 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/repository-sql.md` (SQL-first 전용 규칙)
 
 ### 백엔드 스택 "Spring Boot" + 영속성 도구 "SQL-first" 선택 시 — 삭제 + 편집
 - 선택한 언어·아키텍처의 `.claude/rules/backend/spring/{java|kotlin}/{layered|hexagonal}/repository.md`와 `.claude/rules/backend/spring/{java|kotlin}/repository-tools.md`를 삭제한다 (`repository-sql.md`가 대체한다).
-- Layered면 `spring/{java|kotlin}/layered/domain.md`를 편집한다: 2번(인프라 비종속)의 `@Entity` 마커 허용·orm.xml 분리 문장을 순수 Domain 기준(영속성 애노테이션 전면 금지)으로 수정하고, 9번(JPA 영속성 매핑) 섹션을 삭제하며, 마지막 금지 패턴의 orm.xml 항목과 도입부의 SQL-first 안내 문장을 정리한다. 편집 후 번호와 문맥이 자연스럽게 이어지는지 다시 읽어 확인한다.
+- Layered면 `spring/{java|kotlin}/layered/domain.md`를 편집한다: 2번(인프라 비종속)의 `@Entity` 마커 허용·orm.xml 분리 문장을 순수 Domain 기준(영속성 애노테이션 전면 금지)으로 수정하고, 9번(JPA 영속성 매핑) 섹션을 삭제하며, 마지막 금지 패턴의 orm.xml 항목과 도입부의 SQL-first/WebFlux 안내 문장을 정리한다. 편집 후 번호와 문맥이 자연스럽게 이어지는지 다시 읽어 확인한다.
 - Hexagonal이면 추가 편집이 없다 (`ports-and-adapters.md`의 `{Domain}JpaEntity` 언급은 `repository-sql.md` 2번의 대체 규정이 우선한다).
 - MongoDB/QueryDSL 질문은 이 경우 묻지 않았으므로 해당 편집 케이스도 적용하지 않는다.
 - `spring-*` 에이전트는 영속성 도구(JPA/SQL-first)를 조건부로 함께 언급하므로 수정하지 않는다.
@@ -126,7 +140,7 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 
 ### 백엔드 스택 "Spring Boot" + RDB 선택 시 — 편집 (파일 삭제 아님)
 - PostgreSQL 선택 시: 편집하지 않는다 (규칙의 jOOQ 방언 예시가 이미 PostgreSQL 기준이다).
-- MySQL/MariaDB 선택 시: 앞선 케이스들의 삭제 처리 후 **남아 있는** 파일에 한해, 선택한 언어 디렉토리에서 jOOQ 방언 예시를 치환한다 — `repository-sql.md` 3번과 `repository-tools.md` 2.5절의 `SQLDialect.POSTGRES`(설명 문장과 `JooqConfig` 코드 예시), `layered/test.md` 2.1절의 프로덕션 방언 예시 `POSTGRES`를 선택한 DB의 방언 상수(`SQLDialect.MYSQL`/`SQLDialect.MARIADB`)로 바꾼다.
+- MySQL/MariaDB 선택 시: 앞선 케이스들의 삭제 처리 후 **남아 있는** 파일에 한해, 선택한 언어 디렉토리에서 jOOQ 방언 예시를 치환한다 — `repository-sql.md` 3번과 `repository-tools.md` 2.5절의 `SQLDialect.POSTGRES`(설명 문장과 `JooqConfig` 코드 예시), `layered/test.md` 2.1절의 프로덕션 방언 예시 `POSTGRES`, (WebFlux 프로젝트) `repository-r2dbc.md` 4번의 `SQLDialect.POSTGRES`를 선택한 DB의 방언 상수(`SQLDialect.MYSQL`/`SQLDialect.MARIADB`)로 바꾼다.
 - 그 외 DB를 직접 입력받은 경우: jOOQ 오픈소스 방언이 존재하면(예: SQLite → `SQLDialect.SQLITE`) 동일하게 치환하고, 상용 에디션 방언이 필요한 DB(Oracle, SQL Server 등)면 치환하지 않고 3단계 보고에서 "jOOQ 방언 예시는 PostgreSQL 기준으로 남아 있으며, 선택한 DB는 jOOQ 상용 에디션 방언이 필요하다"고 안내한다.
 - 편집 후 파일 내 방언 언급이 일관되게 읽히는지 다시 확인한다.
 - `spring-*` 에이전트는 DB 벤더를 언급하지 않으므로 수정 대상이 없다.

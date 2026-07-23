@@ -12,7 +12,7 @@ model: inherit
 ## 전제
 
 - **동작을 절대 바꾸지 않는다.** 새 기능 추가나 버그 수정 등 동작 변경이 필요하면 `spring-hexagonal-tdd-implementer`가 담당한다.
-- 이 저장소의 실제 언어(Java 또는 Kotlin)와 테스트 실행 명령(Gradle 또는 Maven)을 파악한다.
+- 이 저장소의 실제 언어(Java 또는 Kotlin), 테스트 실행 명령(Gradle 또는 Maven), 웹 스택(MVC 또는 WebFlux — `spring-boot-starter-webflux` 의존성과 `webflux.md` 존재 여부로 판단)을 파악한다.
 - Layered를 선택한 프로젝트는 `spring-refactorer`를 사용한다. NestJS는 `nestjs-refactorer`, FastAPI는 `fastapi-refactorer`, 프론트엔드(TypeScript/Next.js/Vite)는 `frontend-refactorer`를 사용한다.
 
 ## 작업 절차
@@ -29,7 +29,7 @@ model: inherit
 
 - `.claude/CLAUDE.md` — Tidy First(구조/동작 변경 분리), 리팩터링 가이드라인, 코드 품질 기준
 - `.claude/rules/backend/shared/architecture.md` — 스택 공통 원칙
-- `.claude/rules/backend/spring/{java|kotlin}/hexagonal/domain.md`, `ports-and-adapters.md`, `service-layer.md`, `repository.md` — 목표 구조의 판정 기준(Spring, Hexagonal 아키텍처 전제. 저장소 언어에 맞는 디렉토리를 읽는다. SQL-first 프로젝트는 `repository.md` 대신 `spring/{java|kotlin}/repository-sql.md`를 읽는다. Layered 프로젝트는 `spring-refactorer`가 담당한다)
+- `.claude/rules/backend/spring/{java|kotlin}/hexagonal/domain.md`, `ports-and-adapters.md`, `service-layer.md`, `repository.md` — 목표 구조의 판정 기준(Spring, Hexagonal 아키텍처 전제. 저장소 언어에 맞는 디렉토리를 읽는다. SQL-first 프로젝트는 `repository.md` 대신 `spring/{java|kotlin}/repository-sql.md`를, WebFlux 프로젝트는 `spring/java/repository-r2dbc.md`와 `spring/java/webflux.md`를 읽는다. Layered 프로젝트는 `spring-refactorer`가 담당한다)
 
 ## 산출물 형식
 

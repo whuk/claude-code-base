@@ -7,7 +7,7 @@ globs: "**/domain/**"
 
 도메인 패키지 내 클래스를 작성하거나 수정할 때 다음 원칙을 따른다.
 
-이 프로젝트가 Hexagonal(Ports & Adapters)을 채택했다면 이 파일은 적용 대상이 아니다. Domain 클래스가 JPA 엔티티를 겸하는지(Layered) 완전히 분리되는지(Hexagonal)가 핵심 차이이므로 두 방식을 한 프로젝트에서 동시에 쓰지 않는다 (`hexagonal/domain.md` 참조). 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다. Java와 Kotlin 규칙 파일을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 언어의 규칙 파일도 프로젝트에서 제외한다 (`kotlin/layered/domain.md` 참조). 이 프로젝트가 SQL-first(ORM 미사용)를 채택했다면 이 파일 중 JPA 매핑 조항(2번, 9번)은 적용 대상이 아니며 `repository-sql.md` 2번의 순수 Domain 매핑 규칙이 대신 적용된다 — `/rw:init`이 해당 조항을 정리한다.
+이 프로젝트가 Hexagonal(Ports & Adapters)을 채택했다면 이 파일은 적용 대상이 아니다. Domain 클래스가 JPA 엔티티를 겸하는지(Layered) 완전히 분리되는지(Hexagonal)가 핵심 차이이므로 두 방식을 한 프로젝트에서 동시에 쓰지 않는다 (`hexagonal/domain.md` 참조). 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다. Java와 Kotlin 규칙 파일을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 언어의 규칙 파일도 프로젝트에서 제외한다 (`kotlin/layered/domain.md` 참조). 이 프로젝트가 SQL-first(ORM 미사용)를 채택했다면 이 파일 중 JPA 매핑 조항(2번, 9번)은 적용 대상이 아니며 `repository-sql.md` 2번의 순수 Domain 매핑 규칙이 대신 적용된다 — `/rw:init`이 해당 조항을 정리한다. WebFlux(리액티브 스택)를 채택한 경우에도 마찬가지로 JPA 매핑 조항(2번, 9번)은 적용 대상이 아니며 `repository-r2dbc.md` 2번의 순수 Domain 매핑 규칙이 대신 적용된다 — 역시 `/rw:init`이 정리한다.
 
 ## 1. Rich Domain Model
 

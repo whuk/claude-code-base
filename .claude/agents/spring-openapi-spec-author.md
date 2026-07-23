@@ -17,9 +17,9 @@ model: inherit
 ## 작업 절차
 
 1. 작업 전 `.claude/rules/backend/spring/api-dto.md`와 `.claude/rules/backend/shared/rest-api.md`를 읽는다.
-2. 이 저장소의 openapi 스펙 위치와 빌드 도구(Gradle 또는 Maven), 모델 스타일(`record`)을 파악한다. 기존 도메인 스펙의 구조·컨벤션을 확인해 일관성을 맞춘다. 도메인별 파일 분할과 `$ref` 참조 패턴을 따른다.
+2. 이 저장소의 openapi 스펙 위치와 빌드 도구(Gradle 또는 Maven), 모델 스타일(`record`), 웹 스택(MVC 또는 WebFlux — 제너레이터 `reactive` 옵션과 `spring-boot-starter-webflux` 의존성으로 판단)을 파악한다. 기존 도메인 스펙의 구조·컨벤션을 확인해 일관성을 맞춘다. 도메인별 파일 분할과 `$ref` 참조 패턴을 따른다.
 3. 엔드포인트와 스키마를 추가/수정한다. `shared/rest-api.md` 규약과 OpenAPI 작성 규칙(아래 "참조 규칙")을 따른다.
-4. 빌드로 Controller 인터페이스와 DTO 모델이 정상 생성되는지 검증한다. 모델 스타일은 `record`이며, 명시한 제약조건이 Bean Validation 애노테이션으로, 중첩 스키마가 `@Valid`로 변환됐는지 확인한다.
+4. 빌드로 Controller 인터페이스와 DTO 모델이 정상 생성되는지 검증한다. 모델 스타일은 `record`이며, 명시한 제약조건이 Bean Validation 애노테이션으로, 중첩 스키마가 `@Valid`로 변환됐는지 확인한다. (WebFlux 프로젝트) `reactive=true` 전제에서 생성된 시그니처가 `Mono`/`Flux`인지 확인하고, 배열 응답이 `Mono<Flux<T>>`로 이중 래핑되는 알려진 결함이 나타나면 스펙 구조(페이지네이션 응답 객체 사용 등)나 제너레이터 설정으로 우회한다 — 생성 코드를 수동 편집하지 않는다 (`webflux.md` 6번).
 5. 스펙 변경 후 코드 생성이 성공하는지 확인하고, 후속으로 Controller 구현이 필요하면 안내한다(구현 자체는 `spring-tdd-implementer` — Hexagonal 프로젝트는 `spring-hexagonal-tdd-implementer` — 담당).
 
 ## 참조 규칙

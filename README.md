@@ -6,7 +6,7 @@ Claude Code용 프로젝트 규칙(`rules`)과 서브에이전트(`agents`), 커
 
 1. 이 저장소를 템플릿으로 새 프로젝트를 만듭니다 (GitHub의 "Use this template" 또는 clone).
 2. 새 프로젝트를 Claude Code로 엽니다.
-3. **가장 먼저 `/rw:init`을 실행합니다.** 실제 프로젝트 스택(백엔드/프론트엔드/풀스택, 백엔드 스택 종류, Spring이면 언어(Java/Kotlin)·아키텍처 스타일(Layered/Hexagonal)·영속성 도구(JPA/SQL-first)·MongoDB 사용 여부·QueryDSL/jOOQ 계획, NestJS면 영속성 도구(TypeORM/Prisma/SQL-first)와 검증 도구(class-validator/Zod), FastAPI면 SQLAlchemy ORM 사용 여부, 프론트엔드면 Next.js/Vite/Vue.js)에 대해 질문한 뒤, 해당하지 않는 `.claude/rules/`와 `.claude/agents/` 파일을 정리해줍니다. 그대로 다 복사해서 쓰면 안 쓰는 규칙/에이전트까지 매 세션 로드되어 불필요하게 토큰을 소모합니다.
+3. **가장 먼저 `/rw:init`을 실행합니다.** 실제 프로젝트 스택(백엔드/프론트엔드/풀스택, 백엔드 스택 종류, Spring이면 언어(Java/Kotlin)·아키텍처 스타일(Layered/Hexagonal)·웹 스택(MVC/WebFlux — Java 한정, WebFlux면 영속성은 R2DBC로 고정)·영속성 도구(JPA/SQL-first)·MongoDB 사용 여부·QueryDSL/jOOQ 계획, NestJS면 영속성 도구(TypeORM/Prisma/SQL-first)와 검증 도구(class-validator/Zod), FastAPI면 SQLAlchemy ORM 사용 여부, 프론트엔드면 Next.js/Vite/Vue.js)에 대해 질문한 뒤, 해당하지 않는 `.claude/rules/`와 `.claude/agents/` 파일을 정리해줍니다. 그대로 다 복사해서 쓰면 안 쓰는 규칙/에이전트까지 매 세션 로드되어 불필요하게 토큰을 소모합니다.
 
 ## 구성
 
@@ -16,7 +16,7 @@ Claude Code용 프로젝트 규칙(`rules`)과 서브에이전트(`agents`), 커
 ├── rules/
 │   ├── backend/
 │   │   ├── shared/          # 스택 공통 아키텍처 원칙 (CQRS-lite, 계층 의존 방향, DDD 전술 패턴)과 REST API 규약 (rest-api.md)
-│   │   ├── spring/          # Spring Boot 구현 규칙 (api-dto.md는 공통, java/·kotlin/으로 언어 분리 후 각 언어 아래 layered/·hexagonal/로 아키텍처 스타일 분리. 각 언어 레벨의 repository-tools.md(JPA용 QueryDSL/JdbcClient/jOOQ 상세)와 repository-sql.md(SQL-first, ORM 미사용)는 아키텍처 공통이며 영속성 도구 선택에 따라 둘 중 하나만 유지)
+│   │   ├── spring/          # Spring Boot 구현 규칙 (api-dto.md는 공통, java/·kotlin/으로 언어 분리 후 각 언어 아래 layered/·hexagonal/로 아키텍처 스타일 분리. 각 언어 레벨의 repository-tools.md(JPA용 QueryDSL/JdbcClient/jOOQ 상세)와 repository-sql.md(SQL-first, ORM 미사용)는 아키텍처 공통이며 영속성 도구 선택에 따라 둘 중 하나만 유지. java/의 webflux.md·repository-r2dbc.md는 WebFlux(리액티브, Java 전용) 선택 시에만 유지하며 이 경우 JPA/SQL-first 영속성 규칙을 대체)
 │   │   ├── nestjs/          # NestJS 구현 규칙
 │   │   └── fastapi/         # FastAPI 구현 규칙
 │   └── frontend/           # TypeScript/Next.js/Vite/Vue.js 규칙
