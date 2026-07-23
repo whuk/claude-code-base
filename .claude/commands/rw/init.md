@@ -85,7 +85,7 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 - Layered면 `spring/{java|kotlin}/layered/domain.md`를 편집한다: 2번(인프라 비종속)의 `@Entity` 마커 허용·orm.xml 분리 문장을 순수 Domain 기준(영속성 애노테이션 전면 금지)으로 수정하고, 9번(JPA 영속성 매핑) 섹션을 삭제하며, 마지막 금지 패턴의 orm.xml 항목과 도입부의 SQL-first 안내 문장을 정리한다. 편집 후 번호와 문맥이 자연스럽게 이어지는지 다시 읽어 확인한다.
 - Hexagonal이면 추가 편집이 없다 (`ports-and-adapters.md`의 `{Domain}JpaEntity` 언급은 `repository-sql.md` 2번의 대체 규정이 우선한다).
 - MongoDB/QueryDSL 질문은 이 경우 묻지 않았으므로 해당 편집 케이스도 적용하지 않는다.
-- **`spring-*` 에이전트는 수정하지 않는다.** 에이전트에는 JPA 전제 언급(Specification, JpaEntity 등)이 남는다. 3단계 보고 시 이 사실을 사용자에게 알린다.
+- `spring-*` 에이전트는 영속성 도구(JPA/SQL-first)를 조건부로 함께 언급하므로 수정하지 않는다.
 
 ### 백엔드 포함 + "NestJS" 선택 시 — 삭제
 - `.claude/rules/backend/spring/`, `.claude/rules/backend/fastapi/` 전체 (`nestjs/`, `shared/`는 유지)
@@ -130,13 +130,13 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 ### 백엔드 스택 "NestJS" + 영속성 도구 "사용 안 함(SQL-first)" 선택 시 — 편집 (파일 삭제 아님)
 - `.claude/rules/backend/nestjs/nestjs.md`에서 TypeORM/Prisma 관련 내용을 제거하고 SQL-first(Kysely) 경로만 남긴다: 4번(영속성)의 두 ORM 항목과 embedded 매핑 언급, 5번·6번의 ORM 도구 언급, 10번 금지 패턴의 TypeORM 컬럼 데코레이터 항목.
 - 편집 후 각 섹션이 Kysely 단일 경로로 자연스럽게 읽히는지 다시 읽어 확인한다.
-- **`nestjs-*` 에이전트는 수정하지 않는다.** 에이전트에는 ORM 전제 언급(EntitySchema 등)이 남는다. 3단계 보고 시 이 사실을 사용자에게 알린다.
+- `nestjs-*` 에이전트는 영속성 도구를 조건부로 함께 언급하므로 수정하지 않는다.
 
 ### 백엔드 스택 "FastAPI" + ORM 사용 여부 선택 시 — 편집 (파일 삭제 아님)
 - ORM 사용 선택 시: `.claude/rules/backend/fastapi/fastapi.md`에서 SQL-first 관련 내용을 제거한다 — 1번의 `models.py` 괄호 단서, 3번의 SQL-first 항목과 도구 고정 문장, 4번·5번·10번의 SQL-first/커넥션 언급.
 - SQL-first 선택 시: 반대로 ORM 경로를 제거한다 — 1번의 `models.py` 항목, 3번의 ORM 항목, 4번의 ORM 표현(`selectinload` 등), 5번의 `AsyncSession` 언급을 `AsyncConnection` 기준으로 정리.
 - 편집 후 각 섹션이 선택한 경로 하나로 자연스럽게 읽히는지 다시 읽어 확인한다.
-- **`fastapi-*` 에이전트는 수정하지 않는다.** 에이전트에는 SQLAlchemy ORM 전제 언급이 남을 수 있다. 3단계 보고 시 이 사실을 사용자에게 알린다.
+- `fastapi-*` 에이전트는 영속성 방식을 조건부로 함께 언급하므로 수정하지 않는다.
 
 ### 백엔드 스택 "NestJS" + 검증 도구 선택 시 — 편집 (파일 삭제 아님)
 - class-validator 선택 시: `nestjs.md` 3번에서 Zod 허용 문장("Zod 스키마 기반 검증(`nestjs-zod`)도 허용하되 ... 통일한다")을 제거한다.
@@ -161,7 +161,7 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 
 - 선택된 스택 조합 요약 (영역, 백엔드 스택·언어·아키텍처, 프론트엔드 프레임워크 등)
 - 삭제한 파일/디렉토리 목록과 편집한 파일 목록
-- 해당 시 에이전트 안내문 (NestJS+Zod, JPA만, Specification까지만, SQL-first 선택 시의 에이전트 미수정 안내)
+- 해당 시 에이전트 안내문 (NestJS+Zod, JPA만, Specification까지만 선택 시의 에이전트 미수정 안내)
 - 커밋하지 않았음을 명시하고, 커밋을 원하면 요청하도록 안내
 
 ## 하지 말아야 할 것

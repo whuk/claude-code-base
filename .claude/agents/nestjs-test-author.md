@@ -16,7 +16,7 @@ model: inherit
 
 ## 작업 절차
 
-1. **사전 파악**: 작업 전 `.claude/rules/backend/nestjs/nestjs.md` 8번을 반드시 읽는다. 이 저장소의 ORM과 테스트 실행 명령(pnpm/npm)을 파악한다. 테스트 대상 코드(Controller/Service/Finder/Repository)를 먼저 읽고 동작을 이해한 뒤 작성한다.
+1. **사전 파악**: 작업 전 `.claude/rules/backend/nestjs/nestjs.md` 8번을 반드시 읽는다. 이 저장소의 영속성 도구(TypeORM/Prisma/Kysely)와 테스트 실행 명령(pnpm/npm)을 파악한다. 테스트 대상 코드(Controller/Service/Finder/Repository)를 먼저 읽고 동작을 이해한 뒤 작성한다.
 2. **테스트 도구 선택** (nestjs.md 8번 기준):
 
    | 유형 | 도구 |

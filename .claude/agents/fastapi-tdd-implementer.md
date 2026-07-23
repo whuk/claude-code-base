@@ -11,7 +11,7 @@ model: inherit
 
 ## 전제
 
-- 이 저장소의 패키지 매니저(uv/poetry/pip)와 ORM(SQLAlchemy 사용 여부)을 작업 시작 시 파악한다. 프로젝트 규칙이 모든 판단에 우선한다.
+- 이 저장소의 패키지 매니저(uv/poetry/pip)와 영속성 방식(SQLAlchemy ORM 또는 SQL-first — Core/async 드라이버)을 작업 시작 시 파악한다. 프로젝트 규칙이 모든 판단에 우선한다.
 - Spring은 `spring-tdd-implementer`, NestJS는 `nestjs-tdd-implementer`, 프론트엔드는 `frontend-tdd-implementer`를 사용한다.
 
 ## 작업 절차
@@ -29,7 +29,7 @@ model: inherit
 - **Read 흐름**: Router → Query → Repository.
 - Pydantic 모델은 인스턴스화 시점에 항상 검증되므로, Command 객체를 어느 경로로 생성하든 다중 진입점 방어가 사실상 자동으로 된다(`fastapi.md` 2번).
 - 도메인 로직이 단순하면 클래스 기반 Finder/Service 대신 모듈 함수로 나눠도 된다(`fastapi.md` 1번). 복잡한 불변 조건이 있을 때만 Rich Domain 클래스를 둔다.
-- 세션(`AsyncSession`)은 `Depends`로 주입받는다. Service 함수 내부에서 직접 생성하지 않는다(`fastapi.md` 5번).
+- 세션/커넥션(`AsyncSession`/`AsyncConnection`)은 `Depends`로 주입받는다. Service 함수 내부에서 직접 생성하지 않는다(`fastapi.md` 5번).
 - 연관된 파라미터가 4개 이상이면 별도 Pydantic 모델(Value Object)로 그룹화한다.
 
 ## 참조 규칙

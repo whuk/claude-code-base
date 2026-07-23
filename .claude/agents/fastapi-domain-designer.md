@@ -22,7 +22,7 @@ model: opus
 4. **도메인 모델링(Rich Domain을 택한 경우)**:
    - Entity와 Value Object를 구분한다. 가능한 한 VO를 우선한다.
    - Aggregate Root와 경계를 식별한다. 경계를 넘는 참조는 ID로만.
-   - SQLAlchemy ORM 모델과 Domain을 분리할지, 합칠지 결정하고 변환 책임 위치를 명시한다(`fastapi.md` 3번).
+   - 저장소의 영속성 방식(SQLAlchemy ORM 또는 SQL-first — Core/async 드라이버)을 먼저 파악한다. ORM이면 ORM 모델과 Domain을 분리할지, 합칠지 결정하고 변환 책임 위치를 명시하며, SQL-first면 Repository의 SQL 실행·Row 매핑 책임을 명시한다(`fastapi.md` 3번).
 5. **구조 배치**:
    - Write는 Router(Pydantic 입력)→Service(Command)→Domain→Repository, Read는 Router→Query→Repository로 흐름을 정한다.
    - 클래스 기반 Finder/Service가 과한 단순 기능이면 모듈 함수로 나누는 것을 허용한다(`fastapi.md` 1번).
@@ -31,7 +31,7 @@ model: opus
 ## 참조 규칙
 
 - `.claude/rules/backend/shared/architecture.md` — 스택 공통 원칙(CQRS-lite, 계층 의존 방향, DDD 전술 패턴)
-- `.claude/rules/backend/fastapi/fastapi.md` — 프로젝트 구조, Pydantic 활용, ORM 매핑, Repository 도구 선택
+- `.claude/rules/backend/fastapi/fastapi.md` — 프로젝트 구조, Pydantic 활용, 영속성 매핑(ORM/SQL-first), Repository 도구 선택
 
 ## 산출물 형식
 

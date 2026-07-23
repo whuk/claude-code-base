@@ -28,7 +28,7 @@ model: opus
 
 - 계층 오염(Controller DTO가 Service로 유입) — `shared/architecture.md`
 - Command/Query 검증 데코레이터 누락으로 인한 잘못된 상태 — `nestjs.md` 3번
-- TypeORM/Prisma 매핑 불일치(Domain과 실제 컬럼 구조가 어긋남) — `nestjs.md` 4번
+- 영속성 매핑 불일치(TypeORM/Prisma/Kysely — Domain과 실제 컬럼 구조가 어긋남) — `nestjs.md` 4번
 - 트랜잭션 경계 누락으로 인한 부분 커밋 — `nestjs.md` 6번
 - N+1(관계 로딩 누락) — `nestjs.md` 5번
 

@@ -30,6 +30,7 @@ model: opus
 - 계층 오염(Web DTO가 Service로 유입, 단순 조회가 Rich Domain 경유) — `layer-communication-rules.md`
 - 트랜잭션 경계 오류(readOnly 오지정, 메서드 단위 선언) — `service-layer.md`
 - N+1, `fetchJoin()` + offset 페이지네이션, Specification 오조립 — `repository.md`/`repository-tools.md`
+- (SQL-first 프로젝트) 바인드 파라미터 누락/오매핑, `RowMapper` 컬럼 불일치, 문자열 조립 SQL — `repository-sql.md`
 - 도메인 불변 조건 미검증으로 인한 잘못된 상태 — `domain.md`
 - 테스트 base class 오선택으로 인한 컨텍스트/데이터 문제, `Thread.sleep` 기반 비결정성 — `test.md`
 - openapi 스펙과 생성 코드 불일치 — `api-dto.md`

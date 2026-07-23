@@ -21,8 +21,8 @@ model: opus
    - **shared/architecture.md** — 계층 역참조, Command/Query 미사용, 연관 파라미터 4개 이상인데 그룹화하지 않음.
    - **fastapi.md 2번** — 형식 검증(Pydantic)과 비즈니스 검증이 뒤섞임(비즈니스 규칙이 validator에 들어감).
    - **fastapi.md 3번** — Domain이 SQLAlchemy `Mapped`/`Column`을 직접 참조(분리 원칙 위반, 분리하기로 한 경우에 한함).
-   - **fastapi.md 4번** — 동적 검색 조건을 조합 없이 나열, escalation ladder 무시한 선제적 원시 SQL 사용.
-   - **fastapi.md 5번** — Service 함수 내부에서 세션 직접 생성(`Depends` 주입 원칙 위반).
+   - **fastapi.md 4번** — 동적 검색 조건을 조합 없이 나열, escalation ladder 무시한 선제적 원시 SQL 사용, SQL 문자열 연결/포매팅 조립(바인드 파라미터 미사용).
+   - **fastapi.md 5번** — Service 함수 내부에서 세션/커넥션 직접 생성(`Depends` 주입 원칙 위반).
    - **과설계**: 도메인이 단순한데 불필요하게 무거운 클래스 계층을 도입했는지도 함께 본다(`fastapi.md`가 명시적으로 완화한 지점이므로, 반대로 과설계는 이 스택에서 특히 지적 대상이다).
    - **CLAUDE.md** — 구조적/동작 변경 혼재, 과복잡화(YAGNI 위반).
 3. **일반 품질 검토**: 정확성 버그(경계 조건, null, 동시성), 중복, 명명, 단일 책임 위반을 함께 본다. 발생 불가능한 시나리오에 대한 방어 코드(과잉 방어)는 단순화를 제안한다.

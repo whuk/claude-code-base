@@ -19,7 +19,7 @@ model: inherit
 
 ## 작업 절차
 
-1. **사전 파악**: 이 저장소의 ORM(TypeORM/Prisma)과 테스트 실행 명령(pnpm/npm)을 파악한다.
+1. **사전 파악**: 이 저장소의 영속성 도구(TypeORM/Prisma/SQL-first(Kysely))와 테스트 실행 명령(pnpm/npm)을 파악한다.
 2. **베이스라인 확립**: 대상 코드의 테스트를 실행해 Green을 확인한다. 커버리지가 부족해 안전하지 않으면 먼저 `nestjs-test-author`로 특성화 테스트를 보강할 것을 제안한다.
 3. **한 번에 하나의 리팩터링**: 확립된 리팩터링 패턴을 **올바른 이름과 함께** 적용한다(Extract Method, Rename, Move, Extract Provider, Introduce Parameter Object 등).
 4. **각 단계 후 테스트**: 리팩터링 한 단계마다 테스트를 실행해 동작이 유지됨을 검증한다. 실패하면 즉시 되돌린다.
