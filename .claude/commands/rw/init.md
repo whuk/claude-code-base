@@ -120,7 +120,7 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 - Layered 전제 에이전트 6개: `.claude/agents/spring-domain-designer.md`, `spring-tdd-implementer.md`, `spring-refactorer.md`, `spring-test-author.md`, `spring-code-reviewer.md`, `spring-debugger.md` (`spring-hexagonal-*` 6개와, 아키텍처 스타일과 무관한 `spring-style-checker`/`spring-openapi-spec-author`는 유지)
 
 ### 백엔드 스택 "Spring Boot" + 언어 "Java" + 웹 스택 "Spring MVC" 선택 시 — 삭제
-- `.claude/rules/backend/spring/java/webflux.md`, `.claude/rules/backend/spring/java/repository-r2dbc.md` (WebFlux 전용 규칙. 언어 "Kotlin" 선택 시에는 `spring/java/` 전체 삭제에 이미 포함되므로 별도 처리가 없다)
+- `.claude/rules/backend/spring/java/webflux.md`, `.claude/rules/backend/spring/java/repository-r2dbc.md`, `.claude/rules/backend/spring/java/repository-reactive-mongo.md` (WebFlux 전용 규칙. 언어 "Kotlin" 선택 시에는 `spring/java/` 전체 삭제에 이미 포함되므로 별도 처리가 없다)
 
 ### 백엔드 스택 "Spring Boot" + 웹 스택 "WebFlux" 선택 시 — 삭제 + 편집
 - 영속성(JPA/SQL-first) 항목을 확정하지 않았으므로 JPA/SQL-first의 삭제·편집 케이스와 MongoDB(JPA용)/QueryDSL 편집 케이스는 적용하지 않는다.
@@ -128,7 +128,7 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 - Layered면 `spring/java/layered/domain.md`를 편집한다: 2번(인프라 비종속)의 `@Entity` 마커 허용·orm.xml 분리 문장을 순수 Domain 기준(영속성 애노테이션 전면 금지)으로 수정하고, 9번(JPA 영속성 매핑) 섹션을 삭제하며, 마지막 금지 패턴의 orm.xml 항목과 도입부의 SQL-first/WebFlux 안내 문장을 정리한다. 편집 후 번호와 문맥이 자연스럽게 이어지는지 다시 읽어 확인한다.
 - Hexagonal이면 추가 편집이 없다 (`ports-and-adapters.md`·`hexagonal/domain.md`의 `{Domain}JpaEntity` 언급은 `repository-r2dbc.md` 2번의 대체 규정이 우선한다).
 - `test.md`는 접두사 대체 목적으로는 편집하지 않는다 — base class 표의 `Jpa*` 접두사는 `webflux.md` 8번의 대체 규정(`R2dbc*` 접두사, WebTestClient)으로 갈음한다.
-- (리액티브 MongoDB "R2DBC만 사용" 선택 시) `repository-r2dbc.md`에서 7번(리액티브 MongoDB 병용) 섹션과 8번(테스트)의 리액티브 MongoDB 문장을 제거한다. 편집 후 섹션 번호가 끊기지 않고 이어지도록 후속 섹션 번호를 당겨 정리한다. 또한 "JPA만" 케이스와 동일한 방식으로, 선택한 아키텍처의 `test.md`에서 MongoDB base class 행(`IntegrationTestBase`/`WebIntegrationTestBase`)과 MongoDB 통합 테스트 문단을 제거한다.
+- (리액티브 MongoDB "R2DBC만 사용" 선택 시) `.claude/rules/backend/spring/java/repository-reactive-mongo.md`를 삭제하고, `repository-r2dbc.md` 도입부의 `repository-reactive-mongo.md` 참조 문장을 제거한다. 또한 "JPA만" 케이스와 동일한 방식으로, 선택한 아키텍처의 `test.md`에서 MongoDB base class 행(`IntegrationTestBase`/`WebIntegrationTestBase`)과 MongoDB 통합 테스트 문단을 제거한다.
 - `spring-*` 에이전트는 웹 스택(MVC/WebFlux)을 조건부로 함께 언급하므로 수정하지 않는다.
 
 ### 백엔드 스택 "Spring Boot" + 영속성 도구 "JPA" 선택 시 — 삭제

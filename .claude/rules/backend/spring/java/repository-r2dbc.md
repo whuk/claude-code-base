@@ -5,7 +5,7 @@ globs: "**/*Repository*.java,**/*PersistenceAdapter.java,**/*Row.java,**/*SqlBui
 
 # R2DBC 영속성 규칙 (WebFlux 전용)
 
-WebFlux 프로젝트에서 R2DBC 기반으로 영속성 계층을 구성할 때의 규칙이다. Layered/Hexagonal 아키텍처 스타일과 무관하게 공통 적용되며, CQRS-lite 흐름·Finder/Service 분리(`shared/architecture.md`, `service-layer.md`)와 트랜잭션·블로킹 규율(`webflux.md` 3번·4번)은 그대로 전제한다.
+WebFlux 프로젝트에서 R2DBC 기반으로 영속성 계층을 구성할 때의 규칙이다. Layered/Hexagonal 아키텍처 스타일과 무관하게 공통 적용되며, CQRS-lite 흐름·Finder/Service 분리(`shared/architecture.md`, `service-layer.md`)와 트랜잭션·블로킹 규율(`webflux.md` 3번·4번)은 그대로 전제한다. 문서형 데이터가 필요한 도메인의 리액티브 MongoDB 병용 규칙은 `repository-reactive-mongo.md`가 담당한다(병용하지 않는 프로젝트는 해당 파일을 제외한다).
 
 이 프로젝트가 Spring MVC(서블릿 스택)를 채택했다면 이 파일은 적용 대상이 아니다. MVC와 WebFlux를 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 웹 스택의 영속성 규칙 파일은 프로젝트에서 제외한다 (MVC의 영속성 규칙은 `layered/repository.md`·`hexagonal/repository.md`·`repository-tools.md` 또는 `repository-sql.md` 참조). 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다 — WebFlux 규칙은 현재 Java 전용으로 제공된다.
 
@@ -80,19 +80,13 @@ public class OrderSqlBuilder {
 
 - `webflux.md` 3번을 따른다: `R2dbcTransactionManager` 전제의 클래스 단위 `@Transactional` 선언(Finder는 `readOnly = true`), 트랜잭션 경계 안 연산의 단일 리액티브 체인 연결, 예외적 부분 경계만 `TransactionalOperator`.
 
-## 7. 리액티브 MongoDB 병용 (선택)
-
-- 문서형 데이터가 필요한 도메인은 리액티브 MongoDB(`ReactiveMongoRepository`/`ReactiveMongoTemplate`)를 병용할 수 있다 — MVC의 JPA + MongoDB 병용 구도의 리액티브 대응이다. 블로킹 MongoDB 드라이버(`MongoTemplate` 등)는 사용하지 않는다.
-- 하나의 도메인(Aggregate)은 R2DBC 또는 MongoDB 중 하나의 저장소만 사용한다. 저장소 선택과 무관하게 이 파일의 Domain 매핑 원칙(2번)과 Read/Command 흐름 분리는 동일하게 적용한다.
-
-## 8. 테스트
+## 7. 테스트
 
 - Repository/Persistence Adapter 통합 테스트는 `R2dbcIntegrationTestBase`(R2DBC 지원 인메모리 DB(H2 r2dbc) 또는 Testcontainers, JPA 자동 구성 없음)를 상속한다. `test.md`의 base class 표에서 `Jpa*`/`Jdbc*` 접두사 base class는 `R2dbc*` 접두사로 대체해 읽는다 (`webflux.md` 8번).
 - 검증은 `StepVerifier`로 한다: 방출 값과 종료 시그널을 어서션하고, `block()`으로 결과를 꺼내지 않는다.
 - jOOQ SqlBuilder는 순수 단위 테스트로 작성한다. Spring 컨텍스트를 로드하지 않고, `DSL.using(SQLDialect.H2)`로 테스트용 SQL을 생성하며, 프로덕션 방언과의 차이는 방언별 SQL 문자열 검증으로 확인한다 — MVC의 SqlBuilder 테스트 규칙과 동일하다.
-- 리액티브 MongoDB 병용 도메인의 테스트는 base class 표의 MongoDB 포함 base class(`IntegrationTestBase` 등)를 리액티브 구성으로 대체해 읽는다.
 
-## 9. 금지 패턴
+## 8. 금지 패턴
 
 - JPA/Hibernate/Spring Data JPA/JDBC 등 블로킹 영속성 의존성을 추가하지 않는다.
 - Domain 클래스에 R2DBC/Spring Data 애노테이션(`@Table`, `@Id`, `@Column`)을 붙이지 않는다. 매핑은 `{Domain}Row`에만.

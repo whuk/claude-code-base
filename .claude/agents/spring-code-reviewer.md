@@ -23,7 +23,7 @@ model: opus
 
 ## 참조 규칙
 
-아래 규칙 파일은 저장소 언어(Java 또는 Kotlin, 소스 확장자로 판단)에 맞는 `.claude/rules/backend/spring/{java|kotlin}/layered/` 디렉토리에서 읽는다. `api-dto.md`는 언어 공통으로 `spring/` 바로 아래에, `repository-tools.md`는 언어 디렉토리 바로 아래(`spring/{java|kotlin}/`)에, `rest-api.md`는 스택 공통으로 `backend/shared/` 아래에 있다. SQL-first(ORM 미사용) 프로젝트는 `repository.md`/`repository-tools.md` 대신 `spring/{java|kotlin}/repository-sql.md`를 기준으로 검토하고, `domain.md`의 JPA 매핑 항목(orm.xml 등)은 적용하지 않는다. WebFlux(리액티브) 프로젝트는 영속성 규칙으로 `spring/java/repository-r2dbc.md`를, 웹·트랜잭션·블로킹 규율·테스트 규칙으로 `spring/java/webflux.md`를 함께 기준으로 검토하며, `domain.md`의 JPA 매핑 항목은 마찬가지로 적용하지 않는다.
+아래 규칙 파일은 저장소 언어(Java 또는 Kotlin, 소스 확장자로 판단)에 맞는 `.claude/rules/backend/spring/{java|kotlin}/layered/` 디렉토리에서 읽는다. `api-dto.md`는 언어 공통으로 `spring/` 바로 아래에, `repository-tools.md`는 언어 디렉토리 바로 아래(`spring/{java|kotlin}/`)에, `rest-api.md`는 스택 공통으로 `backend/shared/` 아래에 있다. SQL-first(ORM 미사용) 프로젝트는 `repository.md`/`repository-tools.md` 대신 `spring/{java|kotlin}/repository-sql.md`를 기준으로 검토하고, `domain.md`의 JPA 매핑 항목(orm.xml 등)은 적용하지 않는다. WebFlux(리액티브) 프로젝트는 영속성 규칙으로 `spring/java/repository-r2dbc.md`(리액티브 MongoDB 병용 프로젝트면 `spring/java/repository-reactive-mongo.md`도 함께)를, 웹·트랜잭션·블로킹 규율·테스트 규칙으로 `spring/java/webflux.md`를 함께 기준으로 검토하며, `domain.md`의 JPA 매핑 항목은 마찬가지로 적용하지 않는다.
 
 - **domain.md** — Rich Domain 위반: Anemic 모델(getter/setter만), `@Entity` 마커를 제외한 JPA 매핑 애노테이션(`@Column`, `@Id`, `@Table` 등) 및 Spring 어노테이션 혼입, 매핑 정보가 `orm.xml`이 아닌 애노테이션으로 작성됨, setter 노출, 자기 검증 누락, Aggregate 경계 위반.
 - **service-layer.md** — Finder/Service 미분리, Finder에 상태 변경 로직, 메서드 단위 `@Transactional` 선언.
