@@ -31,6 +31,7 @@ model: opus
 - 트랜잭션 경계 오류(readOnly 오지정, 메서드 단위 선언, Adapter에 트랜잭션 선언) — `service-layer.md`
 - Domain ↔ `{Domain}JpaEntity` 매핑 불일치(`{Domain}PersistenceMapper` 변환 누락/오류로 필드가 유실·오매핑) — `repository.md`
 - N+1, Specification 오조립, Adapter 경계 밖 JPA 타입 유출 — `repository.md`
+- (SQL-first 프로젝트) 바인드 파라미터 누락/오매핑, `{Domain}RowMapper` 컬럼 불일치, 문자열 조립 SQL — `repository-sql.md`
 - 도메인 불변 조건 미검증으로 인한 잘못된 상태(재구성 경로 포함 — Hexagonal은 하이드레이션 예외가 없다) — `domain.md`
 - 테스트 계층 전략 오선택(Application 테스트의 실제 DB 의존, Domain 테스트의 컨텍스트 의존), `Thread.sleep` 기반 비결정성 — `test.md`
 - openapi 스펙과 생성 코드 불일치 — `api-dto.md`
