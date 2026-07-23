@@ -90,8 +90,8 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 - 선택한 아키텍처의 `.claude/rules/backend/spring/java/{layered|hexagonal}/repository.md`와 `.claude/rules/backend/spring/java/repository-tools.md`, `.claude/rules/backend/spring/java/repository-sql.md`를 삭제한다 (`repository-r2dbc.md`가 대체한다).
 - Layered면 `spring/java/layered/domain.md`를 편집한다: 2번(인프라 비종속)의 `@Entity` 마커 허용·orm.xml 분리 문장을 순수 Domain 기준(영속성 애노테이션 전면 금지)으로 수정하고, 9번(JPA 영속성 매핑) 섹션을 삭제하며, 마지막 금지 패턴의 orm.xml 항목과 도입부의 SQL-first/WebFlux 안내 문장을 정리한다. 편집 후 번호와 문맥이 자연스럽게 이어지는지 다시 읽어 확인한다.
 - Hexagonal이면 추가 편집이 없다 (`ports-and-adapters.md`·`hexagonal/domain.md`의 `{Domain}JpaEntity` 언급은 `repository-r2dbc.md` 2번의 대체 규정이 우선한다).
-- `test.md`는 편집하지 않는다 — base class 표의 `Jpa*` 접두사는 `webflux.md` 8번의 대체 규정(`R2dbc*` 접두사, WebTestClient)으로 갈음한다.
-- (리액티브 MongoDB "R2DBC만 사용" 선택 시) `repository-r2dbc.md`에서 7번(리액티브 MongoDB 병용) 섹션과 8번(테스트)의 리액티브 MongoDB 문장을 제거한다. 편집 후 섹션 번호가 끊기지 않고 이어지도록 후속 섹션 번호를 당겨 정리한다.
+- `test.md`는 접두사 대체 목적으로는 편집하지 않는다 — base class 표의 `Jpa*` 접두사는 `webflux.md` 8번의 대체 규정(`R2dbc*` 접두사, WebTestClient)으로 갈음한다.
+- (리액티브 MongoDB "R2DBC만 사용" 선택 시) `repository-r2dbc.md`에서 7번(리액티브 MongoDB 병용) 섹션과 8번(테스트)의 리액티브 MongoDB 문장을 제거한다. 편집 후 섹션 번호가 끊기지 않고 이어지도록 후속 섹션 번호를 당겨 정리한다. 또한 "JPA만" 케이스와 동일한 방식으로, 선택한 아키텍처의 `test.md`에서 MongoDB base class 행(`IntegrationTestBase`/`WebIntegrationTestBase`)과 MongoDB 통합 테스트 문단을 제거한다.
 - `spring-*` 에이전트는 웹 스택(MVC/WebFlux)을 조건부로 함께 언급하므로 수정하지 않는다.
 
 ### 백엔드 스택 "Spring Boot" + 영속성 도구 "JPA" 선택 시 — 삭제
@@ -136,6 +136,7 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 ### 백엔드 스택 "Spring Boot" + "Specification까지만" 선택 시 — 삭제 + 편집
 - 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/repository-tools.md`(QueryDSL/JdbcClient/jOOQ 상세 규칙)를 삭제한다.
 - 언어·아키텍처 답변에 해당하는 `repository.md`에서 "도구 선택 계층" 표의 Level 2~3 행과 `repository-tools.md` 참조 문구, "Finder/Service 계층과의 통합" 다이어그램·금지 패턴의 QueryDSL/JdbcClient/jOOQ 언급을 정리해 본문과 표가 어긋나지 않도록 한다.
+- 언어·아키텍처 답변에 해당하는 `test.md`에서도 삭제된 `repository-tools.md`에 대한 참조가 남지 않게 정리한다: Layered면 `layered/test.md` 2.1절의 jOOQ SqlBuilder 문단과 5번(N+1 쿼리 카운트 검증)의 QueryDSL 언급, Hexagonal이면 `hexagonal/test.md` 5번의 `repository-tools.md` 참조 문구를 제거·조정한다. 편집 후 문단이 자연스럽게 이어지는지 다시 읽어 확인한다.
 - **`spring-*` 에이전트는 수정하지 않는다.** 일부 에이전트(`spring-domain-designer` 등)는 QueryDSL/JdbcClient 티어를 계속 언급한다. 3단계 보고 시 이 사실을 사용자에게 알린다.
 
 ### 백엔드 스택 "Spring Boot" + RDB 선택 시 — 편집 (파일 삭제 아님)

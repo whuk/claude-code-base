@@ -30,7 +30,8 @@ GitHub PR을 squash merge하고 로컬 main 브랜치를 최신 상태로 동기
 
 ## 5단계: 로컬 main 브랜치 동기화
 
-- `git checkout main && git pull origin main`을 실행합니다
+- `git status --short`로 커밋되지 않은 변경사항이 있는지 확인합니다. 있으면 사용자에게 알리고 stash 후 진행할지 중단할지 확인받습니다
+- `git checkout main && git pull origin main`을 실행합니다 (기본 브랜치가 `main`이 아니면 `git remote show origin`으로 확인한 HEAD 브랜치를 사용합니다)
 
 ## 6단계: 정리 작업
 

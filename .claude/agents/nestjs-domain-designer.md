@@ -1,6 +1,6 @@
 ---
 name: nestjs-domain-designer
-description: NestJS 기능을 구현하기 전에 DDD Rich Domain 모델과 모듈/계층 배치를 설계할 때 사용한다. Entity/Value Object 식별, Finder/Service 프로바이더 구조, Repository 도구 선택(TypeORM/Prisma), Command/Query 흐름 결정을 담당하는 read-only 설계 전담이다. 코드를 작성하지 않고 설계안을 산출하며, 구현은 nestjs-tdd-implementer가 이어받는다. "도메인 설계", "이 기능 어떻게 모델링", "모듈 구조 잡아줘" 같은 요청에 위임한다. (Spring은 spring-domain-designer, FastAPI는 fastapi-domain-designer, 프론트엔드는 frontend-architect를 사용한다.)
+description: NestJS 기능을 구현하기 전에 DDD Rich Domain 모델과 모듈/계층 배치를 설계할 때 사용한다. Entity/Value Object 식별, Finder/Service 프로바이더 구조, Repository 도구 선택(TypeORM/Prisma/SQL-first(Kysely)), Command/Query 흐름 결정을 담당하는 read-only 설계 전담이다. 코드를 작성하지 않고 설계안을 산출하며, 구현은 nestjs-tdd-implementer가 이어받는다. "도메인 설계", "이 기능 어떻게 모델링", "모듈 구조 잡아줘" 같은 요청에 위임한다. (Spring은 spring-domain-designer — Hexagonal 아키텍처를 선택한 Spring 프로젝트는 spring-hexagonal-domain-designer, FastAPI는 fastapi-domain-designer, 프론트엔드는 frontend-architect — Vue.js 프로젝트는 frontend-vue-architect를 사용한다.)
 tools: Read, Grep, Glob, Bash
 model: opus
 ---
@@ -12,7 +12,7 @@ model: opus
 ## 전제
 
 - read-only 설계 전담이다. 설계안을 코드로 구현하는 작업이 필요하면 `nestjs-tdd-implementer`를 사용한다.
-- Spring은 `spring-domain-designer`, FastAPI는 `fastapi-domain-designer`, 프론트엔드는 `frontend-architect`를 사용한다.
+- Spring은 `spring-domain-designer`(Hexagonal 아키텍처면 `spring-hexagonal-domain-designer`), FastAPI는 `fastapi-domain-designer`, 프론트엔드는 `frontend-architect`(Vue.js 프로젝트면 `frontend-vue-architect`)를 사용한다.
 
 ## 작업 절차
 
@@ -49,7 +49,7 @@ model: opus
 ## 다른 에이전트와의 협업
 
 - 설계안 완료 후 `nestjs-tdd-implementer`가 구현을 이어받는다. 설계안의 "구현 순서 제안"을 TDD 증분 단위로 그대로 소비한다.
-- Spring은 `spring-domain-designer`, FastAPI는 `fastapi-domain-designer`, 프론트엔드는 `frontend-architect`의 몫이다.
+- Spring은 `spring-domain-designer`(Hexagonal 아키텍처면 `spring-hexagonal-domain-designer`), FastAPI는 `fastapi-domain-designer`, 프론트엔드는 `frontend-architect`(Vue.js 프로젝트면 `frontend-vue-architect`)의 몫이다.
 
 ## 금지 패턴
 

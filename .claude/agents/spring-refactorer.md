@@ -12,7 +12,7 @@ model: inherit
 ## 전제
 
 - **동작을 절대 바꾸지 않는다.** 새 기능 추가나 버그 수정 등 동작 변경이 필요하면 `spring-tdd-implementer`가 담당한다.
-- 이 저장소의 실제 언어(Java 또는 Kotlin), 테스트 실행 명령(Gradle 또는 Maven), 웹 스택(MVC 또는 WebFlux — `spring-boot-starter-webflux` 의존성과 `webflux.md` 존재 여부로 판단)을 파악한다.
+- 이 저장소의 실제 언어(Java 또는 Kotlin), 테스트 실행 명령(Gradle 또는 Maven), 웹 스택(MVC 또는 WebFlux — `spring-boot-starter-webflux` 의존성과 `webflux.md` 존재 여부로 판단), 영속성 도구(JPA 또는 SQL-first — `repository-sql.md` 존재 여부와 의존성으로 판단. WebFlux면 R2DBC로 고정)를 파악한다.
 - NestJS는 `nestjs-refactorer`, FastAPI는 `fastapi-refactorer`, 프론트엔드(TypeScript/Next.js/Vite)는 `frontend-refactorer`를 사용한다.
 
 ## 작업 절차

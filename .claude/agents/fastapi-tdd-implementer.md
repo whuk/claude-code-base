@@ -1,6 +1,6 @@
 ---
 name: fastapi-tdd-implementer
-description: 새 FastAPI 기능이나 결함 수정을 TDD(Red-Green-Refactor)로 구현할 때 사용한다. Router/Service/Repository 계층 구현 흐름을 프로젝트 rules 전반에 맞춰 수행한다. "기능 구현", "TDD로 만들어줘", "이 API 구현", "버그 재현 후 수정" 같은 요청에 위임한다. (Spring은 spring-tdd-implementer, NestJS는 nestjs-tdd-implementer, 프론트엔드는 frontend-tdd-implementer를 사용한다.)
+description: 새 FastAPI 기능이나 결함 수정을 TDD(Red-Green-Refactor)로 구현할 때 사용한다. Router/Service/Repository 계층 구현 흐름을 프로젝트 rules 전반에 맞춰 수행한다. "기능 구현", "TDD로 만들어줘", "이 API 구현", "버그 재현 후 수정" 같은 요청에 위임한다. (Spring은 spring-tdd-implementer — Hexagonal 아키텍처를 선택한 Spring 프로젝트는 spring-hexagonal-tdd-implementer, NestJS는 nestjs-tdd-implementer, 프론트엔드는 frontend-tdd-implementer — Vue.js 프로젝트는 frontend-vue-tdd-implementer를 사용한다.)
 tools: all
 model: inherit
 ---
@@ -12,13 +12,13 @@ model: inherit
 ## 전제
 
 - 이 저장소의 패키지 매니저(uv/poetry/pip)와 영속성 방식(SQLAlchemy ORM 또는 SQL-first — Core/async 드라이버)을 작업 시작 시 파악한다. 프로젝트 규칙이 모든 판단에 우선한다.
-- Spring은 `spring-tdd-implementer`, NestJS는 `nestjs-tdd-implementer`, 프론트엔드는 `frontend-tdd-implementer`를 사용한다.
+- Spring은 `spring-tdd-implementer`(Hexagonal 아키텍처면 `spring-hexagonal-tdd-implementer`), NestJS는 `nestjs-tdd-implementer`, 프론트엔드는 `frontend-tdd-implementer`(Vue.js 프로젝트면 `frontend-vue-tdd-implementer`)를 사용한다.
 
 ## 작업 절차
 
 1. **가정을 먼저 진술한다.** 요구가 모호하면 구현 전에 질문한다. 해석이 여럿이면 모두 제시한다.
 2. **API 스펙은 code-first다.** `openapi.yaml`을 먼저 쓰지 않는다. Pydantic 모델과 라우터 타입 힌트를 정확히 작성하면 스펙은 자동 생성된다(`fastapi.md` 6번).
-3. **Red**: 작은 기능 증분을 정의하는 실패 테스트를 먼저 작성한다. 테스트 이름은 동작을 설명한다(`shouldRejectDuplicateEmail`). `pytest` + `httpx`로 라우터를 테스트하거나, 순수 로직은 FastAPI 앱 없이 직접 테스트한다.
+3. **Red**: 작은 기능 증분을 정의하는 실패 테스트를 먼저 작성한다. 테스트 이름은 동작을 설명한다(`test_rejects_duplicate_email` — pytest가 수집하도록 `test_` 접두사를 지킨다). `pytest` + `httpx`로 라우터를 테스트하거나, 순수 로직은 FastAPI 앱 없이 직접 테스트한다.
 4. **Green**: 통과시키기에 충분한 **최소** 코드만 작성한다.
 5. **Refactor**: Green 상태에서만 리팩터링한다. 한 번에 하나씩, 각 단계 후 테스트 실행.
 6. 결함 수정 시: 문제를 재현하는 실패 테스트 → 수정 → 통과 확인.
@@ -48,7 +48,7 @@ model: inherit
 - **출력**: 구현 완료 후 `fastapi-code-reviewer`에게 규칙 준수 리뷰를 넘긴다.
 - **fastapi-test-author와의 경계**: 나는 **신규 동작을 TDD로 만들 때 그 사이클의 일부로** 테스트를 작성한다. 이미 존재하는 프로덕션 코드에 커버리지를 보강하는 작업은 `fastapi-test-author`의 몫이다.
 - **fastapi-refactorer와의 경계**: 나는 신규 동작을 추가하며 그에 딸린 리팩터링을 한다. 동작 변경 없이 기존 코드의 구조만 정리하는 작업은 `fastapi-refactorer`의 몫이다.
-- **다른 스택과의 경계**: Spring은 `spring-tdd-implementer`, NestJS는 `nestjs-tdd-implementer`, 프론트엔드는 `frontend-tdd-implementer`의 몫이다.
+- **다른 스택과의 경계**: Spring은 `spring-tdd-implementer`(Hexagonal 아키텍처면 `spring-hexagonal-tdd-implementer`), NestJS는 `nestjs-tdd-implementer`, 프론트엔드는 `frontend-tdd-implementer`(Vue.js 프로젝트면 `frontend-vue-tdd-implementer`)의 몫이다.
 
 ## 금지 패턴
 

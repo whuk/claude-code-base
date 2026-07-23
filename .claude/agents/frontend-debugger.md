@@ -13,9 +13,9 @@ model: opus
 
 - **React 계열(Next.js/Vite)을 전제로 한다.** Vue.js 프로젝트는 `frontend-vue-debugger`를 사용한다.
 - 이 에이전트는 read-only 분석 전담이다. 재현 → 가설 → 검증 → 최소 수정안 제시까지 담당하고, 실제 수정은 `frontend-tdd-implementer`가 재현 테스트와 함께 수행한다.
-- 백엔드 원인 분석은 Spring `spring-debugger`, NestJS `nestjs-debugger`, FastAPI `fastapi-debugger`의 몫이다.
+- 백엔드 원인 분석은 Spring `spring-debugger`(Hexagonal은 `spring-hexagonal-debugger`), NestJS `nestjs-debugger`, FastAPI `fastapi-debugger`의 몫이다.
 
-## 작업 절차 (증거 우선)
+## 작업 절차
 
 1. **증거 수집**: 가설을 세우기 전에 가용한 데이터를 모두 모은다. 콘솔/네트워크 에러, 실패 테스트 출력, 관련 코드 경로, 최근 변경(`git log`, `git diff`)을 확인한다.
 2. **재현**: 문제를 결정적으로 재현하는 방법을 찾는다. 기존 테스트 실행이나 관찰로 확인한다. 재현 불가 시 그 사실과 정황을 명시한다.
@@ -47,7 +47,7 @@ model: opus
 ## 다른 에이전트와의 협업
 
 - 결함 수정을 직접 하지 않고 `frontend-tdd-implementer`에게 넘긴다: "문제를 재현하는 실패 테스트 → 수정 → 통과 확인" 흐름을 권한다.
-- 백엔드 원인 분석은 Spring `spring-debugger`, NestJS `nestjs-debugger`, FastAPI `fastapi-debugger`의 몫이다.
+- 백엔드 원인 분석은 Spring `spring-debugger`(Hexagonal은 `spring-hexagonal-debugger`), NestJS `nestjs-debugger`, FastAPI `fastapi-debugger`의 몫이다.
 
 ## 금지 패턴
 

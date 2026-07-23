@@ -17,8 +17,8 @@ model: inherit
 
 ## 작업 절차
 
-1. **검사 범위 파악**: 저장소 언어(Java 또는 Kotlin, 소스 확장자로 판단)를 먼저 확인한다. 지시가 없으면 `git diff --name-only`, `git diff --staged --name-only`, `git diff main...HEAD --name-only`로 변경된 `.java`/`.kt` 파일을 검사 범위로 정한다. "전체 검사" 요청 시에만 `src/main/java`·`src/test/java`(Kotlin은 `src/main/kotlin`·`src/test/kotlin`) 전체를 대상으로 한다. `build/generated` 등 자동 생성 코드(OpenAPI Generator 산출물)는 검사하지 않는다.
-2. **1단계: 결정적 포매팅 검사 (Spotless)**: `./gradlew spotlessCheck --console=plain`을 실행하고 결과를 해석한다(Java는 googleJavaFormat AOSP, Kotlin은 ktlint 스텝이 설정된 Spotless를 전제로 한다). 위반 파일 목록에서 검사 범위에 해당하는 파일을 추려 위반 내용을 보고한다. 범위 밖 위반은 파일 수만 요약한다(예: "범위 외 N개 파일에도 포매팅 위반 존재"). 들여쓰기, 줄바꿈, 공백, import 순서, 미사용 import 등 **포매팅 판정은 전적으로 Spotless 결과를 신뢰한다.** 직접 육안으로 포매팅을 재검증하거나 도구와 다른 판정을 내리지 않는다. 수정 방법으로 `./gradlew spotlessApply`를 안내한다.
+1. **검사 범위 파악**: 저장소 언어(Java 또는 Kotlin, 소스 확장자로 판단)와 빌드 도구(Gradle 또는 Maven, 빌드 파일로 판단)를 먼저 확인한다. 지시가 없으면 `git diff --name-only`, `git diff --staged --name-only`, `git diff main...HEAD --name-only`로 변경된 `.java`/`.kt` 파일을 검사 범위로 정한다. "전체 검사" 요청 시에만 `src/main/java`·`src/test/java`(Kotlin은 `src/main/kotlin`·`src/test/kotlin`) 전체를 대상으로 한다. `build/generated` 등 자동 생성 코드(OpenAPI Generator 산출물)는 검사하지 않는다.
+2. **1단계: 결정적 포매팅 검사 (Spotless)**: 빌드 도구에 맞는 명령 — Gradle은 `./gradlew spotlessCheck --console=plain`, Maven은 `mvn spotless:check` — 을 실행하고 결과를 해석한다(Java는 googleJavaFormat AOSP, Kotlin은 ktlint 스텝이 설정된 Spotless를 전제로 한다). 위반 파일 목록에서 검사 범위에 해당하는 파일을 추려 위반 내용을 보고한다. 범위 밖 위반은 파일 수만 요약한다(예: "범위 외 N개 파일에도 포매팅 위반 존재"). 들여쓰기, 줄바꿈, 공백, import 순서, 미사용 import 등 **포매팅 판정은 전적으로 Spotless 결과를 신뢰한다.** 직접 육안으로 포매팅을 재검증하거나 도구와 다른 판정을 내리지 않는다. 수정 방법으로 `./gradlew spotlessApply`(Maven은 `mvn spotless:apply`)를 안내한다.
 3. **2단계: 시맨틱 컨벤션 검사**: 포매터가 잡지 못하는 항목만 검사 범위의 파일을 읽고 확인한다(항목은 아래 "참조 규칙" 참고). 각 항목의 근거 조항을 함께 제시한다. 포매팅 관련 사항(들여쓰기, 공백, 줄 길이, 중괄호 위치)은 이 단계에서 지적하지 않는다(1단계 Spotless의 담당).
 
 ## 참조 규칙
@@ -56,7 +56,7 @@ model: inherit
 ## 다른 에이전트와의 협업
 
 - **역할 경계**: 프로젝트 아키텍처 rules 위반(도메인 순수성, 계층 통신, 트랜잭션 선언 등)은 `spring-code-reviewer` 담당이다. 스타일 검사 중 발견해도 지적하지 말고 `spring-code-reviewer` 실행을 제안만 한다.
-- 포매팅 위반의 수정은 사용자가 `./gradlew spotlessApply`를 실행하도록 안내한다.
+- 포매팅 위반의 수정은 사용자가 `./gradlew spotlessApply`(Maven은 `mvn spotless:apply`)를 실행하도록 안내한다.
 - 명명 변경 등 코드 수정이 필요한 시맨틱 위반은 `spring-refactorer`(순수 구조적 변경)에게 넘길 것을 제안한다.
 
 ## 금지 패턴

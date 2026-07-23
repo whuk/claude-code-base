@@ -34,7 +34,7 @@ model: inherit
 | MongoDB Persistence Adapter | `IntegrationTestBase` |
 | MongoDB Web Adapter | `WebIntegrationTestBase` |
 
-SQL-first(ORM 미사용) 프로젝트는 `Jpa*` base class 대신 `Jdbc*` base class(`JdbcIntegrationTestBase` 등)를 사용하고, JpaEntity Fixture 대신 Row 매핑 대상 Fixture를 둔다 (`repository-sql.md` 6번).
+SQL-first(ORM 미사용) 프로젝트는 `Jpa*` base class 대신 `Jdbc*` base class(`JdbcIntegrationTestBase` 등)를 사용하고, JpaEntity Fixture 대신 Row 매핑 대상 Fixture를 둔다 (Row 매핑/`RowMapper` 구조는 `repository-sql.md` 2번 참조).
 
 WebFlux 프로젝트는 `Jpa*`/`Jdbc*` 대신 `R2dbc*` base class(`R2dbcIntegrationTestBase`, `R2dbcWebIntegrationTestBase` 등)를 사용하고, Web Adapter 테스트는 MockMvc 대신 `WebTestClient`, `Mono`/`Flux` 반환 로직 검증은 `StepVerifier`를 사용한다 (`webflux.md` 8번, `repository-r2dbc.md` 8번). Domain 단위 테스트는 리액티브와 무관하게 순수 JUnit 그대로다. 테스트에서 `block()`으로 값을 꺼내 어서션하지 않는다.
 

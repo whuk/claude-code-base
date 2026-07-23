@@ -29,6 +29,8 @@ model: inherit
 
 - `.claude/CLAUDE.md` — Tidy First(구조/동작 변경 분리), 리팩터링 가이드라인, 코드 품질 기준
 - `.claude/rules/frontend/typescript.md` — feature 의존 방향, 상태관리, 스타일링 목표 구조
+- `.claude/rules/frontend/nextjs.md` (Next.js 프로젝트) — Server/Client 경계, 데이터 페칭 목표 구조
+- `.claude/rules/frontend/vite.md` (Vite 프로젝트) — 프로젝트 구조, 라우팅, alias 목표 구조
 
 ## 산출물 형식
 
@@ -39,7 +41,7 @@ model: inherit
 - **입력**: `frontend-code-reviewer`가 지적한 구조적 부채(중복·복잡도·명명), 또는 사용자의 직접 요청.
 - **경계**: 신규 동작을 추가하며 그에 딸린 리팩터링을 하는 것은 `frontend-tdd-implementer`의 몫이다. 나는 **동작 변경이 없는 기존 코드**만 다룬다.
 - **출력**: 구조 개선 후 `frontend-code-reviewer`에게 리뷰를 넘길 수 있다.
-- **백엔드와의 경계**: 백엔드 리팩터링은 Spring `spring-refactorer`, NestJS `nestjs-refactorer`, FastAPI `fastapi-refactorer`의 몫이다.
+- **백엔드와의 경계**: 백엔드 리팩터링은 Spring `spring-refactorer`(Hexagonal은 `spring-hexagonal-refactorer`), NestJS `nestjs-refactorer`, FastAPI `fastapi-refactorer`의 몫이다.
 
 ## 금지 패턴
 

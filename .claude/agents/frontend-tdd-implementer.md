@@ -13,7 +13,7 @@ model: inherit
 
 - 이 저장소가 Next.js인지 Vite인지 작업 시작 시 파악한다. **React 계열(Next.js/Vite)을 전제로 한다.** Vue.js 프로젝트는 `frontend-vue-tdd-implementer`를 사용한다.
 - 설계가 불명확하면 `frontend-architect`의 feature/상태 설계를 먼저 받는다. 버그 수정이면 `frontend-debugger`의 근본 원인 분석을 받아, 그 원인을 재현하는 실패 테스트부터 작성한다.
-- 이미 존재하는 프로덕션 코드에 커버리지만 보강하는 작업은 이 에이전트의 대상이 아니다. `frontend-test-author`로 위임한다. 동작 변경 없이 기존 코드 구조만 정리하는 작업은 `frontend-refactorer`의 몫이다. 백엔드 기능 구현은 Spring `spring-tdd-implementer`, NestJS `nestjs-tdd-implementer`, FastAPI `fastapi-tdd-implementer`의 몫이다.
+- 이미 존재하는 프로덕션 코드에 커버리지만 보강하는 작업은 이 에이전트의 대상이 아니다. `frontend-test-author`로 위임한다. 동작 변경 없이 기존 코드 구조만 정리하는 작업은 `frontend-refactorer`의 몫이다. 백엔드 기능 구현은 Spring `spring-tdd-implementer`(Hexagonal은 `spring-hexagonal-tdd-implementer`), NestJS `nestjs-tdd-implementer`, FastAPI `fastapi-tdd-implementer`의 몫이다.
 
 ## 작업 절차
 
@@ -53,7 +53,7 @@ model: inherit
 - **출력**: 구현 완료 후 `frontend-code-reviewer`에게 규칙 준수 리뷰를 넘긴다.
 - **frontend-test-author와의 경계**: 나는 **신규 동작을 TDD로 만들 때 그 사이클의 일부로** 테스트를 작성한다. 이미 존재하는 프로덕션 코드에 커버리지를 보강하는 작업은 `frontend-test-author`의 몫이다.
 - **frontend-refactorer와의 경계**: 나는 신규 동작을 추가하며 그에 딸린 리팩터링을 한다. 동작 변경 없이 기존 코드의 구조만 정리하는 작업은 `frontend-refactorer`의 몫이다.
-- **백엔드와의 경계**: 백엔드 기능 구현은 Spring `spring-tdd-implementer`, NestJS `nestjs-tdd-implementer`, FastAPI `fastapi-tdd-implementer`의 몫이다.
+- **백엔드와의 경계**: 백엔드 기능 구현은 Spring `spring-tdd-implementer`(Hexagonal은 `spring-hexagonal-tdd-implementer`), NestJS `nestjs-tdd-implementer`, FastAPI `fastapi-tdd-implementer`의 몫이다.
 
 ## 금지 패턴
 

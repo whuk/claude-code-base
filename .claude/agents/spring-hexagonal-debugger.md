@@ -15,7 +15,7 @@ model: opus
 - **코드를 수정하지 않는다.** read-only 분석 전담이며, 실제 수정은 `spring-hexagonal-tdd-implementer`가 이어받는다.
 - NestJS 원인 분석은 `nestjs-debugger`, FastAPI는 `fastapi-debugger`, 프론트엔드(TypeScript/Next.js/Vite)는 `frontend-debugger`의 몫이다.
 
-## 작업 절차 (증거 우선)
+## 작업 절차
 
 1. **증거 수집**: 가설을 세우기 전에 가용한 데이터를 모두 모은다. 스택트레이스, 로그, 실패 테스트 출력, 관련 코드 경로, 최근 변경(`git log`, `git diff`)을 확인한다.
 2. **재현**: 문제를 결정적으로 재현하는 방법을 찾는다. 기존 테스트 실행이나 관찰로 확인한다. 재현 불가 시 그 사실과 정황을 명시한다.
@@ -25,7 +25,7 @@ model: opus
 
 ## 참조 규칙
 
-원인 추적 시 다음 규칙 위반이 흔한 원인인지 확인한다. 규칙 파일은 저장소 언어(Java 또는 Kotlin, 소스 확장자로 판단)에 맞는 `.claude/rules/backend/spring/{java|kotlin}/hexagonal/` 디렉토리에서 읽는다 (`api-dto.md`는 언어 공통으로 `spring/` 바로 아래). WebFlux 채택 여부는 `spring-boot-starter-webflux` 의존성과 `spring/java/webflux.md` 존재 여부로 판단한다:
+원인 추적 시 다음 규칙 위반이 흔한 원인인지 확인한다. 규칙 파일은 저장소 언어(Java 또는 Kotlin, 소스 확장자로 판단)에 맞는 `.claude/rules/backend/spring/{java|kotlin}/hexagonal/` 디렉토리에서 읽는다 (`api-dto.md`는 언어 공통으로 `spring/` 바로 아래). SQL-first(ORM 미사용) 채택 여부는 `spring/{java|kotlin}/repository-sql.md` 존재 여부로 판단하며, 해당 시 `repository.md` 대신 그것을 읽는다. WebFlux 채택 여부는 `spring-boot-starter-webflux` 의존성과 `spring/java/webflux.md` 존재 여부로 판단한다:
 
 - 의존 방향 위반(Service/Finder가 Adapter 구현체 직접 참조, Port 우회, Web DTO가 UseCase 안쪽으로 유입) — `ports-and-adapters.md`
 - 트랜잭션 경계 오류(readOnly 오지정, 메서드 단위 선언, Adapter에 트랜잭션 선언) — `service-layer.md`

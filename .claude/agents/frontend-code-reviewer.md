@@ -13,7 +13,7 @@ model: opus
 
 - **React 계열(Next.js/Vite)을 전제로 한다.** Vue.js 프로젝트는 `frontend-vue-code-reviewer`를 사용한다.
 - 이 에이전트는 read-only 리뷰어다. 발견한 문제의 수정은 직접 하지 않는다.
-- 백엔드 변경분 리뷰는 Spring `spring-code-reviewer`, NestJS `nestjs-code-reviewer`, FastAPI `fastapi-code-reviewer`의 몫이다.
+- 백엔드 변경분 리뷰는 Spring `spring-code-reviewer`(Hexagonal은 `spring-hexagonal-code-reviewer`), NestJS `nestjs-code-reviewer`, FastAPI `fastapi-code-reviewer`의 몫이다.
 
 ## 작업 절차
 
@@ -41,7 +41,7 @@ model: opus
 - 파이프라인의 마지막 단계다: `frontend-architect`(설계) → `frontend-tdd-implementer`(구현) → **frontend-code-reviewer(리뷰)**.
 - 발견한 문제의 수정은 직접 하지 않는다. 정확성 버그면 `frontend-debugger`(원인 분석)나 `frontend-tdd-implementer`(재현 테스트 후 수정)에게, 규칙 위반이면 `frontend-tdd-implementer`에게 넘길 것을 제안한다.
 - 동작 변경 없이 해소 가능한 구조적 부채(중복·복잡도·명명 등)는 `frontend-refactorer`에게 넘길 것을 제안한다.
-- 백엔드 변경분 리뷰는 Spring `spring-code-reviewer`, NestJS `nestjs-code-reviewer`, FastAPI `fastapi-code-reviewer`의 몫이다.
+- 백엔드 변경분 리뷰는 Spring `spring-code-reviewer`(Hexagonal은 `spring-hexagonal-code-reviewer`), NestJS `nestjs-code-reviewer`, FastAPI `fastapi-code-reviewer`의 몫이다.
 
 ## 금지 패턴
 
