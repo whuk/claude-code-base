@@ -1,12 +1,12 @@
 ---
-description: "claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용하고, 해당하지 않는 rules/agents 파일을 정리한다."
+description: "claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용하고, 해당하지 않는 rules/agents 파일을 정리한다. 기존 코드가 있으면 스택을 자동 감지하고, 빈 프로젝트면 질문한다."
 argument-hint: "없음"
 user-invocable: true
 ---
 
 # /rw:init — 템플릿 선별 초기화
 
-claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용한다. 스택에 대해 질문한 뒤, 답변에 맞지 않는 `.claude/rules/`와 `.claude/agents/` 파일을 제거하거나 정리한다.
+claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용한다. 프로젝트 루트를 스캔해 기존 코드가 있으면 스택을 자동 감지하고, 감지하지 못한 항목(빈 프로젝트면 전체)만 질문한 뒤, 확정된 스택에 맞지 않는 `.claude/rules/`와 `.claude/agents/` 파일을 제거하거나 정리한다.
 
 ## 0단계: 안전 확인
 
@@ -16,9 +16,46 @@ claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용
    > 이 저장소에는 claude-code-base 템플릿의 rules 디렉토리가 없습니다. 템플릿을 먼저 복사해 주세요.
 3. `git status --short`로 커밋되지 않은 변경사항이 있으면 사용자에게 알리고, 먼저 커밋하거나 stash 할지 확인한다. 이번 작업의 삭제/편집 내역이 기존 변경사항과 섞이지 않도록 한다.
 
-## 1단계: 스택 질문 (AskUserQuestion 사용, 여러 라운드로 진행)
+## 1단계: 프로젝트 스캔 (자동 감지)
 
-**라운드 1 — 항상 묻는다**: "이 프로젝트는 어떤 영역을 사용합니까?"
+프로젝트 루트에서 스택 마커 파일을 찾는다: `build.gradle`/`build.gradle.kts`/`pom.xml`(Spring Boot), `package.json`(NestJS/프론트엔드), `pyproject.toml`/`requirements*.txt`(FastAPI). 모노레포 가능성이 있으므로 루트 직속과 1~2 depth 하위 디렉토리(`apps/*`, `packages/*`, `frontend/`, `backend/` 등)까지 확인한다. `.claude/`, `node_modules/`, 빌드 출력 디렉토리는 스캔 대상이 아니다.
+
+- **마커 파일이 하나도 없으면**(빈 템플릿 상태) 자동 감지를 건너뛰고 2단계에서 모든 질문을 진행한다.
+- **마커 파일이 있으면** 아래 감지 규칙으로 2단계 질문들의 답을 먼저 확정한다. 명확한 근거(파일 경로, 의존성 이름, 디렉토리 구조)가 있는 항목만 확정하고 항목별 근거를 기록한다. 근거가 없거나 상충하는 항목은 미확정으로 남겨 2단계에서 질문한다.
+
+### 영역·백엔드 스택·프론트엔드 프레임워크 감지
+- Spring Boot: 빌드 파일에 `org.springframework.boot` 플러그인/의존성
+- NestJS: `package.json`의 의존성에 `@nestjs/core`
+- FastAPI: `pyproject.toml`/`requirements*.txt`에 `fastapi`
+- 프론트엔드: `package.json`의 의존성에 `next` → Next.js / `vue` → Vue.js / `next` 없이 `vite` + `react` → Vite
+- 백엔드와 프론트엔드 마커가 모두 발견되면 풀스택으로 확정한다. 한쪽만 발견됐으면 다른 쪽 영역의 사용 여부는 미확정으로 남겨 라운드 1 질문으로 확인한다(아직 코드를 만들지 않았을 뿐 계획에 있을 수 있다).
+
+### Spring Boot 세부 감지
+- 언어: `src/main/kotlin` 존재 또는 Kotlin JVM 플러그인 → Kotlin / `src/main/java`만 존재 → Java
+- 웹 스택: `spring-boot-starter-webflux`만 있고 `spring-boot-starter-web`이 없으면 WebFlux / `spring-boot-starter-web`이 있으면 MVC
+- 영속성 도구: `spring-boot-starter-data-jpa` → JPA / JPA 없이 `spring-boot-starter-jdbc`(+`jooq`) → SQL-first / `spring-boot-starter-data-r2dbc` → WebFlux 감지 결과와 교차 확인해 R2DBC로 확정
+- 아키텍처 스타일: 소스 패키지에 `port/in`·`port/out`·`adapter` 디렉토리 또는 `*UseCase`/`*Port`/`*PersistenceAdapter` 클래스 → Hexagonal / controller·service·repository·domain 계층 패키지 구조 → Layered. 소스가 거의 없어 구조 판정이 어려우면 미확정
+- MongoDB: `spring-boot-starter-data-mongodb`(WebFlux면 `-reactive`) 존재 여부로 확정
+- QueryDSL/jOOQ 계획: `querydsl`/`jooq` 의존성이 이미 있으면 "쓸 계획 있음"으로 확정. 없으면 미확정(도입 계획은 코드로 감지할 수 없다)
+- 주 RDB: JDBC/R2DBC 드라이버 의존성(`postgresql`/`mysql`/`mariadb`/`sqlite` 등) 또는 `application.yml`·`application.properties`의 datasource/r2dbc URL 스킴
+
+### NestJS 세부 감지
+- 영속성 도구: `typeorm`/`@nestjs/typeorm` → TypeORM / `prisma`/`@prisma/client` → Prisma / ORM 없이 `kysely` → SQL-first
+- 검증 도구: `nestjs-zod` 존재(또는 `class-validator` 없이 `zod`) → Zod / `class-validator` → class-validator
+- (풀스택) 프론트엔드 소스 루트: 프론트엔드 프레임워크 의존성이 든 `package.json`이 위치한 디렉토리 경로
+
+### FastAPI 세부 감지
+- ORM 사용 여부: `sqlalchemy` 의존성 + ORM 매핑 사용 흔적(`DeclarativeBase`/`Mapped`, `models.py`) → ORM 사용 / `sqlalchemy` 없이 async 드라이버만 쓰거나 Core(`Table`/`text()`)만 사용 → SQL-first. `sqlalchemy`가 있어도 ORM 매핑 흔적이 없으면 미확정
+- 주 RDB: 드라이버 의존성 — `asyncpg`/`psycopg` → PostgreSQL / `asyncmy`/`aiomysql`/`PyMySQL` → MySQL / `aiosqlite` → SQLite
+
+### Vite 세부 감지
+- 라우팅 라이브러리: `@tanstack/react-router` → TanStack Router / `react-router`/`react-router-dom` → React Router
+
+## 2단계: 스택 질문 (AskUserQuestion 사용, 여러 라운드로 진행)
+
+1단계에서 확정하지 못한 항목만 묻는다. 확정된 항목의 질문은 생략하고, 그 답이 뒤 라운드의 분기 조건이면 확정된 답을 그대로 사용한다. 모든 항목이 확정됐으면 이 단계 전체를 건너뛴다.
+
+**라운드 1 — 영역이 미확정이면 묻는다**: "이 프로젝트는 어떤 영역을 사용합니까?"
 - 백엔드만
 - 프론트엔드만
 - 풀스택 (백엔드 + 프론트엔드)
@@ -52,13 +89,13 @@ claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용
 - "라우팅 라이브러리는 무엇을 사용합니까?" → TanStack Router(기본 검토 대상) / React Router
 
 (풀스택 + 백엔드 "NestJS" 선택 시)
-- "프론트엔드 소스 루트 경로는 무엇입니까?" (예: `apps/web`, `frontend`, `web`) — 백엔드와 프론트엔드가 모두 TypeScript이므로 frontend rules의 glob 범위를 좁히는 데 사용한다 (2단계의 해당 편집 규칙 참조)
+- "프론트엔드 소스 루트 경로는 무엇입니까?" (예: `apps/web`, `frontend`, `web`) — 백엔드와 프론트엔드가 모두 TypeScript이므로 frontend rules의 glob 범위를 좁히는 데 사용한다 (3단계의 해당 편집 규칙 참조)
 
 Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 
-## 2단계: 삭제/편집 대상 확정
+## 3단계: 삭제/편집 대상 확정
 
-답변에 따라 아래 규칙을 조합해 대상 목록을 만든다. 질문에서 선택되지 않은 조합을 추측해서 임의로 처리하지 않는다.
+확정된 답(1단계 자동 감지 + 2단계 질문 답변)에 따라 아래 규칙을 조합해 대상 목록을 만든다. 확정되지 않은 조합을 추측해서 임의로 처리하지 않는다.
 
 ### 백엔드 미포함 시 — 삭제
 - `.claude/rules/backend/` 전체
@@ -86,7 +123,7 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 - `.claude/rules/backend/spring/java/webflux.md`, `.claude/rules/backend/spring/java/repository-r2dbc.md` (WebFlux 전용 규칙. 언어 "Kotlin" 선택 시에는 `spring/java/` 전체 삭제에 이미 포함되므로 별도 처리가 없다)
 
 ### 백엔드 스택 "Spring Boot" + 웹 스택 "WebFlux" 선택 시 — 삭제 + 편집
-- 영속성 질문(JPA/SQL-first)을 묻지 않았으므로 JPA/SQL-first의 삭제·편집 케이스와 MongoDB(JPA용)/QueryDSL 편집 케이스는 적용하지 않는다.
+- 영속성(JPA/SQL-first) 항목을 확정하지 않았으므로 JPA/SQL-first의 삭제·편집 케이스와 MongoDB(JPA용)/QueryDSL 편집 케이스는 적용하지 않는다.
 - 선택한 아키텍처의 `.claude/rules/backend/spring/java/{layered|hexagonal}/repository.md`와 `.claude/rules/backend/spring/java/repository-tools.md`, `.claude/rules/backend/spring/java/repository-sql.md`를 삭제한다 (`repository-r2dbc.md`가 대체한다).
 - Layered면 `spring/java/layered/domain.md`를 편집한다: 2번(인프라 비종속)의 `@Entity` 마커 허용·orm.xml 분리 문장을 순수 Domain 기준(영속성 애노테이션 전면 금지)으로 수정하고, 9번(JPA 영속성 매핑) 섹션을 삭제하며, 마지막 금지 패턴의 orm.xml 항목과 도입부의 SQL-first/WebFlux 안내 문장을 정리한다. 편집 후 번호와 문맥이 자연스럽게 이어지는지 다시 읽어 확인한다.
 - Hexagonal이면 추가 편집이 없다 (`ports-and-adapters.md`·`hexagonal/domain.md`의 `{Domain}JpaEntity` 언급은 `repository-r2dbc.md` 2번의 대체 규정이 우선한다).
@@ -101,7 +138,7 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 - 선택한 언어·아키텍처의 `.claude/rules/backend/spring/{java|kotlin}/{layered|hexagonal}/repository.md`와 `.claude/rules/backend/spring/{java|kotlin}/repository-tools.md`를 삭제한다 (`repository-sql.md`가 대체한다).
 - Layered면 `spring/{java|kotlin}/layered/domain.md`를 편집한다: 2번(인프라 비종속)의 `@Entity` 마커 허용·orm.xml 분리 문장을 순수 Domain 기준(영속성 애노테이션 전면 금지)으로 수정하고, 9번(JPA 영속성 매핑) 섹션을 삭제하며, 마지막 금지 패턴의 orm.xml 항목과 도입부의 SQL-first/WebFlux 안내 문장을 정리한다. 편집 후 번호와 문맥이 자연스럽게 이어지는지 다시 읽어 확인한다.
 - Hexagonal이면 추가 편집이 없다 (`ports-and-adapters.md`의 `{Domain}JpaEntity` 언급은 `repository-sql.md` 2번의 대체 규정이 우선한다).
-- MongoDB/QueryDSL 질문은 이 경우 묻지 않았으므로 해당 편집 케이스도 적용하지 않는다.
+- MongoDB/QueryDSL 항목은 이 경우 확정하지 않았으므로 해당 편집 케이스도 적용하지 않는다.
 - `spring-*` 에이전트는 영속성 도구(JPA/SQL-first)를 조건부로 함께 언급하므로 수정하지 않는다.
 
 ### 백엔드 포함 + "NestJS" 선택 시 — 삭제
@@ -131,18 +168,18 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 ### 백엔드 스택 "Spring Boot" + "JPA만" 선택 시 — 편집 (파일 삭제 아님)
 - 언어·아키텍처 스타일 답변에 따라 `.claude/rules/backend/spring/{java|kotlin}/layered/test.md` 또는 `.claude/rules/backend/spring/{java|kotlin}/hexagonal/test.md`에서 MongoDB 관련 내용을 제거한다: base class 표에서 `IntegrationTestBase`(MongoDB Repository/Persistence Adapter 통합), `WebIntegrationTestBase`(MongoDB Controller/Web Adapter) 행을 삭제하고, MongoDB 통합 테스트 관련 문단을 제거해 JPA 전용 안내만 남긴다.
 - Edit 도구로 신중하게 처리하고, 편집 후 표/문단이 자연스럽게 이어지는지 다시 읽어 확인한다.
-- **`spring-*` 에이전트는 수정하지 않는다.** `spring-test-author`/`spring-hexagonal-test-author`의 base class 표에는 MongoDB 행이 남는다. 3단계 보고 시 이 사실을 사용자에게 알린다.
+- **`spring-*` 에이전트는 수정하지 않는다.** `spring-test-author`/`spring-hexagonal-test-author`의 base class 표에는 MongoDB 행이 남는다. 4단계 보고 시 이 사실을 사용자에게 알린다.
 
 ### 백엔드 스택 "Spring Boot" + "Specification까지만" 선택 시 — 삭제 + 편집
 - 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/repository-tools.md`(QueryDSL/JdbcClient/jOOQ 상세 규칙)를 삭제한다.
 - 언어·아키텍처 답변에 해당하는 `repository.md`에서 "도구 선택 계층" 표의 Level 2~3 행과 `repository-tools.md` 참조 문구, "Finder/Service 계층과의 통합" 다이어그램·금지 패턴의 QueryDSL/JdbcClient/jOOQ 언급을 정리해 본문과 표가 어긋나지 않도록 한다.
 - 언어·아키텍처 답변에 해당하는 `test.md`에서도 삭제된 `repository-tools.md`에 대한 참조가 남지 않게 정리한다: Layered면 `layered/test.md` 2.1절의 jOOQ SqlBuilder 문단과 5번(N+1 쿼리 카운트 검증)의 QueryDSL 언급, Hexagonal이면 `hexagonal/test.md` 5번의 `repository-tools.md` 참조 문구를 제거·조정한다. 편집 후 문단이 자연스럽게 이어지는지 다시 읽어 확인한다.
-- **`spring-*` 에이전트는 수정하지 않는다.** 일부 에이전트(`spring-domain-designer` 등)는 QueryDSL/JdbcClient 티어를 계속 언급한다. 3단계 보고 시 이 사실을 사용자에게 알린다.
+- **`spring-*` 에이전트는 수정하지 않는다.** 일부 에이전트(`spring-domain-designer` 등)는 QueryDSL/JdbcClient 티어를 계속 언급한다. 4단계 보고 시 이 사실을 사용자에게 알린다.
 
 ### 백엔드 스택 "Spring Boot" + RDB 선택 시 — 편집 (파일 삭제 아님)
 - PostgreSQL 선택 시: 편집하지 않는다 (규칙의 jOOQ 방언 예시가 이미 PostgreSQL 기준이다).
 - MySQL/MariaDB 선택 시: 앞선 케이스들의 삭제 처리 후 **남아 있는** 파일에 한해, 선택한 언어 디렉토리에서 jOOQ 방언 예시를 치환한다 — `repository-sql.md` 3번과 `repository-tools.md` 2.5절의 `SQLDialect.POSTGRES`(설명 문장과 `JooqConfig` 코드 예시), `layered/test.md` 2.1절의 프로덕션 방언 예시 `POSTGRES`, (WebFlux 프로젝트) `repository-r2dbc.md` 4번의 `SQLDialect.POSTGRES`를 선택한 DB의 방언 상수(`SQLDialect.MYSQL`/`SQLDialect.MARIADB`)로 바꾼다.
-- 그 외 DB를 직접 입력받은 경우: jOOQ 오픈소스 방언이 존재하면(예: SQLite → `SQLDialect.SQLITE`) 동일하게 치환하고, 상용 에디션 방언이 필요한 DB(Oracle, SQL Server 등)면 치환하지 않고 3단계 보고에서 "jOOQ 방언 예시는 PostgreSQL 기준으로 남아 있으며, 선택한 DB는 jOOQ 상용 에디션 방언이 필요하다"고 안내한다.
+- 그 외 DB를 직접 입력받은 경우: jOOQ 오픈소스 방언이 존재하면(예: SQLite → `SQLDialect.SQLITE`) 동일하게 치환하고, 상용 에디션 방언이 필요한 DB(Oracle, SQL Server 등)면 치환하지 않고 4단계 보고에서 "jOOQ 방언 예시는 PostgreSQL 기준으로 남아 있으며, 선택한 DB는 jOOQ 상용 에디션 방언이 필요하다"고 안내한다.
 - 편집 후 파일 내 방언 언급이 일관되게 읽히는지 다시 확인한다.
 - `spring-*` 에이전트는 DB 벤더를 언급하지 않으므로 수정 대상이 없다.
 
@@ -173,25 +210,26 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 ### 백엔드 스택 "NestJS" + 검증 도구 선택 시 — 편집 (파일 삭제 아님)
 - class-validator 선택 시: `nestjs.md` 3번에서 Zod 허용 문장("Zod 스키마 기반 검증(`nestjs-zod`)도 허용하되 ... 통일한다")을 제거한다.
 - Zod 선택 시: `nestjs.md` 3번을 `nestjs-zod` 기준으로 조정한다 — class-validator 기본 문장을 Zod 스키마 기반 검증으로 바꾸고, 다중 진입점 방어 항목의 `validateOrReject()` 언급을 Command 생성 시점의 Zod 스키마 `parse()` 호출로 대체한다.
-- **Zod 선택 시 `nestjs-*` 에이전트는 수정하지 않는다.** `nestjs-tdd-implementer`/`nestjs-code-reviewer`/`nestjs-domain-designer`는 class-validator 전제로 작성돼 있다. 3단계 보고 시 이 사실을 사용자에게 명시적으로 알린다: "nestjs 에이전트들은 class-validator 전제입니다. Zod 기준으로 활용하려면 에이전트를 별도로 조정해야 합니다."
+- **Zod 선택 시 `nestjs-*` 에이전트는 수정하지 않는다.** `nestjs-tdd-implementer`/`nestjs-code-reviewer`/`nestjs-domain-designer`는 class-validator 전제로 작성돼 있다. 4단계 보고 시 이 사실을 사용자에게 명시적으로 알린다: "nestjs 에이전트들은 class-validator 전제입니다. Zod 기준으로 활용하려면 에이전트를 별도로 조정해야 합니다."
 
 ### 풀스택 + 백엔드 "NestJS" 선택 시 — 편집 (파일 삭제 아님)
-- 백엔드와 프론트엔드가 모두 TypeScript이므로 `frontend/typescript.md`의 globs(`**/*.ts`)가 백엔드 소스에도 매칭된다. 1단계 라운드 3에서 답변받은 프론트엔드 소스 루트 경로를 `frontend/*.md`의 globs에 프리픽스로 적용한다 (예: `**/*.ts` → `apps/web/**/*.ts`, `**/*.tsx` → `apps/web/**/*.tsx`).
+- 백엔드와 프론트엔드가 모두 TypeScript이므로 `frontend/typescript.md`의 globs(`**/*.ts`)가 백엔드 소스에도 매칭된다. 1단계에서 감지했거나 2단계 라운드 3에서 답변받은 프론트엔드 소스 루트 경로를 `frontend/*.md`의 globs에 프리픽스로 적용한다 (예: `**/*.ts` → `apps/web/**/*.ts`, `**/*.tsx` → `apps/web/**/*.tsx`).
 - 편집 후 globs가 실제 프론트엔드 파일 경로와 매칭되는지 경로 예시로 확인한다.
 
 ### 프론트엔드 "Vite" + 라우팅 라이브러리 선택 시 — 편집 (파일 삭제 아님)
 - `.claude/rules/frontend/vite.md` 3번(라우팅)에서 선택하지 않은 라이브러리 항목을 제거하고, 선택한 라이브러리를 확정 문장으로 바꾼다. "둘 중 하나를 프로젝트 시작 시점에 고정한다" 문장은 선택이 끝났으므로 제거한다.
 - 5번(금지 패턴)의 "라우팅 라이브러리를 프로젝트 중간에 이유 없이 교체하지 않는다"는 그대로 둔다.
 
-## 3단계: 확인 후 실행
+## 4단계: 확인 후 실행
 
-1. 삭제/편집 대상 전체 목록을 사용자에게 보여주고 진행 여부를 확인받는다. NestJS + Zod를 선택한 경우 "nestjs 에이전트들은 class-validator 전제" 안내를 함께 보여준다.
+1. 삭제/편집 대상 전체 목록을 사용자에게 보여주고 진행 여부를 확인받는다. 1단계에서 자동 확정한 항목이 있으면 항목별 감지 근거(파일 경로·의존성 이름)를 함께 표시해 잘못 감지된 항목을 사용자가 바로잡을 수 있게 한다. NestJS + Zod를 선택한 경우 "nestjs 에이전트들은 class-validator 전제" 안내를 함께 보여준다.
 2. 확인되면 파일 삭제는 `git rm`으로, 내용 편집은 Edit로 수행한다.
 3. 자동으로 커밋하지 않는다. 사용자가 요청할 때만 커밋한다.
 
 ## 결과 보고
 
 - 선택된 스택 조합 요약 (영역, 백엔드 스택·언어·아키텍처·주 RDB, 프론트엔드 프레임워크 등)
+- 자동 감지 모드였던 경우: 자동 확정한 항목과 항목별 감지 근거, 질문으로 보완한 항목 목록
 - 삭제한 파일/디렉토리 목록과 편집한 파일 목록
 - 해당 시 에이전트 안내문 (NestJS+Zod, JPA만, Specification까지만 선택 시의 에이전트 미수정 안내)
 - 해당 시 RDB 안내문 (jOOQ 상용 에디션 방언이 필요한 DB를 선택한 경우)
@@ -201,5 +239,6 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 
 - 사용자 확인 없이 바로 삭제/편집을 실행하지 않는다.
 - 원본 템플릿 저장소에서 실행해 원본을 훼손하지 않는다(0단계 참조).
-- 질문받지 않은 조합을 임의로 판단해서 처리하지 않는다.
-- rules를 편집했더라도 전제가 다른 에이전트(`nestjs-*`의 class-validator 전제, `spring-*`의 MongoDB/QueryDSL 언급 등)를 임의로 고치지 않는다(별도 작업). 3단계 보고에서 안내만 한다.
+- 확정되지 않은 조합을 임의로 판단해서 처리하지 않는다.
+- 근거가 약하거나 상충하는 항목을 추측으로 자동 확정하지 않는다. 미확정으로 남겨 2단계에서 질문한다.
+- rules를 편집했더라도 전제가 다른 에이전트(`nestjs-*`의 class-validator 전제, `spring-*`의 MongoDB/QueryDSL 언급 등)를 임의로 고치지 않는다(별도 작업). 4단계 보고에서 안내만 한다.
