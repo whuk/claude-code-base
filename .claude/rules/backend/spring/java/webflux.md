@@ -5,14 +5,14 @@ alwaysApply: true
 
 # Spring WebFlux 규칙 (리액티브 스택)
 
-Spring MVC(서블릿) 대신 WebFlux(리액티브)를 채택한 프로젝트의 웹 계층·트랜잭션·블로킹 규율·테스트 규칙이다. Layered/Hexagonal 아키텍처 스타일과 무관하게 공통 적용되며, CQRS-lite 흐름·Finder/Service 분리·계층 의존 방향(`shared/architecture.md`)과 REST 설계 규약(`shared/rest-api.md`), API spec-first 원칙(`api-dto.md`)은 그대로 전제한다. 영속성 규칙은 `repository-r2dbc.md`가 담당한다.
+Spring MVC(서블릿) 대신 WebFlux(리액티브)를 채택한 프로젝트의 웹 계층·트랜잭션·블로킹 규율·테스트 규칙이다. Layered/Hexagonal 아키텍처 스타일과 무관하게 공통 적용되며, CQRS-lite 흐름·Finder/Service 분리·계층 의존 방향(`shared/architecture.md`)과 REST 설계 규약(`shared/rest-api.md`), API spec-first 원칙(`api-dto.md`)은 그대로 전제한다. 영속성 규칙은 `repository-r2dbc.md`가, 리액티브 MongoDB 병용 시의 추가 규칙은 `repository-reactive-mongo.md`가 담당한다.
 
-이 프로젝트가 Spring MVC(서블릿 스택)를 채택했다면 이 파일은 적용 대상이 아니다. MVC와 WebFlux를 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 웹 스택의 규칙 파일은 프로젝트에서 제외한다 (`repository-r2dbc.md`도 함께 제외한다). 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다 — WebFlux 규칙은 현재 Java 전용으로 제공된다.
+이 프로젝트가 Spring MVC(서블릿 스택)를 채택했다면 이 파일은 적용 대상이 아니다. MVC와 WebFlux를 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 웹 스택의 규칙 파일은 프로젝트에서 제외한다 (`repository-r2dbc.md`·`repository-reactive-mongo.md`도 함께 제외한다). 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다 — WebFlux 규칙은 현재 Java 전용으로 제공된다.
 
 ## 1. 핵심 원칙
 
 - 웹 스택은 WebFlux + Reactor(`Mono`/`Flux`)로 통일한다. `spring-boot-starter-web`(서블릿)과 `spring-boot-starter-webflux`를 한 프로젝트에서 혼용하지 않는다.
-- 영속성은 리액티브 스택(R2DBC, 선택 시 리액티브 MongoDB)으로 통일한다. JPA/JDBC 등 블로킹 영속성과 혼용하지 않는다 (`repository-r2dbc.md` 참조).
+- 영속성은 리액티브 스택(R2DBC, 선택 시 리액티브 MongoDB)으로 통일한다. JPA/JDBC 등 블로킹 영속성과 혼용하지 않는다 (`repository-r2dbc.md`, 병용 시 `repository-reactive-mongo.md` 참조).
 - 리액티브는 웹·영속성 계층의 실행 모델일 뿐, 아키텍처 규칙을 바꾸지 않는다: Write/Read 분리, Command/Query 객체, Finder/Service 분리, 계층 의존 방향, 다중 진입점 방어는 MVC와 동일하게 적용한다.
 
 ## 2. Controller (웹 계층)
