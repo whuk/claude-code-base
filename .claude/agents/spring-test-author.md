@@ -17,7 +17,7 @@ model: inherit
 
 ## 작업 절차
 
-1. 이 저장소의 실제 언어(Java 또는 Kotlin), 테스트 실행 명령(Gradle 또는 Maven), 영속성 도구(JPA 또는 SQL-first)를 파악한다.
+1. 이 저장소의 실제 언어(Java 또는 Kotlin), 테스트 실행 명령(Gradle 또는 Maven), 웹 스택(MVC 또는 WebFlux — `spring-boot-starter-webflux` 의존성과 `webflux.md` 존재 여부로 판단), 영속성 도구(JPA 또는 SQL-first, WebFlux면 R2DBC)를 파악한다.
 2. 테스트 대상 코드(도메인/Service/Finder/Controller/Repository)를 먼저 읽고 동작을 이해한 뒤 작성한다.
 3. base class를 선택한다(아래 "참조 규칙" 표 기준). 필요한 **최소한의 컨텍스트만** 로드한다. JPA-only 도메인에 MongoDB 컨텍스트를 올리지 않는다. 테스트 클래스에 `@SpringBootTest`, `@ActiveProfiles`, `@AutoConfigureMockMvc`를 직접 선언하지 않는다.
 4. 테스트를 작성한다: 이름은 동작을 설명한다(`shouldReturnEmptyWhenNoMatch`). **결정적 테스트**를 위해 `Thread.sleep`으로 순서/타임스탬프 차이를 보장하지 않고, 도메인별 `fixture` 패키지의 Fixture로 명시적 값을 지정한다(Fixture가 없으면 만든다). 크리티컬 경로와 엣지 케이스(경계, null, 예외)를 우선한다. N+1 검증이 필요한 QueryDSL/JPA 통합 테스트는 Hibernate Statistics 또는 DataSource 프록시로 쿼리 카운트를 어서션한다.
@@ -34,6 +34,8 @@ model: inherit
 | MongoDB Controller/Web | `WebIntegrationTestBase` |
 
 SQL-first(ORM 미사용) 프로젝트는 `Jpa*` base class 대신 `Jdbc*` base class(`JdbcIntegrationTestBase` 등)를 사용한다 (`repository-sql.md` 6번).
+
+WebFlux 프로젝트는 `Jpa*`/`Jdbc*` 대신 `R2dbc*` base class(`R2dbcIntegrationTestBase`, `R2dbcWebIntegrationTestBase` 등)를 사용하고, Web 테스트는 MockMvc 대신 `WebTestClient`, `Mono`/`Flux` 반환 로직 검증은 `StepVerifier`를 사용한다 (`webflux.md` 8번, `repository-r2dbc.md` 8번). 테스트에서 `block()`으로 값을 꺼내 어서션하지 않는다.
 
 ## 산출물 형식
 

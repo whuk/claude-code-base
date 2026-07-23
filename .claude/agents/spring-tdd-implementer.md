@@ -12,7 +12,7 @@ model: inherit
 ## 전제
 
 - **Layered 아키텍처를 전제로 한다.** Hexagonal(Ports & Adapters)을 선택한 프로젝트는 `spring-hexagonal-tdd-implementer`를 사용한다.
-- 이 저장소의 실제 언어(Java 또는 Kotlin), 빌드 도구(Gradle 또는 Maven), 영속성 도구(JPA 또는 SQL-first — `repository-sql.md` 존재 여부와 의존성으로 판단)를 작업 시작 시 파악한다. 데이터 홀더는 Java `record` / Kotlin `data class`를 사용하고, 규칙 참조는 해당 언어 디렉토리(`spring/java/` 또는 `spring/kotlin/`)를 따른다.
+- 이 저장소의 실제 언어(Java 또는 Kotlin), 빌드 도구(Gradle 또는 Maven), 웹 스택(MVC 또는 WebFlux — `spring-boot-starter-webflux` 의존성과 `webflux.md` 존재 여부로 판단), 영속성 도구(JPA 또는 SQL-first — `repository-sql.md` 존재 여부와 의존성으로 판단. WebFlux면 R2DBC로 고정)를 작업 시작 시 파악한다. 데이터 홀더는 Java `record` / Kotlin `data class`를 사용하고, 규칙 참조는 해당 언어 디렉토리(`spring/java/` 또는 `spring/kotlin/`)를 따른다.
 - NestJS는 `nestjs-tdd-implementer`, FastAPI는 `fastapi-tdd-implementer`, 프론트엔드(TypeScript/Next.js/Vite)는 `frontend-tdd-implementer`를 사용한다.
 
 ## 작업 절차
@@ -34,7 +34,7 @@ model: inherit
 - `.claude/rules/backend/spring/{java|kotlin}/layered/domain.md` — Rich Domain 작성 (저장소 언어에 맞는 디렉토리를 읽는다, 전제 참조)
 - `.claude/rules/backend/spring/{java|kotlin}/layered/service-layer.md` — Finder/Service 분리, 트랜잭션
 - `.claude/rules/backend/spring/{java|kotlin}/layered/layer-communication-rules.md` — Command/Query, 계층 간 매핑
-- `.claude/rules/backend/spring/{java|kotlin}/layered/repository.md` — Specification/QueryDSL/JdbcClient 도구 선택 (SQL-first 프로젝트는 대신 `.claude/rules/backend/spring/{java|kotlin}/repository-sql.md`를 읽는다)
+- `.claude/rules/backend/spring/{java|kotlin}/layered/repository.md` — Specification/QueryDSL/JdbcClient 도구 선택 (SQL-first 프로젝트는 대신 `.claude/rules/backend/spring/{java|kotlin}/repository-sql.md`를, WebFlux 프로젝트는 `.claude/rules/backend/spring/java/repository-r2dbc.md`와 `.claude/rules/backend/spring/java/webflux.md`를 읽는다)
 - `.claude/rules/backend/spring/api-dto.md`, `.claude/rules/backend/shared/rest-api.md` — API-first, DTO 자동생성 (언어 공통)
 - `.claude/rules/backend/spring/{java|kotlin}/layered/test.md` — 테스트 base class 선택
 
@@ -43,8 +43,9 @@ model: inherit
 - **Write 흐름**: Controller(Web DTO) → Service(Command) → Rich Domain → Repository. Web DTO를 Service로 넘기지 않는다.
 - **Read 흐름**: Controller → Query/Read DTO → Repository(Projection). 단순 조회는 Rich Domain을 경유하지 않는다.
 - 조회 전용은 `{Domain}Finder`(`@Transactional(readOnly = true)`), 상태 변경은 `{Domain}Service`(`@Transactional`). 트랜잭션은 클래스 단위 선언.
-- (JPA) Repository 동적 검색은 Specification 우선. QueryDSL/JdbcClient는 `repository.md`의 escalation ladder 근거가 있을 때만. (SQL-first) JdbcClient가 기본 실행기이며 동적 조건은 jOOQ Condition 조합으로 해결한다 (`repository-sql.md`).
-- (JPA) Domain 클래스가 JPA 엔티티 역할을 겸한다(별도 Entity 클래스 없음). 클래스에는 `@Entity` 마커만 남기고, `@Column`/`@Id`/`@Table` 등 나머지 매핑은 `orm.xml`에 작성한다 (`domain.md` 9번). (SQL-first) Domain은 영속성 애노테이션 없이 순수하게 유지하고, `RowMapper`/재구성 팩토리가 매핑을 전담한다 (`repository-sql.md` 2번).
+- (JPA) Repository 동적 검색은 Specification 우선. QueryDSL/JdbcClient는 `repository.md`의 escalation ladder 근거가 있을 때만. (SQL-first) JdbcClient가 기본 실행기이며 동적 조건은 jOOQ Condition 조합으로 해결한다 (`repository-sql.md`). (WebFlux) Spring Data R2DBC → `R2dbcEntityTemplate` Criteria → jOOQ 빌더 + `DatabaseClient` 순으로 에스컬레이션한다 (`repository-r2dbc.md` 3번).
+- (JPA) Domain 클래스가 JPA 엔티티 역할을 겸한다(별도 Entity 클래스 없음). 클래스에는 `@Entity` 마커만 남기고, `@Column`/`@Id`/`@Table` 등 나머지 매핑은 `orm.xml`에 작성한다 (`domain.md` 9번). (SQL-first) Domain은 영속성 애노테이션 없이 순수하게 유지하고, `RowMapper`/재구성 팩토리가 매핑을 전담한다 (`repository-sql.md` 2번). (WebFlux) Domain은 순수하게 유지하되 Reactor 타입도 갖지 않으며, R2DBC 매핑은 `{Domain}Row`가 전담한다 (`repository-r2dbc.md` 2번, `webflux.md` 5번).
+- (WebFlux) Controller/Service/Repository 반환 타입은 `Mono`/`Flux`, 트랜잭션은 클래스 단위 선언 그대로. 리액티브 체인에 블로킹 호출(`block()`, JDBC, `Thread.sleep`)을 넣지 않고, 테스트는 `WebTestClient`/`StepVerifier`를 사용한다 (`webflux.md` 3번·4번·8번).
 - 연관된 파라미터가 4개 이상이면 Value Object로 그룹화한다. Command/Query에도 Web DTO와 동일한 Bean Validation 애노테이션을 붙이고 Service 클래스에 `@Validated`를 선언한다 (`layer-communication-rules.md` 7번).
 
 ## 산출물 형식

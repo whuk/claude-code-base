@@ -7,7 +7,7 @@ globs: "**/*Repository*.java,**/*PersistenceAdapter.java,**/*RowMapper.java,**/*
 
 JPA/ORM 없이 JdbcClient와 jOOQ(SQL 빌더)만으로 영속성 계층을 구성할 때의 규칙이다. Layered/Hexagonal 아키텍처 스타일과 무관하게 공통 적용되며, CQRS-lite 흐름·Finder/Service 분리·트랜잭션 규칙(`shared/architecture.md`, `service-layer.md`)은 그대로 전제한다.
 
-이 프로젝트가 JPA(ORM)를 채택했다면 이 파일은 적용 대상이 아니다. ORM과 SQL-first 영속성 규칙을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 영속성 도구의 규칙 파일은 프로젝트에서 제외한다 (`layered/repository.md`·`hexagonal/repository.md`·`repository-tools.md` 참조). 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다. Java와 Kotlin 규칙 파일을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 언어의 규칙 파일도 프로젝트에서 제외한다 (`kotlin/repository-sql.md` 참조).
+이 프로젝트가 JPA(ORM)를 채택했다면 이 파일은 적용 대상이 아니다. ORM과 SQL-first 영속성 규칙을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 영속성 도구의 규칙 파일은 프로젝트에서 제외한다 (`layered/repository.md`·`hexagonal/repository.md`·`repository-tools.md` 참조). 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다. Java와 Kotlin 규칙 파일을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 언어의 규칙 파일도 프로젝트에서 제외한다 (`kotlin/repository-sql.md` 참조). 또한 이 프로젝트가 WebFlux(리액티브 스택)를 채택했다면 이 파일은 적용 대상이 아니다. JdbcClient는 블로킹 실행기이므로 WebFlux와 함께 쓰지 않으며, WebFlux 프로젝트는 `repository-r2dbc.md`를 대신 적용한다.
 
 ## 1. 핵심 원칙
 

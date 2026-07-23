@@ -12,7 +12,7 @@ model: inherit
 ## 전제
 
 - **Hexagonal(Ports & Adapters) 아키텍처를 전제로 한다.** Layered를 선택한 프로젝트는 `spring-tdd-implementer`를 사용한다.
-- 이 저장소의 실제 언어(Java 또는 Kotlin), 빌드 도구(Gradle 또는 Maven), 영속성 도구(JPA 또는 SQL-first — `repository-sql.md` 존재 여부와 의존성으로 판단)를 작업 시작 시 파악한다. 데이터 홀더는 Java `record` / Kotlin `data class`를 사용하고, 규칙 참조는 해당 언어 디렉토리(`spring/java/` 또는 `spring/kotlin/`)를 따른다.
+- 이 저장소의 실제 언어(Java 또는 Kotlin), 빌드 도구(Gradle 또는 Maven), 웹 스택(MVC 또는 WebFlux — `spring-boot-starter-webflux` 의존성과 `webflux.md` 존재 여부로 판단), 영속성 도구(JPA 또는 SQL-first — `repository-sql.md` 존재 여부와 의존성으로 판단. WebFlux면 R2DBC로 고정)를 작업 시작 시 파악한다. 데이터 홀더는 Java `record` / Kotlin `data class`를 사용하고, 규칙 참조는 해당 언어 디렉토리(`spring/java/` 또는 `spring/kotlin/`)를 따른다.
 - NestJS는 `nestjs-tdd-implementer`, FastAPI는 `fastapi-tdd-implementer`, 프론트엔드(TypeScript/Next.js/Vite)는 `frontend-tdd-implementer`를 사용한다.
 
 ## 작업 절차
@@ -34,7 +34,7 @@ model: inherit
 - `.claude/rules/backend/spring/{java|kotlin}/hexagonal/domain.md` — Rich Domain 작성, 완전한 인프라 비종속 (저장소 언어에 맞는 디렉토리를 읽는다, 전제 참조)
 - `.claude/rules/backend/spring/{java|kotlin}/hexagonal/ports-and-adapters.md` — 패키지 구조, 의존 방향, UseCase/Port/Adapter 규칙
 - `.claude/rules/backend/spring/{java|kotlin}/hexagonal/service-layer.md` — Finder/Service 분리, 트랜잭션
-- `.claude/rules/backend/spring/{java|kotlin}/hexagonal/repository.md` — Persistence Adapter, Specification/QueryDSL/JdbcClient 도구 선택 (SQL-first 프로젝트는 대신 `.claude/rules/backend/spring/{java|kotlin}/repository-sql.md`를 읽는다)
+- `.claude/rules/backend/spring/{java|kotlin}/hexagonal/repository.md` — Persistence Adapter, Specification/QueryDSL/JdbcClient 도구 선택 (SQL-first 프로젝트는 대신 `.claude/rules/backend/spring/{java|kotlin}/repository-sql.md`를, WebFlux 프로젝트는 `.claude/rules/backend/spring/java/repository-r2dbc.md`와 `.claude/rules/backend/spring/java/webflux.md`를 읽는다)
 - `.claude/rules/backend/spring/api-dto.md`, `.claude/rules/backend/shared/rest-api.md` — API-first, DTO 자동생성 (언어 공통)
 - `.claude/rules/backend/spring/{java|kotlin}/hexagonal/test.md` — 계층별 테스트 전략과 base class 선택
 
@@ -44,9 +44,10 @@ model: inherit
 - **Read 흐름**: Controller → `{Domain}QueryUseCase` → `{Domain}Finder` → `{Domain}QueryPort` → Read DTO 직접 반환. 단순 조회는 Domain 객체를 경유하지 않는다.
 - 조회 전용은 `{Domain}Finder`(`@Transactional(readOnly = true)`), 상태 변경은 `{Domain}Service`(`@Transactional`). 트랜잭션은 클래스 단위 선언이며 경계는 Application Service에만 있다(Adapter/Domain에 두지 않는다).
 - Controller는 `port/in` UseCase 인터페이스에만, Service/Finder는 `port/out` Port 인터페이스에만 의존한다. Adapter 구현체·`{Domain}JpaRepository`·`{Domain}JpaEntity`를 직접 주입받지 않는다.
-- Domain은 순수 POJO/POKO다. `@Entity`를 포함해 어떤 프레임워크 애노테이션·`jakarta.persistence`/`org.springframework` import도 금지. 영속성은 (JPA) `adapter/out/persistence`의 `{Domain}JpaEntity`(표준 JPA 애노테이션 사용)가 담당하고 변환은 `{Domain}PersistenceMapper`가 전담한다. (SQL-first) JpaEntity 없이 JdbcClient + `{Domain}RowMapper`가 담당한다 (`repository-sql.md` 2번).
-- Port 시그니처에 JPA/Spring Web/Servlet 타입을 노출하지 않는다. Command 흐름의 기존 Aggregate 조회는 `{Domain}CommandPort`의 `findDomainById` 계열을 사용한다.
-- (JPA) Repository 동적 검색은 `{Domain}JpaEntity` 기준 Specification 우선. QueryDSL/JdbcClient는 `hexagonal/repository.md`의 escalation ladder 근거가 있을 때만. (SQL-first) JdbcClient가 기본 실행기이며 동적 조건은 jOOQ Condition 조합으로 해결한다 (`repository-sql.md`).
+- Domain은 순수 POJO/POKO다. `@Entity`를 포함해 어떤 프레임워크 애노테이션·`jakarta.persistence`/`org.springframework` import도 금지. 영속성은 (JPA) `adapter/out/persistence`의 `{Domain}JpaEntity`(표준 JPA 애노테이션 사용)가 담당하고 변환은 `{Domain}PersistenceMapper`가 전담한다. (SQL-first) JpaEntity 없이 JdbcClient + `{Domain}RowMapper`가 담당한다 (`repository-sql.md` 2번). (WebFlux) JpaEntity 없이 `{Domain}Row`(R2DBC 매핑 record)와 Spring Data R2DBC/`DatabaseClient`가 담당한다 (`repository-r2dbc.md` 2번).
+- Port 시그니처에 JPA/Spring Web/Servlet 타입을 노출하지 않는다. Command 흐름의 기존 Aggregate 조회는 `{Domain}CommandPort`의 `findDomainById` 계열을 사용한다. (WebFlux) Port 시그니처의 `Mono`/`Flux`는 허용하되 `{Domain}Row`·R2DBC 타입은 노출하지 않고, Domain은 동기 순수 객체로 유지한다 (`webflux.md` 5번).
+- (JPA) Repository 동적 검색은 `{Domain}JpaEntity` 기준 Specification 우선. QueryDSL/JdbcClient는 `hexagonal/repository.md`의 escalation ladder 근거가 있을 때만. (SQL-first) JdbcClient가 기본 실행기이며 동적 조건은 jOOQ Condition 조합으로 해결한다 (`repository-sql.md`). (WebFlux) Spring Data R2DBC → `R2dbcEntityTemplate` Criteria → jOOQ 빌더 + `DatabaseClient` 순으로 에스컬레이션한다 (`repository-r2dbc.md` 3번).
+- (WebFlux) UseCase/Port/Adapter 반환 타입은 `Mono`/`Flux`, 트랜잭션은 클래스 단위 선언 그대로. 리액티브 체인에 블로킹 호출(`block()`, JDBC, `Thread.sleep`)을 넣지 않고, 테스트는 `WebTestClient`/`StepVerifier`를 사용한다 (`webflux.md` 3번·4번·8번).
 - 연관된 파라미터가 4개 이상이면 Value Object로 그룹화한다. Command/Query에도 Web DTO와 동일한 Bean Validation 애노테이션을 붙여 다중 진입점을 방어한다 (`shared/architecture.md` 4·5번).
 
 ## 산출물 형식

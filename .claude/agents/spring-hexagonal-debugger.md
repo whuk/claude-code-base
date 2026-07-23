@@ -25,13 +25,14 @@ model: opus
 
 ## 참조 규칙
 
-원인 추적 시 다음 규칙 위반이 흔한 원인인지 확인한다. 규칙 파일은 저장소 언어(Java 또는 Kotlin, 소스 확장자로 판단)에 맞는 `.claude/rules/backend/spring/{java|kotlin}/hexagonal/` 디렉토리에서 읽는다 (`api-dto.md`는 언어 공통으로 `spring/` 바로 아래):
+원인 추적 시 다음 규칙 위반이 흔한 원인인지 확인한다. 규칙 파일은 저장소 언어(Java 또는 Kotlin, 소스 확장자로 판단)에 맞는 `.claude/rules/backend/spring/{java|kotlin}/hexagonal/` 디렉토리에서 읽는다 (`api-dto.md`는 언어 공통으로 `spring/` 바로 아래). WebFlux 채택 여부는 `spring-boot-starter-webflux` 의존성과 `spring/java/webflux.md` 존재 여부로 판단한다:
 
 - 의존 방향 위반(Service/Finder가 Adapter 구현체 직접 참조, Port 우회, Web DTO가 UseCase 안쪽으로 유입) — `ports-and-adapters.md`
 - 트랜잭션 경계 오류(readOnly 오지정, 메서드 단위 선언, Adapter에 트랜잭션 선언) — `service-layer.md`
 - Domain ↔ `{Domain}JpaEntity` 매핑 불일치(`{Domain}PersistenceMapper` 변환 누락/오류로 필드가 유실·오매핑) — `repository.md`
 - N+1, Specification 오조립, Adapter 경계 밖 JPA 타입 유출 — `repository.md`
 - (SQL-first 프로젝트) 바인드 파라미터 누락/오매핑, `{Domain}RowMapper` 컬럼 불일치, 문자열 조립 SQL — `repository-sql.md`
+- (WebFlux 프로젝트) 이벤트 루프 블로킹(`block()`, JDBC, `Thread.sleep`)으로 인한 지연·행, 구독되지 않아 실행되지 않는 `Mono`/`Flux`, 트랜잭션 체인 분리로 인한 커밋 누락, `{Domain}Row` 매핑 불일치 — `webflux.md`/`repository-r2dbc.md`. 원인 추적에는 Reactor `log()`/`checkpoint()`와 BlockHound(테스트 전용)를 활용한다
 - 도메인 불변 조건 미검증으로 인한 잘못된 상태(재구성 경로 포함 — Hexagonal은 하이드레이션 예외가 없다) — `domain.md`
 - 테스트 계층 전략 오선택(Application 테스트의 실제 DB 의존, Domain 테스트의 컨텍스트 의존), `Thread.sleep` 기반 비결정성 — `test.md`
 - openapi 스펙과 생성 코드 불일치 — `api-dto.md`
