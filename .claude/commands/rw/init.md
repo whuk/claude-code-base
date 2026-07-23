@@ -32,12 +32,16 @@ claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용
 (백엔드 스택 "Spring Boot" 선택 시)
 - "언어는 무엇입니까?" → Java(기본) / Kotlin
 - "아키텍처 스타일은 무엇입니까?" → Layered(기본) / Hexagonal(Ports & Adapters)
-- "MongoDB도 함께 사용합니까?" → JPA만 사용(기본) / JPA + MongoDB 함께 사용
-- "Repository 조회 도구로 QueryDSL/jOOQ까지 쓸 계획이 있습니까?" → Specification까지만 사용(기본) / QueryDSL/jOOQ까지 쓸 계획 있음
+- "영속성 도구는 무엇입니까?" → JPA(ORM, 기본) / SQL-first(JdbcClient + jOOQ, ORM 미사용)
+- (영속성 도구 "JPA" 선택 시) "MongoDB도 함께 사용합니까?" → JPA만 사용(기본) / JPA + MongoDB 함께 사용
+- (영속성 도구 "JPA" 선택 시) "Repository 조회 도구로 QueryDSL/jOOQ까지 쓸 계획이 있습니까?" → Specification까지만 사용(기본) / QueryDSL/jOOQ까지 쓸 계획 있음
 
 (백엔드 스택 "NestJS" 선택 시)
-- "ORM은 무엇을 사용합니까?" → TypeORM / Prisma
+- "영속성 도구는 무엇을 사용합니까?" → TypeORM / Prisma / 사용 안 함(SQL-first, Kysely)
 - "입력 검증 도구는 무엇을 사용합니까?" → class-validator(기본) / Zod(nestjs-zod)
+
+(백엔드 스택 "FastAPI" 선택 시)
+- "SQLAlchemy ORM을 사용합니까?" → ORM 사용(기본) / SQL-first(Core/async 드라이버만, ORM 미사용)
 
 (프론트엔드 "Vite" 선택 시)
 - "라우팅 라이브러리는 무엇을 사용합니까?" → TanStack Router(기본 검토 대상) / React Router
@@ -45,7 +49,7 @@ claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용
 (풀스택 + 백엔드 "NestJS" 선택 시)
 - "프론트엔드 소스 루트 경로는 무엇입니까?" (예: `apps/web`, `frontend`, `web`) — 백엔드와 프론트엔드가 모두 TypeScript이므로 frontend rules의 glob 범위를 좁히는 데 사용한다 (2단계의 해당 편집 규칙 참조)
 
-FastAPI를 선택한 경우 백엔드 세부 질문은 없다(`fastapi.md`가 단일 경로만 정의한다). Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
+Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 
 ## 2단계: 삭제/편집 대상 확정
 
@@ -72,6 +76,16 @@ FastAPI를 선택한 경우 백엔드 세부 질문은 없다(`fastapi.md`가 �
 ### 백엔드 스택 "Spring Boot" + 아키텍처 스타일 "Hexagonal" 선택 시 — 삭제
 - 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/layered/` 전체 (`spring/{java|kotlin}/hexagonal/`, 아키텍처 공통인 `spring/{java|kotlin}/repository-tools.md`, `spring/api-dto.md`는 유지)
 - Layered 전제 에이전트 6개: `.claude/agents/spring-domain-designer.md`, `spring-tdd-implementer.md`, `spring-refactorer.md`, `spring-test-author.md`, `spring-code-reviewer.md`, `spring-debugger.md` (`spring-hexagonal-*` 6개와, 아키텍처 스타일과 무관한 `spring-style-checker`/`spring-openapi-spec-author`는 유지)
+
+### 백엔드 스택 "Spring Boot" + 영속성 도구 "JPA" 선택 시 — 삭제
+- 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/repository-sql.md` (SQL-first 전용 규칙)
+
+### 백엔드 스택 "Spring Boot" + 영속성 도구 "SQL-first" 선택 시 — 삭제 + 편집
+- 선택한 언어·아키텍처의 `.claude/rules/backend/spring/{java|kotlin}/{layered|hexagonal}/repository.md`와 `.claude/rules/backend/spring/{java|kotlin}/repository-tools.md`를 삭제한다 (`repository-sql.md`가 대체한다).
+- Layered면 `spring/{java|kotlin}/layered/domain.md`를 편집한다: 2번(인프라 비종속)의 `@Entity` 마커 허용·orm.xml 분리 문장을 순수 Domain 기준(영속성 애노테이션 전면 금지)으로 수정하고, 9번(JPA 영속성 매핑) 섹션을 삭제하며, 마지막 금지 패턴의 orm.xml 항목과 도입부의 SQL-first 안내 문장을 정리한다. 편집 후 번호와 문맥이 자연스럽게 이어지는지 다시 읽어 확인한다.
+- Hexagonal이면 추가 편집이 없다 (`ports-and-adapters.md`의 `{Domain}JpaEntity` 언급은 `repository-sql.md` 2번의 대체 규정이 우선한다).
+- MongoDB/QueryDSL 질문은 이 경우 묻지 않았으므로 해당 편집 케이스도 적용하지 않는다.
+- **`spring-*` 에이전트는 수정하지 않는다.** 에이전트에는 JPA 전제 언급(Specification, JpaEntity 등)이 남는다. 3단계 보고 시 이 사실을 사용자에게 알린다.
 
 ### 백엔드 포함 + "NestJS" 선택 시 — 삭제
 - `.claude/rules/backend/spring/`, `.claude/rules/backend/fastapi/` 전체 (`nestjs/`, `shared/`는 유지)
@@ -107,11 +121,22 @@ FastAPI를 선택한 경우 백엔드 세부 질문은 없다(`fastapi.md`가 �
 - 언어·아키텍처 답변에 해당하는 `repository.md`에서 "도구 선택 계층" 표의 Level 2~3 행과 `repository-tools.md` 참조 문구, "Finder/Service 계층과의 통합" 다이어그램·금지 패턴의 QueryDSL/JdbcClient/jOOQ 언급을 정리해 본문과 표가 어긋나지 않도록 한다.
 - **`spring-*` 에이전트는 수정하지 않는다.** 일부 에이전트(`spring-domain-designer` 등)는 QueryDSL/JdbcClient 티어를 계속 언급한다. 3단계 보고 시 이 사실을 사용자에게 알린다.
 
-### 백엔드 스택 "NestJS" + ORM 선택 시 — 편집 (파일 삭제 아님)
-- `.claude/rules/backend/nestjs/nestjs.md`에서 선택하지 않은 ORM 관련 내용을 제거한다: 4번(영속성)의 해당 ORM 항목, 5번(Repository 도구)·6번(트랜잭션)·10번(금지 패턴)의 해당 ORM 도구 언급.
+### 백엔드 스택 "NestJS" + 영속성 도구(TypeORM/Prisma) 선택 시 — 편집 (파일 삭제 아님)
+- `.claude/rules/backend/nestjs/nestjs.md`에서 선택하지 않은 영속성 도구 관련 내용을 제거한다: 4번(영속성)의 다른 ORM 항목과 SQL-first(Kysely) 항목, 5번(Repository 도구)·6번(트랜잭션)·10번(금지 패턴)의 해당 도구 언급.
 - Prisma를 선택한 경우 금지 패턴의 TypeORM 컬럼 데코레이터 항목(`EntitySchema` 사용)도 함께 제거한다.
-- 편집 후 각 섹션이 선택한 ORM 단일 경로로 자연스럽게 읽히는지 다시 읽어 확인한다.
-- `nestjs-*` 에이전트는 두 ORM을 조건부로 함께 언급하므로 수정하지 않는다.
+- 편집 후 각 섹션이 선택한 도구 단일 경로로 자연스럽게 읽히는지 다시 읽어 확인한다.
+- `nestjs-*` 에이전트는 영속성 도구를 조건부로 함께 언급하므로 수정하지 않는다.
+
+### 백엔드 스택 "NestJS" + 영속성 도구 "사용 안 함(SQL-first)" 선택 시 — 편집 (파일 삭제 아님)
+- `.claude/rules/backend/nestjs/nestjs.md`에서 TypeORM/Prisma 관련 내용을 제거하고 SQL-first(Kysely) 경로만 남긴다: 4번(영속성)의 두 ORM 항목과 embedded 매핑 언급, 5번·6번의 ORM 도구 언급, 10번 금지 패턴의 TypeORM 컬럼 데코레이터 항목.
+- 편집 후 각 섹션이 Kysely 단일 경로로 자연스럽게 읽히는지 다시 읽어 확인한다.
+- **`nestjs-*` 에이전트는 수정하지 않는다.** 에이전트에는 ORM 전제 언급(EntitySchema 등)이 남는다. 3단계 보고 시 이 사실을 사용자에게 알린다.
+
+### 백엔드 스택 "FastAPI" + ORM 사용 여부 선택 시 — 편집 (파일 삭제 아님)
+- ORM 사용 선택 시: `.claude/rules/backend/fastapi/fastapi.md`에서 SQL-first 관련 내용을 제거한다 — 1번의 `models.py` 괄호 단서, 3번의 SQL-first 항목과 도구 고정 문장, 4번·5번·10번의 SQL-first/커넥션 언급.
+- SQL-first 선택 시: 반대로 ORM 경로를 제거한다 — 1번의 `models.py` 항목, 3번의 ORM 항목, 4번의 ORM 표현(`selectinload` 등), 5번의 `AsyncSession` 언급을 `AsyncConnection` 기준으로 정리.
+- 편집 후 각 섹션이 선택한 경로 하나로 자연스럽게 읽히는지 다시 읽어 확인한다.
+- **`fastapi-*` 에이전트는 수정하지 않는다.** 에이전트에는 SQLAlchemy ORM 전제 언급이 남을 수 있다. 3단계 보고 시 이 사실을 사용자에게 알린다.
 
 ### 백엔드 스택 "NestJS" + 검증 도구 선택 시 — 편집 (파일 삭제 아님)
 - class-validator 선택 시: `nestjs.md` 3번에서 Zod 허용 문장("Zod 스키마 기반 검증(`nestjs-zod`)도 허용하되 ... 통일한다")을 제거한다.
@@ -136,7 +161,7 @@ FastAPI를 선택한 경우 백엔드 세부 질문은 없다(`fastapi.md`가 �
 
 - 선택된 스택 조합 요약 (영역, 백엔드 스택·언어·아키텍처, 프론트엔드 프레임워크 등)
 - 삭제한 파일/디렉토리 목록과 편집한 파일 목록
-- 해당 시 에이전트 안내문 (NestJS+Zod, JPA만, Specification까지만 선택 시의 에이전트 미수정 안내)
+- 해당 시 에이전트 안내문 (NestJS+Zod, JPA만, Specification까지만, SQL-first 선택 시의 에이전트 미수정 안내)
 - 커밋하지 않았음을 명시하고, 커밋을 원하면 요청하도록 안내
 
 ## 하지 말아야 할 것

@@ -11,7 +11,7 @@ globs: "**/router.py,**/schemas.py,**/service.py,**/repository.py,**/models.py"
 
 ## 1. 프로젝트 구조
 
-- 기능(도메인) 단위로 패키지를 나눈다: `{feature}/router.py`, `{feature}/schemas.py`, `{feature}/service.py`, `{feature}/repository.py`, `{feature}/models.py`(ORM).
+- 기능(도메인) 단위로 패키지를 나눈다: `{feature}/router.py`, `{feature}/schemas.py`, `{feature}/service.py`, `{feature}/repository.py`, `{feature}/models.py`(ORM 사용 시 — SQL-first면 없음, 3번 참조).
 - 클래스 기반 Finder/Service 분리가 과할 정도로 단순한 기능이면, 모듈 레벨 함수로 조회/변경을 나눠도 된다. 다만 한 함수가 조회와 변경을 동시에 하지는 않는다(`shared/architecture.md` 7번).
 
 ## 2. Command/Query와 Pydantic
@@ -20,23 +20,26 @@ globs: "**/router.py,**/schemas.py,**/service.py,**/repository.py,**/models.py"
 - **다중 진입점 방어가 사실상 기본 제공된다**: Pydantic 모델은 인스턴스화 시점에 항상 검증되므로(Pydantic v2 기준), Command 객체를 어느 경로(HTTP 라우터, 백그라운드 태스크, 메시지 컨슈머)로 생성하든 동일하게 검증된다. Java/NestJS처럼 별도 검증 트리거를 신경 쓸 필요가 없다.
 - Router 입력 스키마(`schemas.py`)와 Service Command는 원칙적으로 분리하되, 단순 CRUD처럼 둘이 완전히 동일한 형태면 하나로 합쳐도 된다(`shared/architecture.md` 4번의 "연관 파라미터 그룹화" 취지를 해치지 않는 선에서 실용적으로 판단).
 
-## 3. Domain과 ORM 매핑
+## 3. Domain과 영속성 매핑
 
-- 도메인 로직이 단순하면 Pydantic 모델(또는 `dataclass`)에 메서드를 붙여 그대로 Domain으로 쓴다. 복잡한 불변 조건이 있는 경우에만 SQLAlchemy ORM 모델과 분리된 순수 Domain 클래스를 둔다.
-- SQLAlchemy 사용 시 ORM 모델(`models.py`)과 Domain을 분리했다면, 변환 책임은 Repository가 전담한다. Domain이 SQLAlchemy `Mapped`/`Column`을 직접 참조하지 않는다.
+ORM(SQLAlchemy ORM) 또는 SQL-first(ORM 미사용, SQLAlchemy Core 또는 async 드라이버 직접) 중 하나를 프로젝트 시작 시점에 고정한다.
+
+- 도메인 로직이 단순하면 Pydantic 모델(또는 `dataclass`)에 메서드를 붙여 그대로 Domain으로 쓴다. 복잡한 불변 조건이 있는 경우에만 저장소 모델과 분리된 순수 Domain 클래스를 둔다.
+- **ORM 사용 시**: ORM 모델(`models.py`)과 Domain을 분리했다면, 변환 책임은 Repository가 전담한다. Domain이 SQLAlchemy `Mapped`/`Column`을 직접 참조하지 않는다.
+- **SQL-first(ORM 미사용) 시**: SQLAlchemy **Core**(`select()`/`text()`, ORM 매핑 없음)를 기본으로 하고, 필요하면 asyncpg 등 async 드라이버를 직접 사용한다. `models.py`(ORM 모델)를 만들지 않고, `repository.py`가 SQL 실행과 Row → Pydantic 모델/`dataclass` 매핑을 전담한다. 테이블 메타데이터가 필요하면 Core `Table` 정의를 `repository.py`(또는 전용 모듈)에 둔다.
 - Value Object는 Pydantic `BaseModel`(`frozen=True`)이나 `dataclass(frozen=True)`로 표현한다.
 
 ## 4. Repository 도구 선택 (Escalation Ladder 적용)
 
-- 단순 조회: SQLAlchemy ORM의 기본 쿼리(`select(Model).where(...)`).
-- 동적 검색 조건 조합: 조건별 함수를 조합해 `select` 문에 `.where()`를 체이닝한다. 조건 조합 로직을 라우터/서비스가 아닌 Repository 모듈에 둔다.
-- 복잡한 조인/N+1 방지: `selectinload`/`joinedload`를 명시적으로 사용한다. 관계 로딩과 페이지네이션을 동시에 쓸 때는 N+1이나 중복 로우에 주의한다.
-- 대량 벌크/집계/네이티브 SQL: SQLAlchemy Core(`text()`, `insert().values(...)` 벌크)는 측정된 성능 문제가 있을 때만 사용한다.
+- 단순 조회: SQLAlchemy ORM의 기본 쿼리(`select(Model).where(...)`), (SQL-first) Core `select(table).where(...)`.
+- 동적 검색 조건 조합: 조건별 함수를 조합해 `select` 문에 `.where()`를 체이닝한다(ORM/Core 동일). 조건 조합 로직을 라우터/서비스가 아닌 Repository 모듈에 둔다.
+- 복잡한 조인/N+1 방지: (ORM) `selectinload`/`joinedload`를 명시적으로 사용한다. 관계 로딩과 페이지네이션을 동시에 쓸 때는 N+1이나 중복 로우에 주의한다. (SQL-first) 명시적 조인 쿼리로 해결한다 — 지연 로딩 자체가 없으므로 쿼리 수는 조인 설계로 통제한다.
+- 대량 벌크/집계/네이티브 SQL: `text()`·`insert().values(...)` 벌크는 (ORM에서는) 측정된 성능 문제가 있을 때만, (SQL-first에서는) Core 표현식으로 표현이 어려운 경우에만 사용한다. 항상 바인드 파라미터를 사용하고 문자열 연결로 SQL을 조립하지 않는다.
 
 ## 5. 트랜잭션
 
-- 세션(`AsyncSession`)은 요청 단위로 FastAPI 의존성 주입(`Depends`)을 통해 공급한다. Service 함수가 세션을 직접 생성하지 않는다.
-- 쓰기 흐름은 세션 컨텍스트 안에서 커밋하고, 조회 전용 흐름은 커밋을 호출하지 않는다(읽기 전용 의도를 코드로 드러낸다).
+- 세션(`AsyncSession`) 또는 (SQL-first) 커넥션(`AsyncConnection`)은 요청 단위로 FastAPI 의존성 주입(`Depends`)을 통해 공급한다. Service 함수가 세션/커넥션을 직접 생성하지 않는다.
+- 쓰기 흐름은 세션/트랜잭션 컨텍스트 안에서 커밋하고, 조회 전용 흐름은 커밋을 호출하지 않는다(읽기 전용 의도를 코드로 드러낸다).
 
 ## 6. API 스펙: code-first가 원칙이다
 
@@ -66,8 +69,9 @@ globs: "**/router.py,**/schemas.py,**/service.py,**/repository.py,**/models.py"
 
 ## 10. 금지 패턴
 
-- Router 스키마를 검증 없이 그대로 ORM 모델에 매핑해 저장하지 않는다(Repository/Service를 거치지 않고 직접 커밋).
-- 세션을 Service 함수 내부에서 직접 생성하지 않는다(`Depends`로 주입).
+- Router 스키마를 검증 없이 그대로 저장소 모델에 매핑해 저장하지 않는다(Repository/Service를 거치지 않고 직접 커밋).
+- 세션/커넥션을 Service 함수 내부에서 직접 생성하지 않는다(`Depends`로 주입).
+- SQL을 문자열 연결/포매팅으로 조립하지 않는다. 항상 바인드 파라미터를 사용한다(4번).
 - 비즈니스 규칙 검증(형식이 아닌 규칙 위반)을 Pydantic validator에 넣지 않는다 — 형식 검증은 Pydantic, 비즈니스 검증은 Domain의 몫이다(`shared/architecture.md` 5번).
 - Service/Domain 계층에서 `HTTPException`을 직접 던지지 않는다(8번).
 - `async def` 라우터/서비스에서 동기 블로킹 I/O(동기 DB 드라이버, `requests`, `time.sleep`)를 호출하지 않는다(9번).
