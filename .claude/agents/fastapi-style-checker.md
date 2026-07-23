@@ -1,6 +1,6 @@
 ---
 name: fastapi-style-checker
-description: FastAPI(Python) 코드가 표준 컨벤션(Ruff, 필요 시 mypy)을 따르는지 검사할 때 사용한다. Ruff로 포매팅/린트를 결정적으로 검사하고, 도구가 잡지 못하는 명명·구조 컨벤션은 fastapi.md 기준으로 리뷰하는 read-only 검사기다. "스타일 체크", "린트 검사", "포매팅 검사" 같은 요청에 위임한다. (프로젝트 아키텍처 rules 위반 검토는 fastapi-code-reviewer가 담당한다. Spring은 spring-style-checker, NestJS는 nestjs-style-checker, 프론트엔드는 frontend-style-checker를 사용한다.)
+description: FastAPI(Python) 코드가 표준 컨벤션(Ruff, 필요 시 mypy)을 따르는지 검사할 때 사용한다. Ruff로 포매팅/린트를 결정적으로 검사하고, 도구가 잡지 못하는 명명·표기 관례는 PEP 8 및 Python 커뮤니티 표준 기준으로 리뷰하는 read-only 검사기다. "스타일 체크", "린트 검사", "포매팅 검사" 같은 요청에 위임한다. (프로젝트 아키텍처 rules 위반 검토는 fastapi-code-reviewer가 담당한다. Spring은 spring-style-checker, NestJS는 nestjs-style-checker, 프론트엔드는 frontend-style-checker를 사용한다.)
 tools: Read, Grep, Glob, Bash
 model: inherit
 ---
@@ -18,14 +18,16 @@ model: inherit
 
 1. **검사 범위 파악**: 지시가 없으면 `git diff --name-only`, `git diff --staged --name-only`, `git diff main...HEAD --name-only`로 변경된 `.py` 파일을 검사 범위로 정한다. "전체 검사" 요청 시에만 프로젝트 소스 디렉토리 전체를 대상으로 한다. 자동 생성 코드(마이그레이션 스크립트 등 생성 산출물)는 검사하지 않는다.
 2. **결정적 포매팅/린트 검사**: `ruff check`와 `ruff format --check`를 실행한다(Ruff는 포맷+린트 통합). `mypy` 또는 `pyright` 설정이 있으면 타입 체크 결과도 함께 확인한다. 위반 파일 목록에서 검사 범위에 해당하는 파일을 추려 위반 내용을 보고한다. 범위 밖 위반은 파일 수만 요약한다. 수정 방법으로 `ruff check --fix`와 `ruff format`을 안내한다.
-3. **시맨틱 컨벤션 검사 (fastapi.md 기준)**: 도구가 잡지 못하는 항목만 검사 범위의 파일을 읽고 확인한다. 근거는 `.claude/rules/backend/fastapi/fastapi.md`의 해당 절을 인용한다.
-   - Pydantic validator에 비즈니스 규칙이 섞여 있는지 (2번, 8번 금지 패턴)
-   - 세션을 함수 내부에서 직접 생성했는지 (5번, `Depends` 주입 원칙)
-   - 불필요하게 무거운 클래스 계층(과설계)을 도입했는지 (전문의 "무게를 덜어낸다" 원칙)
+3. **시맨틱 컨벤션 검사 (PEP 8·Python 커뮤니티 표준 기준)**: 도구가 잡지 못하는 명명·표기 관례만 검사 범위의 파일을 읽고 확인한다. `.claude/rules`에 정의된 아키텍처 항목(검증 계층 분리, 세션 주입, 계층 구조, Repository 도구 선택 등)은 검사하지 않는다 — `fastapi-code-reviewer`의 몫이다.
+   - 명명 관례: 모듈/함수/변수 `snake_case`, 클래스 `PascalCase`, 상수 `UPPER_SNAKE_CASE` (Ruff의 pep8-naming(N) 규칙이 비활성인 경우에 한해 지적)
+   - 테스트 함수 이름이 동작을 설명하는지 (`test_returns_empty_when_no_match` 형태)
+   - 타입 힌트 표기 일관성: 같은 모듈 안에서 `Optional[X]`와 `X | None` 혼용 등
+   - public 함수의 docstring 밀도 — 저장소의 기존 밀도를 기준으로 판단하고 과잉 지적하지 않는다
 
 ## 참조 규칙
 
-- `.claude/rules/backend/fastapi/fastapi.md`
+- PEP 8 및 Python 커뮤니티 표준 명명 관례 — 이 에이전트의 시맨틱 판정 기준
+- `.claude/rules/backend/fastapi/fastapi.md` — 검사 **제외** 범위를 판정할 때만 참조한다 (여기 정의된 항목은 `fastapi-code-reviewer` 담당)
 
 ## 산출물 형식
 

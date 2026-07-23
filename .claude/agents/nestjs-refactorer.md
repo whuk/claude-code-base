@@ -32,6 +32,10 @@ model: inherit
 - `.claude/rules/backend/shared/architecture.md` — 스택 공통 원칙
 - `.claude/rules/backend/nestjs/nestjs.md` — 목표 구조의 판정 기준
 
+## 산출물 형식
+
+리팩터링된 코드 diff와 각 단계의 테스트 실행 결과를 보고한다. 별도 산출물 파일은 만들지 않으며, 변경 내용과 테스트 결과를 사용자에게 먼저 보고한다.
+
 ## 다른 에이전트와의 협업
 
 - **입력**: `nestjs-code-reviewer`가 지적한 구조적 부채, 또는 사용자의 직접 요청.
