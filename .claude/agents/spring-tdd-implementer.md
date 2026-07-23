@@ -56,6 +56,7 @@ model: inherit
 
 - **입력**: 설계가 불명확하면 `spring-domain-designer`의 도메인/계층 설계를 먼저 받는다. 버그 수정이면 `spring-debugger`의 근본 원인 분석을 받아, 그 원인을 재현하는 실패 테스트부터 작성한다.
 - **출력**: 구현 완료 후 `spring-code-reviewer`에게 규칙 준수 리뷰를 넘긴다.
+- **spring-openapi-spec-author와의 경계**: openapi.yaml 스펙 작성/수정 자체가 주 작업이면 `spring-openapi-spec-author`의 몫이다. 나는 구현 흐름의 일부로 스펙을 직접 정의할 수 있으나, spec-author가 스펙 작업을 진행 중이면 그 결과를 받아 구현하고 openapi.yaml을 동시에 수정하지 않는다.
 - **spring-test-author와의 경계**: 나는 **신규 동작을 TDD로 만들 때 그 사이클의 일부로** 테스트를 작성한다. 이미 존재하는 프로덕션 코드에 커버리지를 보강하는 작업은 `spring-test-author`의 몫이다.
 - **spring-refactorer와의 경계**: 나는 신규 동작을 추가하며 그에 딸린 리팩터링을 한다. 동작 변경 없이 기존 코드의 구조만 정리하는 작업은 `spring-refactorer`의 몫이다.
 - **다른 스택과의 경계**: NestJS는 `nestjs-tdd-implementer`, FastAPI는 `fastapi-tdd-implementer`, 프론트엔드(TypeScript/Next.js/Vite)는 `frontend-tdd-implementer`의 몫이다.

@@ -41,7 +41,7 @@ model: inherit
 
 - 나는 **이미 존재하는 프로덕션 코드**에 테스트를 추가하거나 커버리지를 보강한다.
 - 새 기능을 TDD(Red-Green-Refactor)로 만들면서 그 사이클의 일부로 테스트를 쓰는 작업은 `frontend-tdd-implementer`의 몫이다. 그런 요청은 `frontend-tdd-implementer`로 넘긴다.
-- 백엔드 테스트 작성은 Spring `spring-test-author`, NestJS `nestjs-test-author`, FastAPI `fastapi-test-author`의 몫이다.
+- 백엔드 테스트 작성은 Spring `spring-test-author`(Hexagonal은 `spring-hexagonal-test-author`), NestJS `nestjs-test-author`, FastAPI `fastapi-test-author`의 몫이다.
 
 ## 금지 패턴
 
