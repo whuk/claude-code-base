@@ -7,6 +7,8 @@ globs: "**/*.controller.ts,**/*.service.ts,**/*.module.ts,**/*.entity.ts,**/*.re
 
 `shared/architecture.md`의 공통 원칙과 `shared/rest-api.md`의 REST 설계 규약(URI, 상태 코드, 페이지네이션, 에러 형식)을 전제로, NestJS 고유 구현 방법만 다룬다. NestJS는 애초에 Angular/Spring 스타일 구조(데코레이터, DI, 모듈)에서 설계됐기 때문에, Java/Spring 규칙(`spring/`)과 사상을 거의 그대로 공유한다.
 
+이 프로젝트가 Spring Boot나 FastAPI를 채택했다면 이 파일은 적용 대상이 아니다. 백엔드 스택(Spring/NestJS/FastAPI)은 한 프로젝트에서 하나만 사용하므로, 실제로 채택하지 않은 스택의 규칙 파일은 프로젝트에서 제외한다 (`spring/`, `fastapi.md` 참조).
+
 ## 1. 모듈/계층 구조
 
 - 기능 단위로 `Module`을 나눈다. 하나의 `Module`이 관련된 `Controller`, `Service`(Finder/Write), `Repository` 프로바이더를 묶는다.

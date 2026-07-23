@@ -1,11 +1,13 @@
 ---
 description: FastAPI 백엔드 고유 컨벤션 (backend/shared/architecture.md 전제, DDD 강제 수준은 완화)
-globs: "**/routers/**,**/schemas/**,**/*_service.py,**/*_repository.py"
+globs: "**/router.py,**/schemas.py,**/service.py,**/repository.py,**/models.py"
 ---
 
 # FastAPI 규칙
 
 `shared/architecture.md`의 공통 원칙과 `shared/rest-api.md`의 REST 설계 규약(URI, 상태 코드, 페이지네이션, 에러 형식)을 전제로 하되, Python/FastAPI 생태계 관례에 맞게 무게를 덜어낸다. FastAPI는 가볍고 명시적인 스타일을 지향하므로, Aggregate Root·Specification 패턴 같은 Java 스타일 DDD 장치를 강제하지 않는다. **Rich Domain 원칙(`shared/architecture.md` 6번)은 권장이지 필수가 아니다** — 도메인 로직이 단순하면 트랜잭션 스크립트 스타일(라우터 → 서비스 함수 → ORM)도 허용한다.
+
+이 프로젝트가 Spring Boot나 NestJS를 채택했다면 이 파일은 적용 대상이 아니다. 백엔드 스택(Spring/NestJS/FastAPI)은 한 프로젝트에서 하나만 사용하므로, 실제로 채택하지 않은 스택의 규칙 파일은 프로젝트에서 제외한다 (`spring/`, `nestjs.md` 참조).
 
 ## 1. 프로젝트 구조
 

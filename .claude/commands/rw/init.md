@@ -42,6 +42,9 @@ claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용
 (프론트엔드 "Vite" 선택 시)
 - "라우팅 라이브러리는 무엇을 사용합니까?" → TanStack Router(기본 검토 대상) / React Router
 
+(풀스택 + 백엔드 "NestJS" 선택 시)
+- "프론트엔드 소스 루트 경로는 무엇입니까?" (예: `apps/web`, `frontend`, `web`) — 백엔드와 프론트엔드가 모두 TypeScript이므로 frontend rules의 glob 범위를 좁히는 데 사용한다 (2단계의 해당 편집 규칙 참조)
+
 FastAPI를 선택한 경우 백엔드 세부 질문은 없다(`fastapi.md`가 단일 경로만 정의한다). Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 
 ## 2단계: 삭제/편집 대상 확정
@@ -63,11 +66,11 @@ FastAPI를 선택한 경우 백엔드 세부 질문은 없다(`fastapi.md`가 �
 - `.claude/rules/backend/spring/java/` 전체 (`spring/kotlin/`, `spring/api-dto.md`는 유지)
 
 ### 백엔드 스택 "Spring Boot" + 아키텍처 스타일 "Layered" 선택 시 — 삭제
-- 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/hexagonal/` 전체 (`spring/{java|kotlin}/layered/`, `spring/api-dto.md`는 유지)
+- 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/hexagonal/` 전체 (`spring/{java|kotlin}/layered/`, 아키텍처 공통인 `spring/{java|kotlin}/repository-tools.md`, `spring/api-dto.md`는 유지)
 - Hexagonal 전담 에이전트 6개: `.claude/agents/spring-hexagonal-*.md`
 
 ### 백엔드 스택 "Spring Boot" + 아키텍처 스타일 "Hexagonal" 선택 시 — 삭제
-- 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/layered/` 전체 (`spring/{java|kotlin}/hexagonal/`, `spring/api-dto.md`는 유지)
+- 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/layered/` 전체 (`spring/{java|kotlin}/hexagonal/`, 아키텍처 공통인 `spring/{java|kotlin}/repository-tools.md`, `spring/api-dto.md`는 유지)
 - Layered 전제 에이전트 6개: `.claude/agents/spring-domain-designer.md`, `spring-tdd-implementer.md`, `spring-refactorer.md`, `spring-test-author.md`, `spring-code-reviewer.md`, `spring-debugger.md` (`spring-hexagonal-*` 6개와, 아키텍처 스타일과 무관한 `spring-style-checker`/`spring-openapi-spec-author`는 유지)
 
 ### 백엔드 포함 + "NestJS" 선택 시 — 삭제
@@ -97,10 +100,12 @@ FastAPI를 선택한 경우 백엔드 세부 질문은 없다(`fastapi.md`가 �
 ### 백엔드 스택 "Spring Boot" + "JPA만" 선택 시 — 편집 (파일 삭제 아님)
 - 언어·아키텍처 스타일 답변에 따라 `.claude/rules/backend/spring/{java|kotlin}/layered/test.md` 또는 `.claude/rules/backend/spring/{java|kotlin}/hexagonal/test.md`에서 MongoDB 관련 내용을 제거한다: base class 표에서 `IntegrationTestBase`(MongoDB Repository/Persistence Adapter 통합), `WebIntegrationTestBase`(MongoDB Controller/Web Adapter) 행을 삭제하고, MongoDB 통합 테스트 관련 문단을 제거해 JPA 전용 안내만 남긴다.
 - Edit 도구로 신중하게 처리하고, 편집 후 표/문단이 자연스럽게 이어지는지 다시 읽어 확인한다.
+- **`spring-*` 에이전트는 수정하지 않는다.** `spring-test-author`/`spring-hexagonal-test-author`의 base class 표에는 MongoDB 행이 남는다. 3단계 보고 시 이 사실을 사용자에게 알린다.
 
-### 백엔드 스택 "Spring Boot" + "Specification까지만" 선택 시 — 편집 (파일 삭제 아님)
-- 언어·아키텍처 스타일 답변에 따라 `.claude/rules/backend/spring/{java|kotlin}/layered/repository.md` 또는 `.claude/rules/backend/spring/{java|kotlin}/hexagonal/repository.md`에서 QueryDSL 사용 규칙, jOOQ를 SQL 빌더로 사용하는 섹션을 제거한다.
-- "도구 선택 계층" 표와 "Finder/Service 계층과의 통합" 다이어그램에 QueryDSL/jOOQ 관련 언급이 남아있으면 함께 정리해 본문과 표가 어긋나지 않도록 한다.
+### 백엔드 스택 "Spring Boot" + "Specification까지만" 선택 시 — 삭제 + 편집
+- 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/repository-tools.md`(QueryDSL/JdbcClient/jOOQ 상세 규칙)를 삭제한다.
+- 언어·아키텍처 답변에 해당하는 `repository.md`에서 "도구 선택 계층" 표의 Level 2~3 행과 `repository-tools.md` 참조 문구, "Finder/Service 계층과의 통합" 다이어그램·금지 패턴의 QueryDSL/JdbcClient/jOOQ 언급을 정리해 본문과 표가 어긋나지 않도록 한다.
+- **`spring-*` 에이전트는 수정하지 않는다.** 일부 에이전트(`spring-domain-designer` 등)는 QueryDSL/JdbcClient 티어를 계속 언급한다. 3단계 보고 시 이 사실을 사용자에게 알린다.
 
 ### 백엔드 스택 "NestJS" + ORM 선택 시 — 편집 (파일 삭제 아님)
 - `.claude/rules/backend/nestjs/nestjs.md`에서 선택하지 않은 ORM 관련 내용을 제거한다: 4번(영속성)의 해당 ORM 항목, 5번(Repository 도구)·6번(트랜잭션)·10번(금지 패턴)의 해당 ORM 도구 언급.
@@ -112,6 +117,10 @@ FastAPI를 선택한 경우 백엔드 세부 질문은 없다(`fastapi.md`가 �
 - class-validator 선택 시: `nestjs.md` 3번에서 Zod 허용 문장("Zod 스키마 기반 검증(`nestjs-zod`)도 허용하되 ... 통일한다")을 제거한다.
 - Zod 선택 시: `nestjs.md` 3번을 `nestjs-zod` 기준으로 조정한다 — class-validator 기본 문장을 Zod 스키마 기반 검증으로 바꾸고, 다중 진입점 방어 항목의 `validateOrReject()` 언급을 Command 생성 시점의 Zod 스키마 `parse()` 호출로 대체한다.
 - **Zod 선택 시 `nestjs-*` 에이전트는 수정하지 않는다.** `nestjs-tdd-implementer`/`nestjs-code-reviewer`/`nestjs-domain-designer`는 class-validator 전제로 작성돼 있다. 3단계 보고 시 이 사실을 사용자에게 명시적으로 알린다: "nestjs 에이전트들은 class-validator 전제입니다. Zod 기준으로 활용하려면 에이전트를 별도로 조정해야 합니다."
+
+### 풀스택 + 백엔드 "NestJS" 선택 시 — 편집 (파일 삭제 아님)
+- 백엔드와 프론트엔드가 모두 TypeScript이므로 `frontend/typescript.md`의 globs(`**/*.ts`)가 백엔드 소스에도 매칭된다. 1단계 라운드 3에서 답변받은 프론트엔드 소스 루트 경로를 `frontend/*.md`의 globs에 프리픽스로 적용한다 (예: `**/*.ts` → `apps/web/**/*.ts`, `**/*.tsx` → `apps/web/**/*.tsx`).
+- 편집 후 globs가 실제 프론트엔드 파일 경로와 매칭되는지 경로 예시로 확인한다.
 
 ### 프론트엔드 "Vite" + 라우팅 라이브러리 선택 시 — 편집 (파일 삭제 아님)
 - `.claude/rules/frontend/vite.md` 3번(라우팅)에서 선택하지 않은 라이브러리 항목을 제거하고, 선택한 라이브러리를 확정 문장으로 바꾼다. "둘 중 하나를 프로젝트 시작 시점에 고정한다" 문장은 선택이 끝났으므로 제거한다.
@@ -127,7 +136,7 @@ FastAPI를 선택한 경우 백엔드 세부 질문은 없다(`fastapi.md`가 �
 
 - 선택된 스택 조합 요약 (영역, 백엔드 스택·언어·아키텍처, 프론트엔드 프레임워크 등)
 - 삭제한 파일/디렉토리 목록과 편집한 파일 목록
-- 해당 시 에이전트 안내문 (NestJS+Zod의 `nestjs-*` 안내)
+- 해당 시 에이전트 안내문 (NestJS+Zod, JPA만, Specification까지만 선택 시의 에이전트 미수정 안내)
 - 커밋하지 않았음을 명시하고, 커밋을 원하면 요청하도록 안내
 
 ## 하지 말아야 할 것
@@ -135,4 +144,4 @@ FastAPI를 선택한 경우 백엔드 세부 질문은 없다(`fastapi.md`가 �
 - 사용자 확인 없이 바로 삭제/편집을 실행하지 않는다.
 - 원본 템플릿 저장소에서 실행해 원본을 훼손하지 않는다(0단계 참조).
 - 질문받지 않은 조합을 임의로 판단해서 처리하지 않는다.
-- Zod를 선택했다고 해서 class-validator 전제로 작성된 `nestjs-*` 에이전트를 임의로 고치지 않는다(별도 작업).
+- rules를 편집했더라도 전제가 다른 에이전트(`nestjs-*`의 class-validator 전제, `spring-*`의 MongoDB/QueryDSL 언급 등)를 임의로 고치지 않는다(별도 작업). 3단계 보고에서 안내만 한다.

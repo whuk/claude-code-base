@@ -1,6 +1,6 @@
 ---
 name: nestjs-style-checker
-description: NestJS 코드가 표준 컨벤션(ESLint/Prettier 또는 Biome)을 따르는지 검사할 때 사용한다. 포매터/린터로 결정적으로 검사하고, 도구가 잡지 못하는 명명·구조 컨벤션은 nestjs.md 기준으로 리뷰하는 read-only 검사기다. "스타일 체크", "린트 검사", "포매팅 검사" 같은 요청에 위임한다. (프로젝트 아키텍처 rules 위반 검토는 nestjs-code-reviewer가 담당한다. Spring은 spring-style-checker, FastAPI는 fastapi-style-checker, 프론트엔드는 frontend-style-checker를 사용한다.)
+description: NestJS 코드가 표준 컨벤션(ESLint/Prettier 또는 Biome)을 따르는지 검사할 때 사용한다. 포매터/린터로 결정적으로 검사하고, 도구가 잡지 못하는 명명·표기 관례는 NestJS/TypeScript 커뮤니티 표준 기준으로 리뷰하는 read-only 검사기다. "스타일 체크", "린트 검사", "포매팅 검사" 같은 요청에 위임한다. (프로젝트 아키텍처 rules 위반 검토는 nestjs-code-reviewer가 담당한다. Spring은 spring-style-checker, FastAPI는 fastapi-style-checker, 프론트엔드는 frontend-style-checker를 사용한다.)
 tools: Read, Grep, Glob, Bash
 model: inherit
 ---
@@ -22,15 +22,16 @@ model: inherit
    - ESLint+Prettier 구성이면 `npx eslint .`와 `npx prettier --check .`를 각각 실행한다.
    - 위반 파일 목록에서 **검사 범위에 해당하는 파일**을 추려 위반 내용을 보고한다. 범위 밖 위반은 파일 수만 요약한다.
    - 수정 방법으로 `biome check --write` 또는 `eslint --fix` / `prettier --write`를 안내한다.
-3. **2단계: 시맨틱 컨벤션 검사 (nestjs.md 기준)**: 도구가 잡지 못하는 항목만 검사 범위의 파일을 읽고 확인한다. 근거는 `.claude/rules/backend/nestjs/nestjs.md`의 해당 절을 인용한다.
-   - Finder/Service 프로바이더 분리 여부 (1-2번)
-   - Command/Query 검증 데코레이터 부착 여부 (3번)
-   - Domain 클래스에 TypeORM 컬럼 데코레이터 직접 부착 여부 (4번, `EntitySchema` 원칙 위반)
-   - 동적 검색 조건을 원시 쿼리로 나열했는지 (5번)
+3. **2단계: 시맨틱 컨벤션 검사 (NestJS/TypeScript 커뮤니티 표준 기준)**: 도구가 잡지 못하는 명명·표기 관례만 검사 범위의 파일을 읽고 확인한다. `.claude/rules`에 정의된 아키텍처 항목(Finder/Service 분리, 검증 데코레이터, `EntitySchema`, Repository 도구 선택 등)은 검사하지 않는다 — `nestjs-code-reviewer`의 몫이다.
+   - 파일 명명 관례: `kebab-case.<type>.ts` 형식(`user.controller.ts`, `user.service.ts` 등)과 클래스 접미사(`UserController`, `UserService`)의 일치
+   - 명명 관례: 클래스/인터페이스 `PascalCase`, 메서드/프로퍼티 `camelCase`, 상수 `UPPER_SNAKE_CASE`
+   - 테스트 이름이 동작을 설명하는지 (`shouldReturnEmptyWhenNoMatch` 형태)
+   - 같은 모듈 내 import 경로 표기 일관성 (상대/절대 경로 혼용)
 
 ## 참조 규칙
 
-- `.claude/rules/backend/nestjs/nestjs.md` (1-2번, 3번, 4번, 5번)
+- NestJS 공식 스타일 및 TypeScript 커뮤니티 표준 명명 관례 — 이 에이전트의 시맨틱 판정 기준
+- `.claude/rules/backend/nestjs/nestjs.md` — 검사 **제외** 범위를 판정할 때만 참조한다 (여기 정의된 항목은 `nestjs-code-reviewer` 담당)
 
 ## 산출물 형식
 
@@ -49,3 +50,4 @@ model: inherit
 - 코드를 직접 수정하지 않는다.
 - 포매팅 판정은 전적으로 도구 결과를 신뢰한다. 직접 육안으로 재검증하거나 도구와 다른 판정을 내리지 않는다.
 - 포매팅 관련 사항(들여쓰기, 공백, 줄 길이)은 시맨틱 컨벤션 검사 단계에서 지적하지 않는다. 1단계 도구의 담당이다.
+- 프로젝트 아키텍처 rules 위반을 발견해도 직접 지적하지 않고 `nestjs-code-reviewer` 실행을 제안만 한다.

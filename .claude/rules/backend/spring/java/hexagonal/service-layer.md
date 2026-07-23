@@ -5,20 +5,20 @@ globs: "**/*Service.java,**/*Finder.java,**/*UseCase.java"
 
 # Application Service 클래스 분리 및 트랜잭션 규칙
 
-`application/service` 패키지의 클래스 작성 규칙이다. `layered/service-layer.md`의 Finder/Service 분리, 트랜잭션 선언 규칙을 그대로 따르되, 각 클래스가 `port/in`의 UseCase 인터페이스를 구현한다는 점이 다르다.
+`application/service` 패키지의 클래스 작성 규칙이다. Finder/Service 분리와 클래스 단위 트랜잭션 선언 원칙은 Layered와 동일하되, 각 클래스가 `port/in`의 UseCase 인터페이스를 구현한다는 점이 다르다.
 
 이 프로젝트가 Layered를 채택했다면 이 파일은 적용 대상이 아니다 (`layered/service-layer.md` 참조). 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다. Java와 Kotlin 규칙 파일을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 언어의 규칙 파일도 프로젝트에서 제외한다 (`kotlin/hexagonal/service-layer.md` 참조).
 
 ## 1. 핵심 원칙
 
-- 하나의 Aggregate에 대해 **Finder 클래스**와 **Service 클래스**를 분리하여 작성한다(`layered/service-layer.md`와 동일).
+- 하나의 Aggregate에 대해 **Finder 클래스**와 **Service 클래스**를 분리하여 작성한다(Layered와 동일한 원칙).
 - **Finder**: `{Domain}QueryUseCase`를 구현하며, 조회(Read) 전용 로직을 담당한다.
 - **Service**: `{Domain}CommandUseCase`를 구현하며, 생성/수정/삭제 등 상태 변경(Write) 로직을 담당한다.
 - Finder/Service는 영속성 접근이 필요할 때 `port/out`의 `{Domain}QueryPort`/`{Domain}CommandPort`만 주입받는다. Adapter 구현체를 직접 알지 못한다(`ports-and-adapters.md` 5번).
 
 ## 2. 트랜잭션 선언 규칙
 
-- 트랜잭션 어노테이션은 **클래스 단위**로 선언한다. 메서드마다 개별 선언하지 않는다(`layered/service-layer.md`와 동일).
+- 트랜잭션 어노테이션은 **클래스 단위**로 선언한다. 메서드마다 개별 선언하지 않는다(Layered와 동일한 원칙).
 - **Finder 클래스**: `@Transactional(readOnly = true)`를 클래스에 선언한다.
 - **Service 클래스**: `@Transactional`을 클래스에 선언한다.
 - 트랜잭션 경계는 Application Service에 있다. Persistence Adapter나 Domain에 트랜잭션 애노테이션을 두지 않는다 — Adapter는 Port 계약을 이행할 뿐 트랜잭션 시작/종료를 책임지지 않는다.
