@@ -21,8 +21,7 @@ globs: "**/vite.config.*,**/vite-env.d.ts,**/src/routes/**,**/src/features/**"
 
 ## 3. 라우팅
 
-- 엔드투엔드 타입 안전성(라우트 파라미터, 검색 파라미터)이 필요하면 TanStack Router를 기본으로 검토한다. TanStack Query와 캐시/devtools를 공유해 궁합이 좋다.
-- 낮은 러닝커브나 SSR/풀스택 전환 가능성이 더 중요하면 React Router를 대안으로 사용해도 된다. 둘 중 하나를 프로젝트 시작 시점에 고정한다.
+- 라우팅 라이브러리를 프로젝트 시작 시점에 하나로 고정한다. 선택 기준과 라이브러리별 적용은 채택한 라우팅 파일(`vite-routing-*.md`)을 따른다.
 
 ## 4. Alias와 코드 스플리팅
 

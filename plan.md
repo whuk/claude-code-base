@@ -61,11 +61,11 @@
 
 ### Phase 3: A그룹 분리 — NestJS / FastAPI / Vite
 
-- [ ] `nestjs.md`의 영속성 섹션(4·5·6·10번 해당 부분)을 `nestjs-persistence-{typeorm,prisma,sqlfirst}.md`로 분리하고 `nestjs.md`는 영속성-무관 핵심으로 완결시킨다 → 검증: 각 영속성 파일 단독으로 해당 도구 경로가 완결되고, `nestjs.md`에 특정 ORM 종속 문장이 없음
-- [ ] `nestjs.md`의 검증 섹션(3번)을 `nestjs-validation-{classvalidator,zod}.md`로 분리한다 → 검증: 두 파일이 각각 완결되고 `nestjs.md`에 검증 도구 선택 잔여물이 없음
-- [ ] `fastapi.md`의 영속성 갈래(ORM/SQL-first)를 `fastapi-persistence-{orm,sqlfirst}.md`로 분리한다 → 검증: 각 파일 단독 완결, `fastapi.md`에 미선택 경로 문장 없음
-- [ ] `vite.md`의 라우팅 섹션(3번)을 `vite-routing-{tanstack,reactrouter}.md`로 분리한다 → 검증: 두 파일 각각 완결, `vite.md`에 미선택 라이브러리 문장 없음
-- [ ] 각 분리 파일에 올바른 frontmatter(글로벌 glob/description)를 부여해 템플릿 상태에서 의도대로 로드되게 한다 → 검증: 분리 파일 frontmatter가 원본 파일 규약과 일치
+- [x] `nestjs.md`의 영속성 섹션(4·5·6·10번 해당 부분)을 `nestjs-persistence-{typeorm,prisma,sqlfirst}.md`로 분리하고 `nestjs.md`는 영속성-무관 핵심으로 완결시킨다 → 검증: 각 영속성 파일 단독으로 해당 도구 경로가 완결되고, `nestjs.md`에 특정 ORM 종속 문장이 없음
+- [x] `nestjs.md`의 검증 섹션(3번)을 `nestjs-validation-{classvalidator,zod}.md`로 분리한다 → 검증: 두 파일이 각각 완결되고 `nestjs.md`에 검증 도구 선택 잔여물이 없음
+- [x] `fastapi.md`의 영속성 갈래(ORM/SQL-first)를 `fastapi-persistence-{orm,sqlfirst}.md`로 분리한다 → 검증: 각 파일 단독 완결, `fastapi.md`에 미선택 경로 문장 없음
+- [x] `vite.md`의 라우팅 섹션(3번)을 `vite-routing-{tanstack,reactrouter}.md`로 분리한다 → 검증: 두 파일 각각 완결, `vite.md`에 미선택 라이브러리 문장 없음
+- [x] 각 분리 파일에 올바른 frontmatter(글로벌 glob/description)를 부여해 템플릿 상태에서 의도대로 로드되게 한다 → 검증: 분리 파일 frontmatter가 원본 파일 규약과 일치
 
 ### Phase 4: init.md 3단계 재작성 (편집 → 삭제/rename)
 

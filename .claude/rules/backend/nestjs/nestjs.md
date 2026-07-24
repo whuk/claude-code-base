@@ -23,30 +23,26 @@ globs: "**/*.controller.ts,**/*.service.ts,**/*.module.ts,**/*.entity.ts,**/*.re
 ## 3. Command/Query와 검증
 
 - Controller의 입력 DTO와 Service의 Command/Query는 별도 클래스로 분리한다(Web DTO를 Service로 그대로 넘기지 않는다, `shared/architecture.md` 1-2번).
-- 검증은 `class-validator` 데코레이터(`@IsString()`, `@IsEmail()`, `@ValidateNested()` 등)를 기본으로 한다. Zod 스키마 기반 검증(`nestjs-zod`)도 허용하되 한 프로젝트 내에서는 하나로 통일한다.
-- **다중 진입점 방어**(`shared/architecture.md` 5번): Command/Query 클래스에도 Controller DTO와 동일한 검증 데코레이터를 붙인다. Service 메서드 진입점에서 `ValidationPipe`를 명시적으로 적용하거나, Command 생성 시점에 `class-validator`의 `validateOrReject()`를 직접 호출해 HTTP 경로를 거치지 않는 호출(메시지 컨슈머, 배치, 다른 서비스의 직접 호출)도 방어한다.
+- 검증 도구는 프로젝트 시작 시점에 하나로 고정한다. 검증 데코레이터/스키마 작성과 다중 진입점 방어의 구체 트리거 방식은 채택한 검증 파일(`nestjs-validation-*.md`)을 따른다.
+- **다중 진입점 방어**(`shared/architecture.md` 5번): Command/Query 클래스에도 Controller DTO와 동일한 검증 규칙을 적용해, HTTP 경로를 거치지 않는 호출(메시지 컨슈머, 배치, 다른 서비스의 직접 호출)도 방어한다. Web 계층 검증만으로는 이런 진입점이 방어되지 않는다.
 - 연관 파라미터 4개 이상은 Value Object(별도 클래스 또는 중첩 DTO)로 그룹화한다(`shared/architecture.md` 4번).
 
 ## 4. 영속성 (도구별 Domain 매핑)
 
-ORM(TypeORM/Prisma) 또는 SQL-first(ORM 미사용, Kysely) 중 하나를 프로젝트 시작 시점에 고정한다.
-
-- **TypeORM 사용 시**: Domain 클래스가 엔티티 역할을 겸한다. 데코레이터 대신 `EntitySchema`(TypeORM의 코드-외부 매핑 정의)를 사용해 컬럼/관계 매핑을 Domain 클래스 밖으로 분리한다. 이는 Spring 규칙의 `orm.xml`(`spring/domain.md` 9번)과 동일한 철학이다.
-- **Prisma 사용 시**: Prisma는 Domain 클래스를 직접 엔티티로 매핑할 수 없다(schema.prisma에서 타입이 생성되는 구조). 이 경우 Prisma가 생성한 타입과 Domain 객체 간 변환은 Repository 구현체가 전담한다. Domain 클래스가 Prisma 타입을 직접 참조하지 않는다.
-- **SQL-first(ORM 미사용) 시**: Kysely(타입 안전 쿼리 빌더)를 기본으로 사용한다(대안: DB 드라이버 직접 + 수동 매핑). Repository 구현체가 SQL 실행과 Row ↔ Domain 객체 변환을 전담하고, Domain 클래스는 어떤 영속성 타입도 참조하지 않는다. `EntitySchema`는 사용하지 않는다(ORM이 없으므로). DB 스키마 타입은 Kysely `Database` 인터페이스로 별도 모듈에 정의한다.
-- Value Object는 (TypeORM) `EntitySchema`의 embedded 매핑, (Prisma/SQL-first) Repository의 변환 로직에서 처리한다.
+- ORM 또는 SQL-first(ORM 미사용) 중 하나를 프로젝트 시작 시점에 고정한다. 도구별 Domain 매핑·Repository 도구·트랜잭션 상세는 채택한 영속성 파일(`nestjs-persistence-*.md`)을 따른다.
+- 도구와 무관하게 Domain 클래스는 영속성 타입을 직접 참조하지 않는다. Domain ↔ 저장소 모델 간 변환 책임은 Repository 구현체(또는 코드-외부 매핑 정의)가 전담한다.
+- 연관 파라미터 4개 이상을 묶은 Value Object의 매핑도 위 원칙을 따른다(구체 방식은 영속성 파일 참조).
 
 ## 5. Repository 도구 선택 (Escalation Ladder 적용)
 
-- 단순 조회(정적 조건 1-2개): TypeORM `Repository.find()`/Prisma `findMany()`/(SQL-first) Kysely 기본 표현식.
-- 동적 검색 조건 조합: TypeORM `QueryBuilder`, Prisma의 동적 `where` 객체 조합, (SQL-first) Kysely 표현식 빌더(`eb`) 조합. 조건별 빌더 함수를 도메인 전용 모듈에 그룹화한다(Spring의 Specification 패턴과 동일한 사상).
-- 복잡한 조인/N+1 방지: TypeORM `relations`/`leftJoinAndSelect`, Prisma `include`, (SQL-first) 명시적 조인 쿼리. 페이지네이션과 fetch join(관계 포함 로딩)을 동시에 쓰지 않는다(인메모리 페이지네이션 경고).
-- 대량 벌크/집계/네이티브 SQL: 원시 쿼리(`query()`, Prisma `$queryRaw`, Kysely `sql` 태그드 템플릿)는 측정된 성능 문제가 있거나 빌더로 표현 불가한 경우에만 예외적으로 허용한다. 항상 파라미터 바인딩을 사용하고 문자열 연결로 SQL을 조립하지 않는다.
+- `shared/architecture.md` 8번의 에스컬레이션 순서(단순 조회 → 동적 조건 조합 → 복잡한 조인/N+1 방지 → 대량 벌크/집계/네이티브 SQL)를 따른다. 항상 최하위 충분한 단계에서 시작하고, 측정된 근거 없이 선제적으로 상위 도구를 쓰지 않는다.
+- 동적 검색 조건 조합 로직은 라우터/서비스가 아닌 도메인 전용 Repository 모듈에 그룹화한다(Spring의 Specification 패턴과 동일한 사상).
+- 페이지네이션과 fetch join(관계 포함 로딩)을 동시에 쓰지 않는다(인메모리 페이지네이션 경고).
+- 각 단계의 구체적 도구/API와 원시 쿼리 허용 범위는 채택한 영속성 파일(`nestjs-persistence-*.md`)을 따른다.
 
 ## 6. 트랜잭션
 
-- Service의 쓰기 메서드는 트랜잭션 경계로 감싼다. TypeORM은 `DataSource.transaction()` 또는 `QueryRunner`, Prisma는 `$transaction()`, (SQL-first) Kysely는 `transaction().execute()`를 사용한다.
-- Finder(조회 전용)는 트랜잭션 경계를 명시적으로 열지 않는다.
+- Service의 쓰기 메서드는 트랜잭션 경계로 감싼다. Finder(조회 전용)는 트랜잭션 경계를 명시적으로 열지 않는다. 도구별 트랜잭션 API는 채택한 영속성 파일(`nestjs-persistence-*.md`)을 따른다.
 - 클래스 전체에 선언적으로 트랜잭션을 적용하는 Spring 방식과 달리 NestJS는 메서드 단위로 트랜잭션을 명시해야 하므로, 트랜잭션이 필요한 메서드를 주석이 아니라 헬퍼 함수/데코레이터로 일관되게 표시한다.
 
 ## 7. API 스펙
@@ -70,9 +66,8 @@ ORM(TypeORM/Prisma) 또는 SQL-first(ORM 미사용, Kysely) 중 하나를 프로
 ## 10. 금지 패턴
 
 - Controller DTO를 Service 메서드 파라미터로 그대로 사용하지 않는다.
-- Domain 클래스에 TypeORM 컬럼 데코레이터(`@Column`, `@OneToMany` 등)를 직접 붙이지 않는다(`EntitySchema` 사용).
+- Domain 클래스가 영속성 타입(ORM 매핑 타입, 쿼리 빌더 스키마 타입 등)을 직접 참조하지 않는다(4번, 변환은 Repository 전담. 도구별 상세는 `nestjs-persistence-*.md`).
 - Finder 프로바이더에 상태 변경 메서드를 포함하지 않는다.
-- 동적 검색 조건을 원시 SQL/QueryBuilder 문자열로 나열하지 않는다(5번 기준 도구 사용).
+- 동적 검색 조건을 도메인 전용 Repository 모듈 밖(라우터/서비스)에 나열하지 않는다(5번 기준 도구 사용).
 - SQL을 문자열 연결로 조립하지 않는다. 항상 파라미터 바인딩을 사용한다(5번).
-- (SQL-first) Domain 클래스가 Kysely `Database` 스키마 타입 등 영속성 타입을 직접 참조하지 않는다(4번, 변환은 Repository 전담).
 - Domain/Service 계층에서 `HttpException` 계열을 직접 던지지 않는다(9번).

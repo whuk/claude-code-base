@@ -11,7 +11,7 @@ globs: "**/router.py,**/schemas.py,**/service.py,**/repository.py,**/models.py"
 
 ## 1. 프로젝트 구조
 
-- 기능(도메인) 단위로 패키지를 나눈다: `{feature}/router.py`, `{feature}/schemas.py`, `{feature}/service.py`, `{feature}/repository.py`, `{feature}/models.py`(ORM 사용 시 — SQL-first면 없음, 3번 참조).
+- 기능(도메인) 단위로 패키지를 나눈다: `{feature}/router.py`, `{feature}/schemas.py`, `{feature}/service.py`, `{feature}/repository.py`. 영속성 도구가 ORM 모델을 두는 경우 `{feature}/models.py`가 추가된다(3번, 채택한 `fastapi-persistence-*.md` 참조).
 - 클래스 기반 Finder/Service 분리가 과할 정도로 단순한 기능이면, 모듈 레벨 함수로 조회/변경을 나눠도 된다. 다만 한 함수가 조회와 변경을 동시에 하지는 않는다(`shared/architecture.md` 7번).
 
 ## 2. Command/Query와 Pydantic
@@ -22,23 +22,19 @@ globs: "**/router.py,**/schemas.py,**/service.py,**/repository.py,**/models.py"
 
 ## 3. Domain과 영속성 매핑
 
-ORM(SQLAlchemy ORM) 또는 SQL-first(ORM 미사용, SQLAlchemy Core 또는 async 드라이버 직접) 중 하나를 프로젝트 시작 시점에 고정한다.
-
-- 도메인 로직이 단순하면 Pydantic 모델(또는 `dataclass`)에 메서드를 붙여 그대로 Domain으로 쓴다. 복잡한 불변 조건이 있는 경우에만 저장소 모델과 분리된 순수 Domain 클래스를 둔다.
-- **ORM 사용 시**: ORM 모델(`models.py`)과 Domain을 분리했다면, 변환 책임은 Repository가 전담한다. Domain이 SQLAlchemy `Mapped`/`Column`을 직접 참조하지 않는다.
-- **SQL-first(ORM 미사용) 시**: SQLAlchemy **Core**(`select()`/`text()`, ORM 매핑 없음)를 기본으로 하고, 필요하면 asyncpg 등 async 드라이버를 직접 사용한다. `models.py`(ORM 모델)를 만들지 않고, `repository.py`가 SQL 실행과 Row → Pydantic 모델/`dataclass` 매핑을 전담한다. 테이블 메타데이터가 필요하면 Core `Table` 정의를 `repository.py`(또는 전용 모듈)에 둔다.
+- ORM 또는 SQL-first(ORM 미사용) 중 하나를 프로젝트 시작 시점에 고정한다. 도구별 매핑·Repository 도구·트랜잭션 상세는 채택한 영속성 파일(`fastapi-persistence-*.md`)을 따른다.
+- 도메인 로직이 단순하면 Pydantic 모델(또는 `dataclass`)에 메서드를 붙여 그대로 Domain으로 쓴다. 복잡한 불변 조건이 있는 경우에만 저장소 모델과 분리된 순수 Domain 클래스를 둔다. 분리한 경우 변환 책임은 Repository가 전담하고, Domain은 영속성 타입을 직접 참조하지 않는다.
 - Value Object는 Pydantic `BaseModel`(`frozen=True`)이나 `dataclass(frozen=True)`로 표현한다.
 
 ## 4. Repository 도구 선택 (Escalation Ladder 적용)
 
-- 단순 조회: SQLAlchemy ORM의 기본 쿼리(`select(Model).where(...)`), (SQL-first) Core `select(table).where(...)`.
-- 동적 검색 조건 조합: 조건별 함수를 조합해 `select` 문에 `.where()`를 체이닝한다(ORM/Core 동일). 조건 조합 로직을 라우터/서비스가 아닌 Repository 모듈에 둔다.
-- 복잡한 조인/N+1 방지: (ORM) `selectinload`/`joinedload`를 명시적으로 사용한다. 관계 로딩과 페이지네이션을 동시에 쓸 때는 N+1이나 중복 로우에 주의한다. (SQL-first) 명시적 조인 쿼리로 해결한다 — 지연 로딩 자체가 없으므로 쿼리 수는 조인 설계로 통제한다.
-- 대량 벌크/집계/네이티브 SQL: `text()`·`insert().values(...)` 벌크는 (ORM에서는) 측정된 성능 문제가 있을 때만, (SQL-first에서는) Core 표현식으로 표현이 어려운 경우에만 사용한다. 항상 바인드 파라미터를 사용하고 문자열 연결로 SQL을 조립하지 않는다.
+- `shared/architecture.md` 8번의 에스컬레이션 순서(단순 조회 → 동적 조건 조합 → 복잡한 조인/N+1 방지 → 대량 벌크/집계/네이티브 SQL)를 따른다. 항상 최하위 충분한 단계에서 시작하고, 측정된 근거 없이 선제적으로 상위 도구를 쓰지 않는다.
+- 동적 검색 조건 조합 로직은 라우터/서비스가 아닌 Repository 모듈에 둔다.
+- 각 단계의 구체적 도구/API(관계 로딩, 벌크 등)와 원시 SQL 허용 범위는 채택한 영속성 파일(`fastapi-persistence-*.md`)을 따른다.
 
 ## 5. 트랜잭션
 
-- 세션(`AsyncSession`) 또는 (SQL-first) 커넥션(`AsyncConnection`)은 요청 단위로 FastAPI 의존성 주입(`Depends`)을 통해 공급한다. Service 함수가 세션/커넥션을 직접 생성하지 않는다.
+- 요청 단위 세션/커넥션은 FastAPI 의존성 주입(`Depends`)을 통해 공급한다. Service 함수가 직접 생성하지 않는다. 구체 세션/커넥션 타입은 채택한 영속성 파일(`fastapi-persistence-*.md`)을 따른다.
 - 쓰기 흐름은 세션/트랜잭션 컨텍스트 안에서 커밋하고, 조회 전용 흐름은 커밋을 호출하지 않는다(읽기 전용 의도를 코드로 드러낸다).
 
 ## 6. API 스펙: code-first가 원칙이다
@@ -64,7 +60,7 @@ ORM(SQLAlchemy ORM) 또는 SQL-first(ORM 미사용, SQLAlchemy Core 또는 async
 ## 9. async 규율 (이벤트 루프 보호)
 
 - `async def` 라우터/서비스에서 동기 블로킹 호출을 하지 않는다: 동기 DB 드라이버(psycopg2 등), `requests`, `time.sleep`, 대용량 동기 파일 I/O. 이벤트 루프가 멈춰 해당 요청뿐 아니라 서버 전체 처리량이 무너진다.
-- I/O 스택을 async로 통일한다: DB는 `AsyncSession` + async 드라이버(asyncpg, aiosqlite 등 — 5번 트랜잭션 규칙과 동일 전제), HTTP 클라이언트는 `httpx.AsyncClient`, 대기는 `asyncio.sleep`.
+- I/O 스택을 async로 통일한다: DB는 async 세션/커넥션 + async 드라이버(asyncpg, aiosqlite 등 — 5번 트랜잭션 규칙과 동일 전제), HTTP 클라이언트는 `httpx.AsyncClient`, 대기는 `asyncio.sleep`.
 - async 버전이 없는 동기 전용 라이브러리를 써야 하면 해당 엔드포인트를 `def`로 선언해 FastAPI의 스레드풀 실행에 맡기거나, `run_in_threadpool`로 감싼다. `async def` 안에서 동기 블로킹 호출을 섞는 것이 최악의 조합이다.
 
 ## 10. 금지 패턴
