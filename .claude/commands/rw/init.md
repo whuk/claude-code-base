@@ -14,7 +14,7 @@ claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용
    > 이 저장소가 claude-code-base 템플릿 원본처럼 보입니다. 원본이 맞다면 실행을 중단해 주세요. 이 템플릿을 복사해서 만든 새 프로젝트라면 계속 진행해도 됩니다.
 2. `.claude/rules/backend/`와 `.claude/rules/frontend/` 중 어느 것도 존재하지 않으면 다음 메시지를 출력하고 **중단**한다:
    > 이 저장소에는 claude-code-base 템플릿의 rules 디렉토리가 없습니다. 템플릿을 먼저 복사해 주세요.
-3. `git status --short`로 커밋되지 않은 변경사항이 있으면 사용자에게 알리고, 먼저 커밋하거나 stash 할지 확인한다. 이번 작업의 삭제/편집 내역이 기존 변경사항과 섞이지 않도록 한다.
+3. `git status --short`로 커밋되지 않은 변경사항이 있으면 사용자에게 알리고, 먼저 커밋하거나 stash 할지 확인한다. 이번 작업의 삭제/rename 내역이 기존 변경사항과 섞이지 않도록 한다.
 
 ## 1단계: 프로젝트 스캔 (자동 감지)
 
@@ -93,7 +93,7 @@ claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용
 
 Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 
-## 3단계: 삭제/편집 대상 확정
+## 3단계: 삭제/rename 대상 확정
 
 확정된 답(1단계 자동 감지 + 2단계 질문 답변)에 따라 아래 규칙을 조합해 대상 목록을 만든다. 확정되지 않은 조합을 추측해서 임의로 처리하지 않는다.
 
@@ -122,23 +122,25 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 ### 백엔드 스택 "Spring Boot" + 언어 "Java" + 웹 스택 "Spring MVC" 선택 시 — 삭제
 - `.claude/rules/backend/spring/java/webflux.md`, `.claude/rules/backend/spring/java/repository-r2dbc.md`, `.claude/rules/backend/spring/java/repository-reactive-mongo.md` (WebFlux 전용 규칙. 언어 "Kotlin" 선택 시에는 `spring/java/` 전체 삭제에 이미 포함되므로 별도 처리가 없다)
 
-### 백엔드 스택 "Spring Boot" + 웹 스택 "WebFlux" 선택 시 — 삭제 + 편집
-- 영속성(JPA/SQL-first) 항목을 확정하지 않았으므로 JPA/SQL-first의 삭제·편집 케이스와 MongoDB(JPA용)/QueryDSL 편집 케이스는 적용하지 않는다.
+### 백엔드 스택 "Spring Boot" + 웹 스택 "WebFlux" 선택 시 — 삭제 (+ Layered면 rename)
+- 영속성(JPA/SQL-first) 항목을 확정하지 않았으므로 JPA/SQL-first의 삭제 케이스와 MongoDB(JPA용)/QueryDSL 케이스는 적용하지 않는다.
 - 선택한 아키텍처의 `.claude/rules/backend/spring/java/{layered|hexagonal}/repository.md`와 `.claude/rules/backend/spring/java/repository-tools.md`, `.claude/rules/backend/spring/java/repository-sql.md`를 삭제한다 (`repository-r2dbc.md`가 대체한다).
-- Layered면 `spring/java/layered/domain.md`를 편집한다: 2번(인프라 비종속)의 `@Entity` 마커 허용·orm.xml 분리 문장을 순수 Domain 기준(영속성 애노테이션 전면 금지)으로 수정하고, 9번(JPA 영속성 매핑) 섹션을 삭제하며, 마지막 금지 패턴의 orm.xml 항목과 도입부의 SQL-first/WebFlux 안내 문장을 정리한다. 편집 후 번호와 문맥이 자연스럽게 이어지는지 다시 읽어 확인한다.
-- Hexagonal이면 추가 편집이 없다 (`ports-and-adapters.md`·`hexagonal/domain.md`의 `{Domain}JpaEntity` 언급은 `repository-r2dbc.md` 2번의 대체 규정이 우선한다).
-- `test.md`는 접두사 대체 목적으로는 편집하지 않는다 — base class 표의 `Jpa*` 접두사는 `webflux.md` 8번의 대체 규정(`R2dbc*` 접두사, WebTestClient)으로 갈음한다.
-- (리액티브 MongoDB "R2DBC만 사용" 선택 시) `.claude/rules/backend/spring/java/repository-reactive-mongo.md`를 삭제하고, `repository-r2dbc.md` 도입부의 `repository-reactive-mongo.md` 참조 문장을 제거한다. 또한 "JPA만" 케이스와 동일한 방식으로, 선택한 아키텍처의 `test.md`에서 MongoDB base class 행(`IntegrationTestBase`/`WebIntegrationTestBase`)과 MongoDB 통합 테스트 문단을 제거한다.
+- Layered면 `.claude/rules/backend/spring/java/layered/domain.md`(JPA용, orm.xml 전제)를 `git rm`으로 삭제하고, 순수 Domain 변형인 `layered/domain-pure.md`를 `git mv`로 `domain.md`에 맞춰 rename한다. 본문은 편집하지 않는다.
+- Hexagonal이면 domain 관련 처리가 없다 (`ports-and-adapters.md`·`hexagonal/domain.md`의 `{Domain}JpaEntity` 언급은 `repository-r2dbc.md` 2번의 대체 규정이 우선한다).
+- `test.md`는 편집하지 않는다 — base class 표의 `Jpa*` 접두사는 `webflux.md` 8번의 대체 규정(`R2dbc*` 접두사, WebTestClient)으로 갈음한다.
+- (리액티브 MongoDB "R2DBC만 사용" 선택 시) `.claude/rules/backend/spring/java/repository-reactive-mongo.md`와, 선택한 아키텍처의 `.claude/rules/backend/spring/java/{layered|hexagonal}/test-mongodb.md`를 삭제한다. `repository-r2dbc.md` 도입부는 리액티브 MongoDB 참조를 조건부("병용하지 않는 프로젝트는 해당 파일을 제외한다")로 이미 서술하므로 편집하지 않는다.
+- (리액티브 MongoDB "함께 사용" 선택 시) `repository-reactive-mongo.md`와 `test-mongodb.md`를 그대로 유지한다.
 - `spring-*` 에이전트는 웹 스택(MVC/WebFlux)을 조건부로 함께 언급하므로 수정하지 않는다.
 
 ### 백엔드 스택 "Spring Boot" + 영속성 도구 "JPA" 선택 시 — 삭제
 - 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/repository-sql.md` (SQL-first 전용 규칙)
+- (Layered인 경우) `.claude/rules/backend/spring/{java|kotlin}/layered/domain-pure.md` (순수 Domain 변형). JPA용 `layered/domain.md`를 그대로 유지한다.
 
-### 백엔드 스택 "Spring Boot" + 영속성 도구 "SQL-first" 선택 시 — 삭제 + 편집
+### 백엔드 스택 "Spring Boot" + 영속성 도구 "SQL-first" 선택 시 — 삭제 (+ Layered면 rename)
 - 선택한 언어·아키텍처의 `.claude/rules/backend/spring/{java|kotlin}/{layered|hexagonal}/repository.md`와 `.claude/rules/backend/spring/{java|kotlin}/repository-tools.md`를 삭제한다 (`repository-sql.md`가 대체한다).
-- Layered면 `spring/{java|kotlin}/layered/domain.md`를 편집한다: 2번(인프라 비종속)의 `@Entity` 마커 허용·orm.xml 분리 문장을 순수 Domain 기준(영속성 애노테이션 전면 금지)으로 수정하고, 9번(JPA 영속성 매핑) 섹션을 삭제하며, 마지막 금지 패턴의 orm.xml 항목과 도입부의 SQL-first/WebFlux 안내 문장을 정리한다. 편집 후 번호와 문맥이 자연스럽게 이어지는지 다시 읽어 확인한다.
-- Hexagonal이면 추가 편집이 없다 (`ports-and-adapters.md`의 `{Domain}JpaEntity` 언급은 `repository-sql.md` 2번의 대체 규정이 우선한다).
-- MongoDB/QueryDSL 항목은 이 경우 확정하지 않았으므로 해당 편집 케이스도 적용하지 않는다.
+- Layered면 `.claude/rules/backend/spring/{java|kotlin}/layered/domain.md`(JPA용, orm.xml 전제)를 `git rm`으로 삭제하고, 순수 Domain 변형인 `layered/domain-pure.md`를 `git mv`로 `domain.md`에 맞춰 rename한다. 본문은 편집하지 않는다.
+- Hexagonal이면 domain 관련 처리가 없다 (`ports-and-adapters.md`의 `{Domain}JpaEntity` 언급은 `repository-sql.md` 2번의 대체 규정이 우선한다).
+- MongoDB/QueryDSL 항목은 이 경우 확정하지 않았으므로 해당 케이스도 적용하지 않는다.
 - `spring-*` 에이전트는 영속성 도구(JPA/SQL-first)를 조건부로 함께 언급하므로 수정하지 않는다.
 
 ### 백엔드 포함 + "NestJS" 선택 시 — 삭제
@@ -165,15 +167,14 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 - `.claude/rules/frontend/nextjs.md`, `.claude/rules/frontend/vite.md`
 - React 계열 전제 에이전트 6개: `.claude/agents/frontend-architect.md`, `frontend-tdd-implementer.md`, `frontend-refactorer.md`, `frontend-test-author.md`, `frontend-code-reviewer.md`, `frontend-debugger.md` (`frontend-vue-*` 6개와, 프레임워크 무관인 `frontend-style-checker`는 유지)
 
-### 백엔드 스택 "Spring Boot" + "JPA만" 선택 시 — 편집 (파일 삭제 아님)
-- 언어·아키텍처 스타일 답변에 따라 `.claude/rules/backend/spring/{java|kotlin}/layered/test.md` 또는 `.claude/rules/backend/spring/{java|kotlin}/hexagonal/test.md`에서 MongoDB 관련 내용을 제거한다: base class 표에서 `IntegrationTestBase`(MongoDB Repository/Persistence Adapter 통합), `WebIntegrationTestBase`(MongoDB Controller/Web Adapter) 행을 삭제하고, MongoDB 통합 테스트 관련 문단을 제거해 JPA 전용 안내만 남긴다.
-- Edit 도구로 신중하게 처리하고, 편집 후 표/문단이 자연스럽게 이어지는지 다시 읽어 확인한다.
+### 백엔드 스택 "Spring Boot" + "JPA만" 선택 시 — 삭제
+- 언어·아키텍처 스타일 답변에 따라 `.claude/rules/backend/spring/{java|kotlin}/{layered|hexagonal}/test-mongodb.md`(MongoDB 추가 테스트 규칙)를 삭제한다. JPA 전용 `test.md`는 그대로 유지한다 (`test.md`는 `test-mongodb.md`를 역참조하지 않으므로 죽은 참조가 남지 않는다).
+- ("JPA + MongoDB 함께 사용" 선택 시에는 `test-mongodb.md`를 유지한다.)
 - **`spring-*` 에이전트는 수정하지 않는다.** `spring-test-author`/`spring-hexagonal-test-author`의 base class 표에는 MongoDB 행이 남는다. 4단계 보고 시 이 사실을 사용자에게 알린다.
 
-### 백엔드 스택 "Spring Boot" + "Specification까지만" 선택 시 — 삭제 + 편집
+### 백엔드 스택 "Spring Boot" + "Specification까지만" 선택 시 — 삭제
 - 선택한 언어 디렉토리의 `.claude/rules/backend/spring/{java|kotlin}/repository-tools.md`(QueryDSL/JdbcClient/jOOQ 상세 규칙)를 삭제한다.
-- 언어·아키텍처 답변에 해당하는 `repository.md`에서 "도구 선택 계층" 표의 Level 2~3 행과 `repository-tools.md` 참조 문구, "Finder/Service 계층과의 통합" 다이어그램·금지 패턴의 QueryDSL/JdbcClient/jOOQ 언급을 정리해 본문과 표가 어긋나지 않도록 한다.
-- 언어·아키텍처 답변에 해당하는 `test.md`에서도 삭제된 `repository-tools.md`에 대한 참조가 남지 않게 정리한다: Layered면 `layered/test.md` 2.1절의 jOOQ SqlBuilder 문단과 5번(N+1 쿼리 카운트 검증)의 QueryDSL 언급, Hexagonal이면 `hexagonal/test.md` 5번의 `repository-tools.md` 참조 문구를 제거·조정한다. 편집 후 문단이 자연스럽게 이어지는지 다시 읽어 확인한다.
+- `repository.md`·`test.md`는 편집하지 않는다 — 이 두 파일은 Level 0~1로 완결돼 있고 `repository-tools.md`를 역참조하지 않으므로(참조 방향은 tools→repository 단방향), 상위 티어 파일만 삭제하면 죽은 참조가 남지 않는다.
 - **`spring-*` 에이전트는 수정하지 않는다.** 일부 에이전트(`spring-domain-designer` 등)는 QueryDSL/JdbcClient 티어를 계속 언급한다. 4단계 보고 시 이 사실을 사용자에게 알린다.
 
 ### 백엔드 스택 "Spring Boot" + RDB 선택 시 — 보고만 (파일 편집 없음)
@@ -182,21 +183,21 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 - 그 외 DB 선택 시: 4단계 보고에서 "예시는 PostgreSQL 기준이며, 선택한 DB에 맞는 jOOQ 방언 상수(`SQLDialect.MYSQL`/`SQLDialect.MARIADB`/`SQLDialect.SQLITE` 등)와 드라이버로 직접 교체해야 한다"고 안내한다. Oracle·SQL Server처럼 jOOQ 상용 에디션 방언이 필요한 DB면 그 사실도 함께 안내한다.
 - `spring-*` 에이전트는 DB 벤더를 언급하지 않으므로 수정 대상이 없다.
 
-### 백엔드 스택 "NestJS" + 영속성 도구(TypeORM/Prisma) 선택 시 — 편집 (파일 삭제 아님)
-- `.claude/rules/backend/nestjs/nestjs.md`에서 선택하지 않은 영속성 도구 관련 내용을 제거한다: 4번(영속성)의 다른 ORM 항목과 SQL-first(Kysely) 항목, 5번(Repository 도구)·6번(트랜잭션)·10번(금지 패턴)의 해당 도구 언급.
-- Prisma를 선택한 경우 금지 패턴의 TypeORM 컬럼 데코레이터 항목(`EntitySchema` 사용)도 함께 제거한다.
-- 편집 후 각 섹션이 선택한 도구 단일 경로로 자연스럽게 읽히는지 다시 읽어 확인한다.
+### 백엔드 스택 "NestJS" + 영속성 도구 "TypeORM" 선택 시 — 삭제
+- `.claude/rules/backend/nestjs/nestjs-persistence-prisma.md`, `.claude/rules/backend/nestjs/nestjs-persistence-sqlfirst.md`를 삭제한다 (`nestjs-persistence-typeorm.md`만 남긴다). 영속성-무관 핵심인 `nestjs.md`는 그대로 유지한다.
 - `nestjs-*` 에이전트는 영속성 도구를 조건부로 함께 언급하므로 수정하지 않는다.
 
-### 백엔드 스택 "NestJS" + 영속성 도구 "사용 안 함(SQL-first)" 선택 시 — 편집 (파일 삭제 아님)
-- `.claude/rules/backend/nestjs/nestjs.md`에서 TypeORM/Prisma 관련 내용을 제거하고 SQL-first(Kysely) 경로만 남긴다: 4번(영속성)의 두 ORM 항목과 embedded 매핑 언급, 5번·6번의 ORM 도구 언급, 10번 금지 패턴의 TypeORM 컬럼 데코레이터 항목.
-- 편집 후 각 섹션이 Kysely 단일 경로로 자연스럽게 읽히는지 다시 읽어 확인한다.
+### 백엔드 스택 "NestJS" + 영속성 도구 "Prisma" 선택 시 — 삭제
+- `.claude/rules/backend/nestjs/nestjs-persistence-typeorm.md`, `.claude/rules/backend/nestjs/nestjs-persistence-sqlfirst.md`를 삭제한다 (`nestjs-persistence-prisma.md`만 남긴다). 영속성-무관 핵심인 `nestjs.md`는 그대로 유지한다.
 - `nestjs-*` 에이전트는 영속성 도구를 조건부로 함께 언급하므로 수정하지 않는다.
 
-### 백엔드 스택 "FastAPI" + ORM 사용 여부 선택 시 — 편집 (파일 삭제 아님)
-- ORM 사용 선택 시: `.claude/rules/backend/fastapi/fastapi.md`에서 SQL-first 관련 내용을 제거한다 — 1번의 `models.py` 괄호 단서, 3번의 SQL-first 항목과 도구 고정 문장, 4번·5번·10번의 SQL-first/커넥션 언급.
-- SQL-first 선택 시: 반대로 ORM 경로를 제거한다 — 1번의 `models.py` 항목, 3번의 ORM 항목, 4번의 ORM 표현(`selectinload` 등), 5번의 `AsyncSession` 언급을 `AsyncConnection` 기준으로 정리.
-- 편집 후 각 섹션이 선택한 경로 하나로 자연스럽게 읽히는지 다시 읽어 확인한다.
+### 백엔드 스택 "NestJS" + 영속성 도구 "사용 안 함(SQL-first)" 선택 시 — 삭제
+- `.claude/rules/backend/nestjs/nestjs-persistence-typeorm.md`, `.claude/rules/backend/nestjs/nestjs-persistence-prisma.md`를 삭제한다 (`nestjs-persistence-sqlfirst.md`만 남긴다). 영속성-무관 핵심인 `nestjs.md`는 그대로 유지한다.
+- `nestjs-*` 에이전트는 영속성 도구를 조건부로 함께 언급하므로 수정하지 않는다.
+
+### 백엔드 스택 "FastAPI" + ORM 사용 여부 선택 시 — 삭제
+- ORM 사용 선택 시: `.claude/rules/backend/fastapi/fastapi-persistence-sqlfirst.md`를 삭제한다 (`fastapi-persistence-orm.md`만 남긴다). 영속성-무관 핵심인 `fastapi.md`는 그대로 유지한다.
+- SQL-first 선택 시: `.claude/rules/backend/fastapi/fastapi-persistence-orm.md`를 삭제한다 (`fastapi-persistence-sqlfirst.md`만 남긴다). 영속성-무관 핵심인 `fastapi.md`는 그대로 유지한다.
 - `fastapi-*` 에이전트는 영속성 방식을 조건부로 함께 언급하므로 수정하지 않는다.
 
 ### 백엔드 스택 "FastAPI" + RDB 선택 시 — 보고만 (파일 편집 없음)
@@ -205,23 +206,23 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 - 그 외 DB 선택 시: 4단계 보고에서 "예시는 asyncpg(PostgreSQL) 기준이며, 선택한 DB에 맞는 드라이버로 직접 교체해야 한다"고 안내한다 (MySQL/MariaDB: async는 `asyncmy`/`aiomysql`, 동기는 `PyMySQL`; SQLite: async는 `aiosqlite`, 동기는 표준 `sqlite3`).
 - `fastapi-*` 에이전트는 DB 벤더를 언급하지 않으므로 수정 대상이 없다.
 
-### 백엔드 스택 "NestJS" + 검증 도구 선택 시 — 편집 (파일 삭제 아님)
-- class-validator 선택 시: `nestjs.md` 3번에서 Zod 허용 문장("Zod 스키마 기반 검증(`nestjs-zod`)도 허용하되 ... 통일한다")을 제거한다.
-- Zod 선택 시: `nestjs.md` 3번을 `nestjs-zod` 기준으로 조정한다 — class-validator 기본 문장을 Zod 스키마 기반 검증으로 바꾸고, 다중 진입점 방어 항목의 `validateOrReject()` 언급을 Command 생성 시점의 Zod 스키마 `parse()` 호출로 대체한다.
+### 백엔드 스택 "NestJS" + 검증 도구 선택 시 — 삭제
+- class-validator 선택 시: `.claude/rules/backend/nestjs/nestjs-validation-zod.md`를 삭제한다 (`nestjs-validation-classvalidator.md`만 남긴다). 검증-무관 핵심인 `nestjs.md`는 그대로 유지한다.
+- Zod 선택 시: `.claude/rules/backend/nestjs/nestjs-validation-classvalidator.md`를 삭제한다 (`nestjs-validation-zod.md`만 남긴다). 검증-무관 핵심인 `nestjs.md`는 그대로 유지한다.
 - **Zod 선택 시 `nestjs-*` 에이전트는 수정하지 않는다.** `nestjs-tdd-implementer`/`nestjs-code-reviewer`/`nestjs-domain-designer`는 class-validator 전제로 작성돼 있다. 4단계 보고 시 이 사실을 사용자에게 명시적으로 알린다: "nestjs 에이전트들은 class-validator 전제입니다. Zod 기준으로 활용하려면 에이전트를 별도로 조정해야 합니다."
 
 ### 풀스택 + 백엔드 "NestJS" 선택 시 — 보고만 (파일 편집 없음)
 - 백엔드와 프론트엔드가 모두 TypeScript이므로 `frontend/*.md`의 globs(`**/*.ts`, `**/*.tsx`)가 백엔드 소스에도 매칭될 수 있다. rw:init은 이 globs를 편집하지 않고 원본 그대로 둔다.
 - 대신 4단계 보고에서, 1단계에서 감지했거나 2단계 라운드 3에서 답변받은 프론트엔드 소스 루트 경로를 이용해 "필요하면 `frontend/*.md`의 globs를 이 경로로 직접 좁히라(예: `**/*.ts` → `apps/web/**/*.ts`)"고 안내한다.
 
-### 프론트엔드 "Vite" + 라우팅 라이브러리 선택 시 — 편집 (파일 삭제 아님)
-- `.claude/rules/frontend/vite.md` 3번(라우팅)에서 선택하지 않은 라이브러리 항목을 제거하고, 선택한 라이브러리를 확정 문장으로 바꾼다. "둘 중 하나를 프로젝트 시작 시점에 고정한다" 문장은 선택이 끝났으므로 제거한다.
-- 5번(금지 패턴)의 "라우팅 라이브러리를 프로젝트 중간에 이유 없이 교체하지 않는다"는 그대로 둔다.
+### 프론트엔드 "Vite" + 라우팅 라이브러리 선택 시 — 삭제
+- TanStack Router 선택 시: `.claude/rules/frontend/vite-routing-reactrouter.md`를 삭제한다 (`vite-routing-tanstack.md`만 남긴다). 라우팅-무관 공통인 `vite.md`는 그대로 유지한다.
+- React Router 선택 시: `.claude/rules/frontend/vite-routing-tanstack.md`를 삭제한다 (`vite-routing-reactrouter.md`만 남긴다). 라우팅-무관 공통인 `vite.md`는 그대로 유지한다.
 
 ## 4단계: 확인 후 실행
 
 1. 삭제/편집 대상 전체 목록을 사용자에게 보여주고 진행 여부를 확인받는다. 1단계에서 자동 확정한 항목이 있으면 항목별 감지 근거(파일 경로·의존성 이름)를 함께 표시해 잘못 감지된 항목을 사용자가 바로잡을 수 있게 한다. NestJS + Zod를 선택한 경우 "nestjs 에이전트들은 class-validator 전제" 안내를 함께 보여준다.
-2. 확인되면 파일 삭제는 `git rm`으로, 내용 편집은 Edit로 수행한다.
+2. 확인되면 파일 삭제는 `git rm`으로, 분리 파일의 정규 이름 맞춤(rename)은 `git mv`로 수행한다. rules/agents 파일의 본문은 Edit로 수정하지 않는다.
 3. 자동으로 커밋하지 않는다. 사용자가 요청할 때만 커밋한다.
 
 ## 결과 보고
@@ -240,4 +241,4 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 - 원본 템플릿 저장소에서 실행해 원본을 훼손하지 않는다(0단계 참조).
 - 확정되지 않은 조합을 임의로 판단해서 처리하지 않는다.
 - 근거가 약하거나 상충하는 항목을 추측으로 자동 확정하지 않는다. 미확정으로 남겨 2단계에서 질문한다.
-- rules를 편집했더라도 전제가 다른 에이전트(`nestjs-*`의 class-validator 전제, `spring-*`의 MongoDB/QueryDSL 언급 등)를 임의로 고치지 않는다(별도 작업). 4단계 보고에서 안내만 한다.
+- rules 파일을 삭제/rename했더라도 전제가 다른 에이전트(`nestjs-*`의 class-validator 전제, `spring-*`의 MongoDB/QueryDSL 언급 등)를 임의로 고치지 않는다(별도 작업). 4단계 보고에서 안내만 한다.

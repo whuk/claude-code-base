@@ -69,13 +69,13 @@
 
 ### Phase 4: init.md 3단계 재작성 (편집 → 삭제/rename)
 
-- [ ] "Spring WebFlux/SQL-first + Layered domain 편집" 케이스를 `domain.md` 삭제 + `domain-pure.md`→`domain.md` rename으로 교체한다 → 검증: 해당 섹션에 domain.md 본문 Edit 지시가 없음
-- [ ] "JPA만 / MongoDB" 케이스를 `test-mongodb.md` 유지/삭제 선택으로 교체한다 (편집 제거) → 검증: test.md Edit 지시 없음
-- [ ] "Specification까지만" 케이스를 `repository-tools.md` 삭제만으로 교체한다 (repository.md·test.md 편집 제거) → 검증: repository.md/test.md Edit 지시 없음
-- [ ] NestJS 영속성·검증 케이스를 해당 분리 파일 선택 삭제로 교체한다 → 검증: nestjs.md Edit 지시 없음
-- [ ] FastAPI 영속성 케이스를 분리 파일 선택 삭제로 교체한다 → 검증: fastapi.md Edit 지시 없음
-- [ ] Vite 라우팅 케이스를 분리 파일 선택 삭제로 교체한다 → 검증: vite.md Edit 지시 없음
-- [ ] init.md 전체에서 `Edit`로 rules 본문을 수정하라는 지시가 하나도 없음을 확인한다 → 검증: 문서 내 "편집 (파일 삭제 아님)"/"삭제 + 편집" 표현이 남지 않고, 4단계 실행 지시가 `git rm`/`git mv`만 사용
+- [x] "Spring WebFlux/SQL-first + Layered domain 편집" 케이스를 `domain.md` 삭제 + `domain-pure.md`→`domain.md` rename으로 교체한다 → 검증: 해당 섹션에 domain.md 본문 Edit 지시가 없음
+- [x] "JPA만 / MongoDB" 케이스를 `test-mongodb.md` 유지/삭제 선택으로 교체한다 (편집 제거) → 검증: test.md Edit 지시 없음
+- [x] "Specification까지만" 케이스를 `repository-tools.md` 삭제만으로 교체한다 (repository.md·test.md 편집 제거) → 검증: repository.md/test.md Edit 지시 없음
+- [x] NestJS 영속성·검증 케이스를 해당 분리 파일 선택 삭제로 교체한다 → 검증: nestjs.md Edit 지시 없음
+- [x] FastAPI 영속성 케이스를 분리 파일 선택 삭제로 교체한다 → 검증: fastapi.md Edit 지시 없음
+- [x] Vite 라우팅 케이스를 분리 파일 선택 삭제로 교체한다 → 검증: vite.md Edit 지시 없음
+- [x] init.md 전체에서 `Edit`로 rules 본문을 수정하라는 지시가 하나도 없음을 확인한다 → 검증: 문서 내 "편집 (파일 삭제 아님)"/"삭제 + 편집" 표현이 남지 않고, 4단계 실행 지시가 `git rm`/`git mv`만 사용
 
 ### Phase 5: 문서 동기화 및 조합 검증
 
