@@ -54,10 +54,10 @@
 
 ### Phase 2: A그룹 분리 — Spring (domain / test / repository)
 
-- [ ] `spring/{java,kotlin}/layered/domain.md`의 순수 Domain 변형을 별도 파일(예: `domain-pure.md`)로 만든다. JPA용 `domain.md`는 현행 유지 → 검증: 두 파일이 각각 JPA(orm.xml 조항 포함)/순수(조항 없음)로 완결되게 읽힘
-- [ ] `spring/{java,kotlin}/{layered,hexagonal}/test.md`에서 MongoDB 내용을 `test-mongodb.md`(추가분)로 분리하고, `test.md`는 JPA-only로 완결시킨다 → 검증: `test.md`에 MongoDB base class 행/문단이 없고, `test-mongodb.md`만으로 MongoDB 추가 규칙이 이해됨
-- [ ] `spring/{java,kotlin}/{layered,hexagonal}/repository.md`의 Escalation Ladder Level 2~3과 QueryDSL/JdbcClient 통합 언급을 `repository-tools.md`로 이관하고, `repository.md`는 Level 0~1로 완결시킨다 → 검증: `repository-tools.md` 삭제 시 `repository.md`에 Level 2~3/도구 참조가 남지 않음
-- [ ] 위 분리로 깨진 상호참조(`domain.md 9번`, `repository-tools.md 참조` 등)를 분리된 파일들 안에서 정적으로 갱신한다 → 검증: 남게 될 각 조합에서 참조 파일명이 실제 존재 파일과 일치
+- [x] `spring/{java,kotlin}/layered/domain.md`의 순수 Domain 변형을 별도 파일(예: `domain-pure.md`)로 만든다. JPA용 `domain.md`는 현행 유지 → 검증: 두 파일이 각각 JPA(orm.xml 조항 포함)/순수(조항 없음)로 완결되게 읽힘. domain.md/domain-pure.md 도입부를 선택 동작(둘 중 하나만 남김)으로 갱신
+- [x] `spring/{java,kotlin}/{layered,hexagonal}/test.md`에서 MongoDB 내용을 `test-mongodb.md`(추가분)로 분리하고, `test.md`는 JPA-only로 완결시킨다 → 검증: `test.md`에 MongoDB base class 행/문단이 없고(정밀 grep 통과), `test-mongodb.md`만으로 MongoDB 추가 규칙이 이해됨. test.md는 test-mongodb.md를 참조하지 않음(삭제 시 dangling 방지)
+- [x] `spring/{java,kotlin}/{layered,hexagonal}/repository.md`를 Level 0~1로 완결시키고 상위 티어 컨텍스트는 `repository-tools.md`가 보유하게 한다 → 검증: repository.md는 `repository-tools.md`를 참조하지 않고(참조 방향 tools→repository 단방향), Level 2~3 표 행이 없음. 상위 도구 이름(QueryDSL/jOOQ)은 에스컬레이션 경로 안내로만 남기고 파일 참조는 두지 않음
+- [x] 위 분리로 깨진 상호참조를 정적으로 갱신한다 → 검증: 남게 될 각 조합에서 참조 파일명이 실제 존재 파일과 일치. `repository-tools.md` 도입부(Level 2~3 정의), `repository-reactive-mongo.md` 4번(MongoDB base class → `test-mongodb.md`) 갱신. 기존부터 존재하던 `layer-communication-rules.md`의 `domain.md 9번` 참조는 이번 분할이 새로 깨뜨린 것이 아니므로 Phase 5에서 종합 점검
 
 ### Phase 3: A그룹 분리 — NestJS / FastAPI / Vite
 

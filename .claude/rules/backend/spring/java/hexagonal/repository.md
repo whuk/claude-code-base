@@ -1,11 +1,11 @@
 ---
 description: Outbound Persistence Adapter 작성 시 동적 검색 조건 처리 방식과 쿼리 작성 규칙 (Hexagonal)
-globs: "**/*PersistenceAdapter.java,**/*JpaEntity.java,**/*JpaRepository.java,**/*Specifications.java,**/*SqlBuilder.java"
+globs: "**/*PersistenceAdapter.java,**/*JpaEntity.java,**/*JpaRepository.java,**/*Specifications.java"
 ---
 
 # Outbound Persistence Adapter 규칙
 
-`ports-and-adapters.md` 6.2절의 Outbound Persistence Adapter 구현 방법을 다룬다. 검색 조건은 JPA Specification으로 조합하고, Level 2~3 도구(QueryDSL, JdbcClient + jOOQ)의 사용 상세 규칙은 `repository-tools.md`를 따른다. 적용 대상은 Domain 클래스가 아니라 `{Domain}JpaEntity`다.
+`ports-and-adapters.md` 6.2절의 Outbound Persistence Adapter 구현 방법을 다룬다. 검색 조건은 JPA Specification(Level 0~1)으로 조합한다. Level 1로 표현하기 어려운 복잡 쿼리를 위한 상위 도구(QueryDSL, JdbcClient + jOOQ)를 도입한 프로젝트는 그 사용 상세 규칙을 별도 도구 문서에서 다룬다(도입하지 않은 프로젝트에는 해당 문서가 없다). 적용 대상은 Domain 클래스가 아니라 `{Domain}JpaEntity`다.
 
 이 프로젝트가 Layered를 채택했다면 이 파일은 적용 대상이 아니다 (`layered/repository.md` 참조). 마찬가지로 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다. Java와 Kotlin 규칙 파일을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 언어의 규칙 파일도 프로젝트에서 제외한다 (`kotlin/hexagonal/repository.md` 참조). 또한 이 프로젝트가 SQL-first(ORM 미사용)를 채택했다면 이 파일은 적용 대상이 아니다. ORM과 SQL-first 영속성 규칙을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 영속성 도구의 규칙 파일도 프로젝트에서 제외한다 (`repository-sql.md` 참조). WebFlux(리액티브 스택)를 채택한 프로젝트도 이 파일의 적용 대상이 아니다. 블로킹 영속성(JPA)과 리액티브 영속성(R2DBC)을 한 프로젝트에서 동시에 쓰지 않으므로, WebFlux 프로젝트는 `repository-r2dbc.md`를 대신 적용한다.
 
@@ -17,17 +17,15 @@ globs: "**/*PersistenceAdapter.java,**/*JpaEntity.java,**/*JpaRepository.java,**
 
 ## 2. 도구 선택 계층 (Escalation Ladder)
 
-항상 최하위 충분한 단계에서 시작한다. 적용 대상은 `{Domain}JpaEntity`이며, Level 2~3 도구의 사용 상세 규칙은 `repository-tools.md`를 따른다.
+항상 최하위 충분한 단계에서 시작한다. 적용 대상은 `{Domain}JpaEntity`다 (`shared/architecture.md` 8번).
 
 | Level | 도구 | 사용 조건 |
 |-------|------|-----------|
 | 0 | Query Derivation | 정적 조건 2개 이하의 단순 조회 |
 | 1 | JPA Specification | 동적 검색 조건 조합 (기본값) |
-| 2 | QueryDSL | N+1 fetch join + 페이지네이션, 3개 이상 엔티티 조인, 타입 안전 DTO 프로젝션, 복잡한 서브쿼리 |
-| 3 | JdbcClient + jOOQ | 대량 벌크 처리, 리포팅/집계, 측정된 JPA 성능 병목, JPQL/QueryDSL로 표현 불가한 네이티브 SQL |
 
-- Level 3까지는 측정된 근거 없이 선제적으로 올라가지 않는다.
-- QueryDSL Q-class는 `{Domain}JpaEntity`에 대해 생성된다. `{Domain}JpaEntity`에 `@Entity`가 표준 애노테이션으로 남아 있으므로 APT 기반 Q-class 생성이 별도 설정 없이 그대로 동작한다 — orm.xml 우회가 필요 없다(`repository-tools.md` 1.1절 참조).
+- Level 1(Specification)로 표현하기 어려운 경우(N+1 fetch join + 페이지네이션, 3개 이상 엔티티 조인, 타입 안전 DTO 프로젝션, 복잡한 서브쿼리, 대량 벌크/집계, 측정된 JPA 성능 병목)에는 상위 도구(Level 2 QueryDSL, Level 3 JdbcClient + jOOQ)로 에스컬레이션한다. 상위 도구의 도입 여부와 사용 상세 규칙은 프로젝트 시작 시점에 결정하며, 도입한 프로젝트만 별도 도구 문서를 둔다.
+- 상위 도구를 측정된 근거 없이 선제적으로 사용하지 않는다.
 
 ## 3. PersistenceAdapter 구조
 
@@ -78,7 +76,7 @@ public class OrderPersistenceAdapter implements OrderCommandPort, OrderQueryPort
 
 ## 4. N+1 방지 도구
 
-`repository-tools.md` 1.4절과 동일한 우선순위를 따른다: `@EntityGraph` → QueryDSL `fetchJoin()` → `@BatchSize`/`hibernate.default_batch_fetch_size` → DTO Projection. 모두 `{Domain}JpaEntity`/`{Domain}JpaRepository` 내부에서만 적용하며, Adapter 경계 밖으로 로딩 전략이 새어나가지 않게 한다.
+`@EntityGraph`와 `@BatchSize`/`hibernate.default_batch_fetch_size`로 N+1을 방지한다. 상위 도구를 도입한 경우 QueryDSL `fetchJoin()`·DTO Projection도 우선순위(`@EntityGraph` → `fetchJoin()` → `@BatchSize` → DTO Projection)에 따라 사용할 수 있다(도구 문서 참조). 모두 `{Domain}JpaEntity`/`{Domain}JpaRepository` 내부에서만 적용하며, Adapter 경계 밖으로 로딩 전략이 새어나가지 않게 한다.
 
 ## 5. Finder/Service 계층과의 통합
 
@@ -89,14 +87,10 @@ public class OrderPersistenceAdapter implements OrderCommandPort, OrderQueryPort
               |
               +---> {Domain}PersistenceAdapter (adapter/out/persistence)
                         |
-                        +---> {Domain}JpaRepository — JPA (Specification + QueryDSL)
-                        +---> {Domain}JdbcRepository — 성능 최적화 쿼리 (JdbcClient, 선택)
-                                  |
-                                  +---> {Domain}SqlBuilder (jOOQ, 선택)
+                        +---> {Domain}JpaRepository — JPA (Specification)
 ```
 
 - Application Service/Finder는 Port 인터페이스 타입으로만 의존을 선언한다. 어떤 Adapter 구현체가 주입되는지 알 필요가 없다(Spring이 DI로 연결).
-- JdbcClient/jOOQ를 예외적으로 쓰는 경우도 `{Domain}QueryPort`/`{Domain}CommandPort`를 구현하는 별도 Adapter(또는 같은 Adapter 내부 분기)로 캡슐화하고, Port 밖으로 JDBC 관련 타입을 노출하지 않는다.
 
 ## 6. 테스트
 

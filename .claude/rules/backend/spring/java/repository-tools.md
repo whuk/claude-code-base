@@ -5,7 +5,7 @@ globs: "**/*Repository*.java,**/*PersistenceAdapter.java,**/*JpaEntity.java,**/*
 
 # QueryDSL·JdbcClient·jOOQ 사용 규칙
 
-Escalation Ladder(`layered/repository.md` 4번 또는 `hexagonal/repository.md` 2번)의 Level 2(QueryDSL)와 Level 3(JdbcClient + jOOQ) 도구 사용 상세 규칙이다. Layered/Hexagonal 아키텍처 스타일과 무관하게 공통 적용된다 — Layered는 Domain 클래스, Hexagonal은 `{Domain}JpaEntity`가 쿼리 대상이라는 점만 다르다.
+Escalation Ladder(`shared/architecture.md` 8번)의 상위 티어에 해당하는 Level 2(QueryDSL)와 Level 3(JdbcClient + jOOQ) 도구의 사용 상세 규칙이다. Level 0~1(Query Derivation, JPA Specification)은 `layered/repository.md` 또는 `hexagonal/repository.md`가 다루며, 이 파일은 그 상위 도구를 도입하기로 한 프로젝트에만 존재한다(도입하지 않으면 `/rw:init`이 제외한다). Layered/Hexagonal 아키텍처 스타일과 무관하게 공통 적용된다 — Layered는 Domain 클래스, Hexagonal은 `{Domain}JpaEntity`가 쿼리 대상이라는 점만 다르다.
 
 이 프로젝트가 Kotlin을 채택했다면 이 파일은 적용 대상이 아니다. Java와 Kotlin 규칙 파일을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 언어의 규칙 파일은 프로젝트에서 제외한다 (`kotlin/repository-tools.md` 참조). 또한 이 프로젝트가 SQL-first(ORM 미사용)를 채택했다면 이 파일은 적용 대상이 아니다. ORM과 SQL-first 영속성 규칙을 한 프로젝트에서 동시에 쓰지 않으므로, 실제로 채택하지 않은 영속성 도구의 규칙 파일도 프로젝트에서 제외한다 (`repository-sql.md` 참조). WebFlux(리액티브 스택)를 채택한 프로젝트도 이 파일의 적용 대상이 아니다. 블로킹 도구(QueryDSL/JdbcClient)와 리액티브 영속성을 한 프로젝트에서 동시에 쓰지 않으므로, WebFlux 프로젝트는 `repository-r2dbc.md`를 대신 적용한다.
 
