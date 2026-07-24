@@ -74,7 +74,7 @@ claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용
 - (영속성 도구 "JPA" 선택 시) "MongoDB도 함께 사용합니까?" → JPA만 사용(기본) / JPA + MongoDB 함께 사용
 - (영속성 도구 "JPA" 선택 시) "Repository 조회 도구로 QueryDSL/jOOQ까지 쓸 계획이 있습니까?" → Specification까지만 사용(기본) / QueryDSL/jOOQ까지 쓸 계획 있음
 - (웹 스택 "WebFlux" 선택 시) "리액티브 MongoDB도 함께 사용합니까?" → R2DBC만 사용(기본) / R2DBC + 리액티브 MongoDB 함께 사용
-- "주 관계형 데이터베이스(RDB)는 무엇입니까?" → PostgreSQL(기본) / MySQL / MariaDB / 그 외 유명 DB(Oracle·SQL Server·SQLite 등, "Other"로 직접 입력). 옵션 설명에 PostgreSQL/MySQL이 가장 자주 사용되는 선택지임을 표기한다. 웹 스택과 무관하게 묻는다(WebFlux면 jOOQ 방언과 R2DBC 드라이버 선택의 기준이 된다).
+- "주 관계형 데이터베이스(RDB)는 무엇입니까?" → PostgreSQL(기본) / MySQL / MariaDB / 그 외 유명 DB(Oracle·SQL Server·SQLite 등, "Other"로 직접 입력). 옵션 설명에 PostgreSQL/MySQL이 가장 자주 사용되는 선택지임을 표기한다. 웹 스택과 무관하게 묻는다. 이 답변은 파일 편집으로 이어지지 않는다 — 규칙의 jOOQ 방언/R2DBC 드라이버 예시는 PostgreSQL 기준으로 고정돼 있으며, 선택 결과는 결과 보고에서 사용자가 직접 교체하도록 안내하는 용도로만 쓴다.
 
 (백엔드 스택 "NestJS" 선택 시)
 - "영속성 도구는 무엇을 사용합니까?" → TypeORM / Prisma / 사용 안 함(SQL-first, Kysely)
@@ -83,13 +83,13 @@ claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용
 
 (백엔드 스택 "FastAPI" 선택 시)
 - "SQLAlchemy ORM을 사용합니까?" → ORM 사용(기본) / SQL-first(Core/async 드라이버만, ORM 미사용)
-- "주 관계형 데이터베이스(RDB)는 무엇입니까?" → PostgreSQL(기본) / MySQL / MariaDB / 그 외 유명 DB(SQLite 등, "Other"로 직접 입력). 옵션 설명에 PostgreSQL/MySQL이 가장 자주 사용되는 선택지임을 표기한다.
+- "주 관계형 데이터베이스(RDB)는 무엇입니까?" → PostgreSQL(기본) / MySQL / MariaDB / 그 외 유명 DB(SQLite 등, "Other"로 직접 입력). 옵션 설명에 PostgreSQL/MySQL이 가장 자주 사용되는 선택지임을 표기한다. 이 답변은 파일 편집으로 이어지지 않는다 — `fastapi.md`의 드라이버 예시는 asyncpg(PostgreSQL) 기준으로 고정돼 있으며, 선택 결과는 결과 보고에서 사용자가 직접 교체하도록 안내하는 용도로만 쓴다.
 
 (프론트엔드 "Vite" 선택 시)
 - "라우팅 라이브러리는 무엇을 사용합니까?" → TanStack Router(기본 검토 대상) / React Router
 
 (풀스택 + 백엔드 "NestJS" 선택 시)
-- "프론트엔드 소스 루트 경로는 무엇입니까?" (예: `apps/web`, `frontend`, `web`) — 백엔드와 프론트엔드가 모두 TypeScript이므로 frontend rules의 glob 범위를 좁히는 데 사용한다 (3단계의 해당 편집 규칙 참조)
+- "프론트엔드 소스 루트 경로는 무엇입니까?" (예: `apps/web`, `frontend`, `web`) — 백엔드와 프론트엔드가 모두 TypeScript이라 `frontend/*.md`의 glob(`**/*.ts`)이 백엔드 소스에도 매칭될 수 있다. 이 경로는 파일 편집에 쓰지 않고, 결과 보고에서 "필요하면 이 경로로 glob을 직접 좁히라"는 안내에만 사용한다 (3단계의 해당 안내 규칙 참조)
 
 Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 
@@ -176,11 +176,10 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 - 언어·아키텍처 답변에 해당하는 `test.md`에서도 삭제된 `repository-tools.md`에 대한 참조가 남지 않게 정리한다: Layered면 `layered/test.md` 2.1절의 jOOQ SqlBuilder 문단과 5번(N+1 쿼리 카운트 검증)의 QueryDSL 언급, Hexagonal이면 `hexagonal/test.md` 5번의 `repository-tools.md` 참조 문구를 제거·조정한다. 편집 후 문단이 자연스럽게 이어지는지 다시 읽어 확인한다.
 - **`spring-*` 에이전트는 수정하지 않는다.** 일부 에이전트(`spring-domain-designer` 등)는 QueryDSL/JdbcClient 티어를 계속 언급한다. 4단계 보고 시 이 사실을 사용자에게 알린다.
 
-### 백엔드 스택 "Spring Boot" + RDB 선택 시 — 편집 (파일 삭제 아님)
-- PostgreSQL 선택 시: 편집하지 않는다 (규칙의 jOOQ 방언 예시가 이미 PostgreSQL 기준이다).
-- MySQL/MariaDB 선택 시: 앞선 케이스들의 삭제 처리 후 **남아 있는** 파일에 한해, 선택한 언어 디렉토리에서 jOOQ 방언 예시를 치환한다 — `repository-sql.md` 3번과 `repository-tools.md` 2.5절의 `SQLDialect.POSTGRES`(설명 문장과 `JooqConfig` 코드 예시), `layered/test.md` 2.1절의 프로덕션 방언 예시 `POSTGRES`, (WebFlux 프로젝트) `repository-r2dbc.md` 4번의 `SQLDialect.POSTGRES`를 선택한 DB의 방언 상수(`SQLDialect.MYSQL`/`SQLDialect.MARIADB`)로 바꾼다.
-- 그 외 DB를 직접 입력받은 경우: jOOQ 오픈소스 방언이 존재하면(예: SQLite → `SQLDialect.SQLITE`) 동일하게 치환하고, 상용 에디션 방언이 필요한 DB(Oracle, SQL Server 등)면 치환하지 않고 4단계 보고에서 "jOOQ 방언 예시는 PostgreSQL 기준으로 남아 있으며, 선택한 DB는 jOOQ 상용 에디션 방언이 필요하다"고 안내한다.
-- 편집 후 파일 내 방언 언급이 일관되게 읽히는지 다시 확인한다.
+### 백엔드 스택 "Spring Boot" + RDB 선택 시 — 보고만 (파일 편집 없음)
+- 어떤 DB를 선택하든 rules 파일을 편집하지 않는다. `repository-sql.md`·`repository-tools.md`·`layered/test.md`·(WebFlux) `repository-r2dbc.md`의 jOOQ 방언/R2DBC 드라이버 예시는 PostgreSQL 기준으로 그대로 둔다.
+- PostgreSQL 선택 시: 별도 안내가 없다 (예시가 이미 PostgreSQL 기준이다).
+- 그 외 DB 선택 시: 4단계 보고에서 "예시는 PostgreSQL 기준이며, 선택한 DB에 맞는 jOOQ 방언 상수(`SQLDialect.MYSQL`/`SQLDialect.MARIADB`/`SQLDialect.SQLITE` 등)와 드라이버로 직접 교체해야 한다"고 안내한다. Oracle·SQL Server처럼 jOOQ 상용 에디션 방언이 필요한 DB면 그 사실도 함께 안내한다.
 - `spring-*` 에이전트는 DB 벤더를 언급하지 않으므로 수정 대상이 없다.
 
 ### 백엔드 스택 "NestJS" + 영속성 도구(TypeORM/Prisma) 선택 시 — 편집 (파일 삭제 아님)
@@ -200,11 +199,10 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 - 편집 후 각 섹션이 선택한 경로 하나로 자연스럽게 읽히는지 다시 읽어 확인한다.
 - `fastapi-*` 에이전트는 영속성 방식을 조건부로 함께 언급하므로 수정하지 않는다.
 
-### 백엔드 스택 "FastAPI" + RDB 선택 시 — 편집 (파일 삭제 아님)
-- PostgreSQL 선택 시: 편집하지 않는다 (`fastapi.md`의 드라이버 예시가 이미 PostgreSQL 기준이다).
-- 그 외 선택 시: `.claude/rules/backend/fastapi/fastapi.md`의 드라이버 예시를 선택한 DB 기준으로 치환한다 — 3번의 async 드라이버 예시(`asyncpg`), 9번의 동기 드라이버 예시(`psycopg2`)와 async 드라이버 예시(`asyncpg, aiosqlite 등`)를 해당 DB의 드라이버로 바꾼다 (MySQL/MariaDB: async는 `asyncmy` 또는 `aiomysql`, 동기는 `PyMySQL`; SQLite: async는 `aiosqlite`, 동기는 표준 `sqlite3`).
-- ORM 사용 여부 케이스(위)의 편집으로 이미 제거된 문장은 대상이 아니다. 남아 있는 문장에 대해서만 적용한다.
-- 편집 후 문장이 자연스럽게 읽히는지 다시 확인한다.
+### 백엔드 스택 "FastAPI" + RDB 선택 시 — 보고만 (파일 편집 없음)
+- 어떤 DB를 선택하든 `fastapi.md`를 편집하지 않는다. 드라이버 예시(3번의 `asyncpg`, 9번의 `psycopg2`/`asyncpg, aiosqlite 등`)는 PostgreSQL 기준으로 그대로 둔다.
+- PostgreSQL 선택 시: 별도 안내가 없다 (예시가 이미 PostgreSQL 기준이다).
+- 그 외 DB 선택 시: 4단계 보고에서 "예시는 asyncpg(PostgreSQL) 기준이며, 선택한 DB에 맞는 드라이버로 직접 교체해야 한다"고 안내한다 (MySQL/MariaDB: async는 `asyncmy`/`aiomysql`, 동기는 `PyMySQL`; SQLite: async는 `aiosqlite`, 동기는 표준 `sqlite3`).
 - `fastapi-*` 에이전트는 DB 벤더를 언급하지 않으므로 수정 대상이 없다.
 
 ### 백엔드 스택 "NestJS" + 검증 도구 선택 시 — 편집 (파일 삭제 아님)
@@ -212,9 +210,9 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 - Zod 선택 시: `nestjs.md` 3번을 `nestjs-zod` 기준으로 조정한다 — class-validator 기본 문장을 Zod 스키마 기반 검증으로 바꾸고, 다중 진입점 방어 항목의 `validateOrReject()` 언급을 Command 생성 시점의 Zod 스키마 `parse()` 호출로 대체한다.
 - **Zod 선택 시 `nestjs-*` 에이전트는 수정하지 않는다.** `nestjs-tdd-implementer`/`nestjs-code-reviewer`/`nestjs-domain-designer`는 class-validator 전제로 작성돼 있다. 4단계 보고 시 이 사실을 사용자에게 명시적으로 알린다: "nestjs 에이전트들은 class-validator 전제입니다. Zod 기준으로 활용하려면 에이전트를 별도로 조정해야 합니다."
 
-### 풀스택 + 백엔드 "NestJS" 선택 시 — 편집 (파일 삭제 아님)
-- 백엔드와 프론트엔드가 모두 TypeScript이므로 `frontend/typescript.md`의 globs(`**/*.ts`)가 백엔드 소스에도 매칭된다. 1단계에서 감지했거나 2단계 라운드 3에서 답변받은 프론트엔드 소스 루트 경로를 `frontend/*.md`의 globs에 프리픽스로 적용한다 (예: `**/*.ts` → `apps/web/**/*.ts`, `**/*.tsx` → `apps/web/**/*.tsx`).
-- 편집 후 globs가 실제 프론트엔드 파일 경로와 매칭되는지 경로 예시로 확인한다.
+### 풀스택 + 백엔드 "NestJS" 선택 시 — 보고만 (파일 편집 없음)
+- 백엔드와 프론트엔드가 모두 TypeScript이므로 `frontend/*.md`의 globs(`**/*.ts`, `**/*.tsx`)가 백엔드 소스에도 매칭될 수 있다. rw:init은 이 globs를 편집하지 않고 원본 그대로 둔다.
+- 대신 4단계 보고에서, 1단계에서 감지했거나 2단계 라운드 3에서 답변받은 프론트엔드 소스 루트 경로를 이용해 "필요하면 `frontend/*.md`의 globs를 이 경로로 직접 좁히라(예: `**/*.ts` → `apps/web/**/*.ts`)"고 안내한다.
 
 ### 프론트엔드 "Vite" + 라우팅 라이브러리 선택 시 — 편집 (파일 삭제 아님)
 - `.claude/rules/frontend/vite.md` 3번(라우팅)에서 선택하지 않은 라이브러리 항목을 제거하고, 선택한 라이브러리를 확정 문장으로 바꾼다. "둘 중 하나를 프로젝트 시작 시점에 고정한다" 문장은 선택이 끝났으므로 제거한다.
@@ -232,7 +230,8 @@ Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
 - 자동 감지 모드였던 경우: 자동 확정한 항목과 항목별 감지 근거, 질문으로 보완한 항목 목록
 - 삭제한 파일/디렉토리 목록과 편집한 파일 목록
 - 해당 시 에이전트 안내문 (NestJS+Zod, JPA만, Specification까지만 선택 시의 에이전트 미수정 안내)
-- 해당 시 RDB 안내문 (jOOQ 상용 에디션 방언이 필요한 DB를 선택한 경우)
+- 해당 시 RDB 안내문 (PostgreSQL 외 DB 선택 시: 예시가 PostgreSQL/asyncpg 기준이므로 jOOQ 방언 상수·드라이버를 직접 교체하라는 안내. Oracle·SQL Server처럼 jOOQ 상용 에디션 방언이 필요한 경우 그 사실도 함께)
+- 해당 시 풀스택 NestJS glob 안내문 (frontend globs가 백엔드 TS에도 매칭될 수 있으니 필요하면 프론트엔드 소스 루트로 직접 좁히라는 안내)
 - 커밋하지 않았음을 명시하고, 커밋을 원하면 요청하도록 안내
 
 ## 하지 말아야 할 것

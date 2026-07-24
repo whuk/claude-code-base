@@ -30,7 +30,7 @@ WebFlux 프로젝트에서 문서형 데이터가 필요한 도메인에 리액�
 
 ## 4. 테스트
 
-- 리액티브 MongoDB 병용 도메인의 통합 테스트는 base class 표(`test.md`)의 MongoDB 포함 base class(`IntegrationTestBase`/`WebIntegrationTestBase`)를 리액티브 구성으로 대체해 읽는다 (`webflux.md` 8번의 접두사 대체 규정과 동일한 방식).
+- 리액티브 MongoDB 병용 도메인의 통합 테스트는 `test-mongodb.md`의 MongoDB 포함 base class(`IntegrationTestBase`/`WebIntegrationTestBase`)를 리액티브 구성으로 대체해 읽는다 (`webflux.md` 8번의 접두사 대체 규정과 동일한 방식).
 - 검증은 `StepVerifier`로 한다: 방출 값과 종료 시그널을 어서션하고, `block()`으로 결과를 꺼내지 않는다 (`repository-r2dbc.md` 7번과 동일).
 
 ## 5. 금지 패턴

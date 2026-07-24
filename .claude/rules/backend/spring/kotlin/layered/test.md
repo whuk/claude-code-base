@@ -23,28 +23,19 @@ globs: "**/src/test/**"
 - Service, Validator, 도메인 로직 등 외부 의존성 없이 검증 가능한 테스트에 사용한다.
 - jOOQ SqlBuilder 테스트가 이 유형에 해당한다. `DSL.using(SQLDialect.H2)`로 테스트용 SQL을 생성하고, 프로덕션 방언(`POSTGRES` 등)으로도 SQL 문자열을 검증하여 방언 간 차이를 확인한다.
 
-### 2.2. JPA 통합 테스트 (MongoDB 불필요)
+### 2.2. JPA 통합 테스트
 
 - **Repository 테스트**: `JpaIntegrationTestBase`를 상속한다.
 - **Controller/Web 테스트**: `JpaWebIntegrationTestBase`를 상속한다.
-- H2 데이터베이스만 로드하고 Embedded MongoDB를 시작하지 않는다.
-- Terms, System 등 JPA 엔티티만 사용하는 도메인의 테스트에 해당한다.
-
-### 2.3. MongoDB 통합 테스트 (전체 컨텍스트)
-
-- **Repository 테스트**: `IntegrationTestBase`를 상속한다.
-- **Controller/Web 테스트**: `WebIntegrationTestBase`를 상속한다.
-- H2 + Embedded MongoDB를 모두 로드한다.
-- Message, Conversation 등 MongoDB를 사용하는 도메인의 테스트에 해당한다.
+- H2 데이터베이스를 로드한다.
+- Terms, System 등 JPA 엔티티를 사용하는 도메인의 테스트에 해당한다.
 
 ## 3. base class 구조
 
 | base class | 용도 | 로드 범위 |
 |---|---|---|
-| `IntegrationTestBase` | MongoDB 포함 통합 테스트 | 전체 컨텍스트 (H2 + MongoDB) |
-| `WebIntegrationTestBase` | MongoDB 포함 Web 테스트 | 전체 컨텍스트 + MockMvc |
-| `JpaIntegrationTestBase` | JPA-only 통합 테스트 | H2만 (MongoDB 제외) |
-| `JpaWebIntegrationTestBase` | JPA-only Web 테스트 | H2만 + MockMvc |
+| `JpaIntegrationTestBase` | JPA 통합 테스트 | H2 |
+| `JpaWebIntegrationTestBase` | JPA Web 테스트 | H2 + MockMvc |
 
 ## 4. 테스트 데이터 생성
 
@@ -60,5 +51,4 @@ globs: "**/src/test/**"
 ## 6. 금지 패턴
 
 - 테스트 클래스에 `@SpringBootTest`, `@ActiveProfiles`, `@AutoConfigureMockMvc`를 직접 선언하지 않는다.
-- JPA-only 테스트에서 `IntegrationTestBase` 또는 `WebIntegrationTestBase`를 상속하지 않는다 (불필요한 MongoDB 로드).
 - 테스트에서 `Thread.sleep`으로 실행 순서나 타임스탬프 차이를 보장하지 않는다.

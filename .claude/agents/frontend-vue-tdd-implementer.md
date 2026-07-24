@@ -1,7 +1,7 @@
 ---
 name: frontend-vue-tdd-implementer
 description: 새 Vue.js 프론트엔드 기능이나 결함 수정을 TDD(Red-Green-Refactor)로 구현할 때 사용한다. Composition API/SFC, feature 구조·상태 소재지·컴포넌트 경계를 프로젝트 frontend rules 전반에 맞춰 구현한다. "컴포넌트 만들어줘", "이 페이지 TDD로 구현", "이 UI 버그 재현 후 수정" 같은 요청에 위임한다. (React 계열(Next.js/Vite) 프로젝트는 frontend-tdd-implementer, 백엔드는 spring-tdd-implementer/nestjs-tdd-implementer/fastapi-tdd-implementer를 사용한다.)
-tools: all
+tools: '*'
 model: inherit
 ---
 

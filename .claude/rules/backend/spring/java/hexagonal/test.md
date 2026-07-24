@@ -30,30 +30,23 @@ globs: "**/src/test/**"
 - 검증 대상은 UseCase 구현체의 오케스트레이션 로직(Port 호출 순서, Domain 메서드 호출, 트랜잭션 경계 내 흐름)이지 실제 영속성 동작이 아니다.
 - Port 인터페이스를 Mock으로 대체할 수 있다는 것이 Ports & Adapters 구조의 핵심 이점이다 — 실제 DB 없이 Application 로직을 검증한다.
 
-### 2.3. Persistence Adapter 통합 테스트 (JPA-only, MongoDB 불필요)
+### 2.3. Persistence Adapter 통합 테스트 (JPA-only)
 
 - `{Domain}PersistenceAdapter`, `{Domain}JpaRepository` 테스트는 `JpaIntegrationTestBase`를 상속한다.
 - 검증 대상은 `{Domain}JpaEntity` 매핑, `{Domain}PersistenceMapper`의 Domain ↔ JpaEntity 변환 정확성, Specification/QueryDSL 조건 조립 결과다.
-- H2 데이터베이스만 로드하고 Embedded MongoDB를 시작하지 않는다.
+- H2 데이터베이스를 로드한다.
 
 ### 2.4. Web Adapter 테스트 (Controller)
 
-- `{Domain}Controller` 테스트는 `JpaWebIntegrationTestBase`(또는 MongoDB 포함 도메인이면 `WebIntegrationTestBase`)를 상속한다.
+- `{Domain}Controller` 테스트는 `JpaWebIntegrationTestBase`를 상속한다.
 - `port/in`의 UseCase를 `@MockitoBean`(또는 동등 수단)으로 대체해 Application Service 실행 없이 Web 계층(요청 바인딩, 검증, 상태 코드, 직렬화)만 검증할 수도 있다. 전체 흐름을 검증하려면 Mock 없이 실제 UseCase 구현체를 통과시킨다 — 어느 쪽을 쓸지는 팀 컨벤션으로 고정한다.
-
-### 2.5. MongoDB 통합 테스트 (전체 컨텍스트)
-
-- `IntegrationTestBase`(Repository)/`WebIntegrationTestBase`(Controller/Web)를 상속한다.
-- H2 + Embedded MongoDB를 모두 로드한다.
 
 ## 3. base class 구조
 
 | base class | 용도 | 로드 범위 |
 |---|---|---|
-| `IntegrationTestBase` | MongoDB 포함 Persistence Adapter 테스트 | 전체 컨텍스트 (H2 + MongoDB) |
-| `WebIntegrationTestBase` | MongoDB 포함 Web Adapter 테스트 | 전체 컨텍스트 + MockMvc |
-| `JpaIntegrationTestBase` | JPA-only Persistence Adapter 테스트 | H2만 (MongoDB 제외) |
-| `JpaWebIntegrationTestBase` | JPA-only Web Adapter 테스트 | H2만 + MockMvc |
+| `JpaIntegrationTestBase` | Persistence Adapter 통합 테스트 | H2 |
+| `JpaWebIntegrationTestBase` | Web Adapter 테스트 | H2 + MockMvc |
 
 ## 4. 테스트 데이터 생성
 
@@ -69,5 +62,4 @@ globs: "**/src/test/**"
 - 테스트 클래스에 `@SpringBootTest`, `@ActiveProfiles`, `@AutoConfigureMockMvc`를 직접 선언하지 않는다.
 - Domain 단위 테스트에 Spring 컨텍스트나 base class를 끌어들이지 않는다(Domain이 프레임워크로부터 격리되어 있다는 전제가 깨진다).
 - Application Service/Finder 테스트에서 실제 Persistence Adapter(DB 접근)를 사용하지 않는다. Port를 Mock으로 대체한다.
-- JPA-only 테스트에서 `IntegrationTestBase` 또는 `WebIntegrationTestBase`를 상속하지 않는다.
 - 테스트에서 `Thread.sleep`으로 실행 순서나 타임스탬프 차이를 보장하지 않는다.
