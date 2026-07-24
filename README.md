@@ -8,6 +8,8 @@ Claude Code용 프로젝트 규칙(`rules`)과 서브에이전트(`agents`), 커
 2. 새 프로젝트를 Claude Code로 엽니다.
 3. **가장 먼저 `/rw:init`을 실행합니다.** 실제 프로젝트 스택(백엔드/프론트엔드/풀스택, 백엔드 스택 종류, Spring이면 언어(Java/Kotlin)·아키텍처 스타일(Layered/Hexagonal)·웹 스택(MVC/WebFlux — Java 한정, WebFlux면 영속성은 R2DBC로 고정)·영속성 도구(JPA/SQL-first)·MongoDB 사용 여부·QueryDSL/jOOQ 계획·주 RDB(PostgreSQL/MySQL 등), NestJS면 영속성 도구(TypeORM/Prisma/SQL-first)와 검증 도구(class-validator/Zod), FastAPI면 SQLAlchemy ORM 사용 여부와 주 RDB, 프론트엔드면 Next.js/Vite/Vue.js와 Vite의 라우팅 라이브러리)을 확정한 뒤, 해당하지 않는 `.claude/rules/`와 `.claude/agents/` 파일을 정리해줍니다. 기존 코드가 있는 프로젝트면 빌드 파일·의존성·디렉토리 구조를 스캔해 스택을 자동 감지하고(감지 근거는 실행 전 확인 단계에 표시), 빈 프로젝트거나 감지하지 못한 항목만 질문합니다. 그대로 다 복사해서 쓰면 안 쓰는 규칙/에이전트까지 매 세션 로드되어 불필요하게 토큰을 소모합니다.
 
+> **이미 초기화한 프로젝트를 템플릿 업데이트와 동기화하기:** 템플릿의 선별(삭제) 규칙이 갱신되면(예: `/rw:init`이 Next.js/Vue.js 선택 시 Vite 전용 `vite-routing-*.md`도 삭제하도록 수정됨), 구버전으로 초기화한 프로젝트에는 이제 불필요해진 규칙 파일이 남아 매 세션 로드될 수 있습니다. `/rw:init` 재실행보다(이미 삭제된 파일까지 다시 지우려다 에러가 날 수 있음) 남은 파일을 수동으로 제거하는 편이 깔끔합니다. 예: Next.js/Vue.js 프로젝트에서 `git rm .claude/rules/frontend/vite-routing-reactrouter.md .claude/rules/frontend/vite-routing-tanstack.md` (커밋 전이면 `rm`).
+
 ## 구성
 
 ```
