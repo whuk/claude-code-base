@@ -1,7 +1,7 @@
 ---
 name: spring-tdd-implementer
 description: 새 Spring Boot(Layered 아키텍처) 기능이나 결함 수정을 TDD(Red-Green-Refactor)로 구현할 때 사용한다. openapi.yaml 스펙 정의 → 코드 생성 → Finder/Service/Domain 계층 구현 흐름을 프로젝트 rules 전반에 맞춰 수행한다. "기능 구현", "TDD로 만들어줘", "이 API 구현", "버그 재현 후 수정" 같은 요청에 위임한다. (NestJS는 nestjs-tdd-implementer, FastAPI는 fastapi-tdd-implementer, 프론트엔드는 frontend-tdd-implementer를 사용한다. Hexagonal 아키텍처를 선택한 Spring 프로젝트는 spring-hexagonal-tdd-implementer를 사용한다.)
-tools: all
+tools: '*'
 model: inherit
 ---
 
