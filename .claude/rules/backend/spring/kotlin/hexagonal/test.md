@@ -55,7 +55,7 @@ globs: "**/src/test/**"
 
 ## 5. N+1 쿼리 카운트 검증
 
-- Persistence Adapter 통합 테스트에서 Hibernate Statistics 또는 DataSource 프록시로 쿼리 카운트를 어서션한다(Layered와 동일한 원칙, `repository-tools.md` 3번 참조).
+- Persistence Adapter 통합 테스트에서 Hibernate Statistics 또는 DataSource 프록시로 쿼리 카운트를 어서션한다(Layered와 동일한 원칙). 상위 도구(QueryDSL 등)를 도입한 프로젝트라면 `repository-tools.md` 3번의 N+1 검증 지침도 함께 참조한다.
 
 ## 6. 금지 패턴
 
