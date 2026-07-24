@@ -79,7 +79,7 @@
 
 ### Phase 5: 문서 동기화 및 조합 검증
 
-- [ ] `CLAUDE.md` 1번의 rw:init 설명에서 편집을 전제한 문구(RDB가 편집으로 이어진다는 취지 등)를 새 동작에 맞게 수정한다 → 검증: 설명이 "선별 삭제 + 분리 파일 선택 + RDB 보고" 동작과 일치
-- [ ] init.md 4단계/결과 보고를 갱신한다: rename 수행 명시, RDB 수동 교체 안내, 풀스택 glob 안내, 분리 파일 목록 반영 → 검증: 보고 항목이 새 처리와 일치
-- [ ] 대표 스택 조합(Java/Layered/SQL-first, Java/WebFlux, Kotlin/Hexagonal/JPA+Mongo, NestJS/Prisma/Zod, FastAPI/SQL-first, Vite/React Router)별로 남는 파일 집합을 손으로 시뮬레이션해 내용 누락·잔여 참조가 없는지 점검한다 → 검증: 각 조합에서 남는 파일만으로 규칙이 완결되고 죽은 참조가 없음
-- [ ] agents 파일은 이번 작업에서 수정하지 않음을 재확인하고, 기존 "에이전트 미수정 안내"(NestJS+Zod 등)가 여전히 유효한지 확인한다 → 검증: agents/ 변경 0건, 관련 안내 문구 유지
+- [x] `CLAUDE.md` 1번의 rw:init 설명에서 편집을 전제한 문구(RDB가 편집으로 이어진다는 취지 등)를 새 동작에 맞게 수정한다 → 검증: 설명이 "선별 삭제 + 분리 파일 선택 + RDB 보고" 동작과 일치
+- [x] init.md 4단계/결과 보고를 갱신한다: rename 수행 명시, RDB 수동 교체 안내, 풀스택 glob 안내, 분리 파일 목록 반영 → 검증: 보고 항목이 새 처리와 일치
+- [x] 대표 스택 조합(Java/Layered/SQL-first, Java/WebFlux, Kotlin/Hexagonal/JPA+Mongo, NestJS/Prisma/Zod, FastAPI/SQL-first, Vite/React Router)별로 남는 파일 집합을 손으로 시뮬레이션해 내용 누락·잔여 참조가 없는지 점검한다 → 검증: 각 조합에서 남는 파일만으로 규칙이 완결되고 죽은 참조가 없음. (새 dangling 1건 발견·수정: `hexagonal/test.md`의 `repository-tools.md` 참조를 조건부화. 기존 이슈로 `layer-communication-rules.md`의 `domain.md 9번`(JPA 전제)은 이번 분할 scope 밖으로 확인·보고)
+- [x] agents 파일은 이번 작업에서 수정하지 않음을 재확인하고, 기존 "에이전트 미수정 안내"(NestJS+Zod 등)가 여전히 유효한지 확인한다 → 검증: agents/ 변경 0건, 관련 안내 문구 유지
