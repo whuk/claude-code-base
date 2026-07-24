@@ -37,6 +37,8 @@ SQL-first(ORM 미사용) 프로젝트는 `Jpa*` base class 대신 `Jdbc*` base c
 
 WebFlux 프로젝트는 `Jpa*`/`Jdbc*` 대신 `R2dbc*` base class(`R2dbcIntegrationTestBase`, `R2dbcWebIntegrationTestBase` 등)를 사용하고, Web 테스트는 MockMvc 대신 `WebTestClient`, `Mono`/`Flux` 반환 로직 검증은 `StepVerifier`를 사용한다 (`webflux.md` 8번, `repository-r2dbc.md` 8번). 테스트에서 `block()`으로 값을 꺼내 어서션하지 않는다.
 
+Java/Kotlin 프로젝트에 `.claude/rules/backend/spring/{java|kotlin}/archunit.md`가 있으면, 계층 의존 방향(Controller→Service→Repository→Domain)과 슬라이스 순환을 강제하는 `ArchUnit` 아키텍처 테스트를 커버리지 대상에 포함한다(없으면 생성, 있으면 유지·보강).
+
 ## 산출물 형식
 
 작성한 테스트 코드와 실행 결과(통과/실패)를 최종 메시지로 보고한다. 결과는 실제 테스트 출력에 근거한다.
