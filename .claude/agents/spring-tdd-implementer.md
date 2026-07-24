@@ -37,6 +37,7 @@ model: inherit
 - `.claude/rules/backend/spring/{java|kotlin}/layered/repository.md` — Specification/QueryDSL/JdbcClient 도구 선택 (SQL-first 프로젝트는 대신 `.claude/rules/backend/spring/{java|kotlin}/repository-sql.md`를, WebFlux 프로젝트는 `.claude/rules/backend/spring/java/repository-r2dbc.md`와 `.claude/rules/backend/spring/java/webflux.md`를 읽는다)
 - `.claude/rules/backend/spring/api-dto.md`, `.claude/rules/backend/shared/rest-api.md` — API-first, DTO 자동생성 (언어 공통)
 - `.claude/rules/backend/spring/{java|kotlin}/layered/test.md` — 테스트 base class 선택
+- `.claude/rules/backend/spring/{java|kotlin}/archunit.md`(Java/Kotlin 프로젝트에 있으면) — ArchUnit으로 계층 의존 방향(Controller→Service→Repository→Domain)을 강제. 아키텍처 테스트가 없으면 초기 1회 생성을 포함하고, 있으면 새 계층/패키지 추가 시 함께 갱신한다
 
 **계층 규칙 요약**:
 
