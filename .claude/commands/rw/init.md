@@ -52,6 +52,20 @@ claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용
 ### Vite 세부 감지
 - 라우팅 라이브러리: `@tanstack/react-router` → TanStack Router / `react-router`/`react-router-dom` → React Router
 
+### 언어·프레임워크 버전 감지 (스택 공통)
+
+확정된 스택에 해당하는 항목만 감지한다. 여러 소스가 서로 다른 값을 가리키면(예: `.java-version`은 17인데 Gradle 툴체인은 21) 미확정으로 남겨 2단계에서 질문한다.
+
+- **JDK**: Gradle의 `JavaLanguageVersion.of(N)`(toolchain) / `sourceCompatibility`·`targetCompatibility`, Maven의 `maven.compiler.release`·`maven.compiler.source`·`<java.version>` property, `.java-version`(jenv), `.sdkmanrc`, `.tool-versions`(asdf/mise)의 `java` 항목
+- **Kotlin**: 빌드 파일의 `kotlin("jvm") version "..."`/`org.jetbrains.kotlin.jvm` 플러그인 버전, `kotlin.jvmToolchain(N)`(JDK 쪽 근거로도 사용)
+- **Spring Boot**: `org.springframework.boot` 플러그인 버전(Gradle) 또는 `spring-boot-starter-parent`/`spring-boot-dependencies` BOM 버전(Maven)
+- **Python**: `pyproject.toml`의 `requires-python`, `.python-version`(pyenv), `.tool-versions`의 `python` 항목, Docker 베이스 이미지 태그
+- **FastAPI·Pydantic**: `pyproject.toml`/`requirements*.txt`의 `fastapi`·`pydantic` 버전 지정, lock 파일(`poetry.lock`/`uv.lock`/`requirements.lock`)의 해결된 버전. 버전 지정이 없거나(`fastapi`만 적힌 경우) 범위가 너무 넓어 v1/v2 판정이 불가하면 미확정
+- **Node**: `package.json`의 `engines.node`, `.nvmrc`, `.tool-versions`의 `nodejs` 항목
+- **Vue**: `package.json`의 `vue` 의존성 버전(`^3.x` → Vue 3 / `^2.x` → Vue 2)
+
+이 항목들은 삭제/rename 대상을 바꾸지 않는다(3단계의 "언어·프레임워크 버전 — 보고만" 참조). 감지 목적은 rules가 전제하는 최소 버전을 충족하는지 확인해 보고하기 위함이다.
+
 ## 2단계: 스택 질문 (AskUserQuestion 사용, 여러 라운드로 진행)
 
 1단계에서 확정하지 못한 항목만 묻는다. 확정된 항목의 질문은 생략하고, 그 답이 뒤 라운드의 분기 조건이면 확정된 답을 그대로 사용한다. 모든 항목이 확정됐으면 이 단계 전체를 건너뛴다.
@@ -94,6 +108,31 @@ claude-code-base 템플릿을 실제 프로젝트 스택에 맞게 선별 적용
 - "프론트엔드 소스 루트 경로는 무엇입니까?" (예: `apps/web`, `frontend`, `web`) — 백엔드와 프론트엔드가 모두 TypeScript이라 `frontend/*.md`의 glob(`**/*.ts`)이 백엔드 소스에도 매칭될 수 있다. 이 경로는 파일 편집에 쓰지 않고, 결과 보고에서 "필요하면 이 경로로 glob을 직접 좁히라"는 안내에만 사용한다 (3단계의 해당 안내 규칙 참조)
 
 Next.js/Vue.js를 선택한 경우 프론트엔드 세부 질문은 없다.
+
+**라운드 4 — 언어·프레임워크 버전 (1단계에서 감지하지 못한 항목만)**:
+
+확정된 스택에 해당하는 것만 묻는다. 1단계에서 감지된 항목은 묻지 않는다. 이 답변들은 파일 편집으로 이어지지 않고 전제 검증·보고에만 쓰인다(3단계의 "언어·프레임워크 버전 — 보고만" 참조). 각 질문의 옵션 설명에 "이 답변은 파일 삭제 대상을 바꾸지 않으며, 규칙이 전제하는 최소 버전 충족 여부 확인에만 쓰입니다"를 표기한다.
+
+(백엔드 "Spring Boot" + 언어 "Java" 선택 시)
+- "JDK 버전은 무엇입니까?" → 21(LTS, 기본) / 17(LTS, 규칙이 요구하는 최소) / 25(LTS) / 그 외("Other"로 직접 입력)
+- "Spring Boot 버전대는 무엇입니까?" → 3.2 이상(기본) / 3.0~3.1 / 2.x. 옵션 설명에 각각의 의미를 표기한다 — 3.2+는 `JdbcClient`를 쓸 수 있는 기준선, 3.0~3.1은 Jakarta EE는 맞지만 `JdbcClient`가 없음, 2.x는 `javax.persistence` 시대라 규칙 전반의 Jakarta 전제가 깨짐
+
+(백엔드 "Spring Boot" + 언어 "Kotlin" 선택 시)
+- "JDK 버전은 무엇입니까?" → (Java와 동일한 선택지)
+- "Kotlin 버전대는 무엇입니까?" → 2.x(기본) / 1.9.x / 그 외
+- "Spring Boot 버전대는 무엇입니까?" → (Java와 동일한 선택지)
+
+(백엔드 "FastAPI" 선택 시)
+- "Python 버전은 무엇입니까?" → 3.13(기본) / 3.12 / 3.11 / 그 외("Other"로 직접 입력). 옵션 설명에 규칙이 요구하는 최소는 3.9(Pydantic v2·최신 FastAPI 기준)임을 표기한다
+- "FastAPI·Pydantic 버전대는 무엇입니까?" → FastAPI 0.100 이상 + Pydantic v2(기본) / FastAPI 0.99 이하 + Pydantic v1 / 그 외("Other"로 직접 입력). 옵션 설명에 `fastapi.md` 2번의 다중 진입점 방어가 Pydantic v2의 인스턴스화 시점 검증을 근거로 삼는다는 점, FastAPI가 Pydantic v2를 지원하기 시작한 것이 0.100이라는 점을 표기한다
+
+(백엔드 "NestJS" 선택 시 또는 프론트엔드 포함 시)
+- "Node.js 버전대는 무엇입니까?" → 22 LTS(기본) / 20 LTS / 24 LTS / 그 외. 백엔드·프론트엔드 모두 Node를 쓰는 풀스택이면 한 번만 묻는다(런타임이 하나로 통일된 경우). 서로 다른 버전을 쓰면 "Other"로 각각 기입하도록 안내한다
+
+(프론트엔드 "Vue.js" 선택 시)
+- "Vue 버전은 무엇입니까?" → 3.x(기본) / 2.x. 옵션 설명에 `vue.md`가 Vue 3 + Composition API(`<script setup>`)를 전제로 한다는 점을 표기한다
+
+NestJS·Next.js·Vite·React 자체의 라이브러리 버전은 묻지 않는다. 해당 rules에 버전 의존적인 최소 전제가 없어 답변이 검증으로 이어지지 않기 때문이다(전제가 있는 항목만 묻는다는 원칙).
 
 ## 3단계: 삭제/rename 대상 확정
 
@@ -238,6 +277,22 @@ Hexagonal + JPA + MVC일 때 선택한 언어 디렉토리(`spring/{java|kotlin}
 - TanStack Router 선택 시: `.claude/rules/frontend/vite-routing-reactrouter.md`를 삭제한다 (`vite-routing-tanstack.md`만 남긴다). 라우팅-무관 공통인 `vite.md`는 그대로 유지한다.
 - React Router 선택 시: `.claude/rules/frontend/vite-routing-tanstack.md`를 삭제한다 (`vite-routing-reactrouter.md`만 남긴다). 라우팅-무관 공통인 `vite.md`는 그대로 유지한다.
 
+### 언어·프레임워크 버전 — 보고만 (파일 편집 없음)
+
+버전은 삭제/rename 대상을 바꾸지 않는다. 어떤 버전을 쓰든 남는 rules 파일 집합은 동일하며, rules 본문의 버전 서술(`repository-tools.md`의 "Spring Boot 3.2+" 등)도 편집하지 않는다. 확정된 버전을 아래 전제와 대조해, **미달하는 항목이 있을 때만** 4단계 보고에서 경고한다. 전제를 모두 충족하면 버전 관련 안내를 출력하지 않는다.
+
+| 전제 | 근거 | 미달 시 보고할 내용 |
+|---|---|---|
+| JDK 17+ | Java rules 전반이 `record`·`sealed interface`를 Command/Query·Read DTO·Value Object의 기본 표현 수단으로 사용 | 규칙 대부분이 문법적으로 성립하지 않는다. JDK 상향 또는 rules 수정이 필요하다 |
+| Spring Boot 3.2+ / Framework 6.1+ | `spring/{java\|kotlin}/repository-tools.md` 2.1(JdbcClient), `repository-sql.md`(모든 영속성 접근을 JdbcClient로 실행) | `JdbcClient`가 없다. SQL-first를 선택했다면 영속성 규칙의 기반 자체가 없으므로 Boot 상향이 사실상 필수이고, JPA + QueryDSL/jOOQ를 선택했다면 Level 3 티어를 쓸 수 없다 |
+| Spring Boot 3+ (Jakarta EE) | `repository-tools.md` 1.1(QueryDSL `io.github.openfeign.querydsl` 6.x), Spring rules 전반의 `jakarta.persistence.*` 전제 | Boot 2.x는 `javax.persistence` 시대다. 패키지 전제와 QueryDSL 아티팩트 선택이 모두 어긋나므로 Boot 상향 또는 rules 전반 재검토가 필요하다 |
+| Python 3.9+ / Pydantic v2 (FastAPI 0.100+) | `fastapi.md` 2번(Pydantic v2의 인스턴스화 시점 검증이 다중 진입점 방어의 근거). FastAPI가 Pydantic v2를 지원하는 것은 0.100부터다 | Pydantic v1에서는 다중 진입점 방어 논리가 성립하지 않는다. v2 마이그레이션(FastAPI도 함께 상향) 또는 검증 트리거 재설계가 필요하다 |
+| Vue 3 | `frontend/vue.md` 1번(Vue 3 + Vite), 2번(Composition API·`<script setup>`) | Vue 2에서는 `vue.md`의 핵심 규칙 대부분이 적용 불가하다 |
+
+- 위 전제 검증은 **해당 규칙 파일이 살아남은 경우에만** 수행한다. 예를 들어 "Specification까지만" 선택으로 `repository-tools.md`를 삭제했고 영속성이 JPA면 `JdbcClient` 전제 경고를 하지 않는다.
+- Kotlin·Node 버전은 rules에 명시된 최소 전제가 없다. 확정된 값을 결과 보고의 스택 요약에 기록만 하고 별도 경고를 만들지 않는다.
+- 버전 때문에 rules 파일을 추가로 삭제하거나 본문을 편집하지 않는다. 조치 여부는 사용자가 판단한다.
+
 ## 4단계: 확인 후 실행
 
 1. 삭제/rename 대상 전체 목록을 사용자에게 보여주고 진행 여부를 확인받는다. 분리 파일을 정규 이름으로 맞추는 rename(예: `domain-pure.md` → `domain.md`)이 있으면 그 항목도 함께 표시한다. 1단계에서 자동 확정한 항목이 있으면 항목별 감지 근거(파일 경로·의존성 이름)를 함께 표시해 잘못 감지된 항목을 사용자가 바로잡을 수 있게 한다. NestJS + Zod를 선택한 경우 "nestjs 에이전트들은 class-validator 전제" 안내를 함께 보여준다.
@@ -246,12 +301,13 @@ Hexagonal + JPA + MVC일 때 선택한 언어 디렉토리(`spring/{java|kotlin}
 
 ## 결과 보고
 
-- 선택된 스택 조합 요약 (영역, 백엔드 스택·언어·아키텍처·헥사고날 flavor(Hexagonal+JPA+MVC일 때 Clean/Pragmatic, Java·Kotlin 모두)·주 RDB, 프론트엔드 프레임워크 등)
+- 선택된 스택 조합 요약 (영역, 백엔드 스택·언어·아키텍처·헥사고날 flavor(Hexagonal+JPA+MVC일 때 Clean/Pragmatic, Java·Kotlin 모두)·주 RDB, 프론트엔드 프레임워크, 확정된 언어·프레임워크 버전(JDK/Kotlin/Spring Boot/Python/FastAPI·Pydantic/Node/Vue) 등)
 - 자동 감지 모드였던 경우: 자동 확정한 항목과 항목별 감지 근거, 질문으로 보완한 항목 목록
 - 삭제한 파일/디렉토리 목록과 rename한 파일 목록(분리 파일 → 정규 이름). rules 파일 본문은 편집하지 않았음을 함께 명시한다
 - 해당 시 에이전트 안내문 (NestJS+Zod, JPA만, Specification까지만 선택 시의 에이전트 미수정 안내)
 - 해당 시 헥사고날 flavor 안내 (Pragmatic 선택 시: rename한 정규 파일과 제거한 spec-first `api-dto.md`, `spring-hexagonal-*` 에이전트는 flavor를 규칙에서 읽어 동작하므로 삭제하지 않았음. Pragmatic+MongoDB면 `test-mongodb.md` 참조 방식 안내)
 - 해당 시 ArchUnit 안내 (Java·Kotlin 모두 `spring/{java|kotlin}/archunit.md`가 Layered/Hexagonal 양쪽에 유지되어 아키텍처 테스트 강제 대상임)
+- 해당 시 버전 전제 경고 (확정된 버전이 3단계 "언어·프레임워크 버전 — 보고만"의 전제에 미달하는 항목이 있을 때만. 전제를 모두 충족하면 이 항목은 출력하지 않는다). 버전 때문에 파일을 삭제하거나 편집하지 않았음을 함께 명시한다
 - 해당 시 RDB 안내문 (PostgreSQL 외 DB 선택 시: 예시가 PostgreSQL/asyncpg 기준이므로 jOOQ 방언 상수·드라이버를 직접 교체하라는 안내. Oracle·SQL Server처럼 jOOQ 상용 에디션 방언이 필요한 경우 그 사실도 함께)
 - 해당 시 풀스택 NestJS glob 안내문 (frontend globs가 백엔드 TS에도 매칭될 수 있으니 필요하면 프론트엔드 소스 루트로 직접 좁히라는 안내)
 - 커밋하지 않았음을 명시하고, 커밋을 원하면 요청하도록 안내
