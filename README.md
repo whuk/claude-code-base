@@ -37,8 +37,8 @@ Claude Code용 프로젝트 규칙(`rules`)과 서브에이전트(`agents`), 커
 
 1. **`/rw:git:commit-and-push`** — 변경사항을 커밋하고 push 합니다(PR 생성은 이 커맨드의 범위가 아닙니다). PR은 **`/commit-commands:commit-push-pr`** 또는 `gh pr create`로 생성합니다.
 2. **`/rw:git:pr-review [PR번호]`** — 열린 PR의 변경분을 `code-reviewer` 에이전트(+ 저장소에 남아 있는 스택 전담 리뷰어)로 리뷰하고, 심각도 등급(Blocker/Major/Minor/Nit)이 붙은 결과를 PR 코멘트로 남긴 뒤 확인용 링크를 출력합니다. 리뷰 기준은 `rules/code-review.md`입니다.
-3. **사람이 PR에서 리뷰를 확인하고 승인(accept)합니다.** 커맨드는 `gh pr review --approve`/`--request-changes`/`--comment`를 실행하지 않으며(PR의 리뷰 상태를 바꾸지 않고 일반 코멘트만 남깁니다), 발견한 문제를 직접 수정하지도 않습니다. Blocker/Major가 있으면 수정한 뒤 2번을 다시 실행합니다.
-4. **`/rw:git:squash-merge-pull [PR번호]`** — 승인된 PR을 squash merge 하고 로컬 기본 브랜치를 동기화합니다.
+3. **사람이 리뷰 결과를 확인하고 머지 여부를 판단합니다.** 별도 리뷰어가 있는 저장소는 PR에서 Approve까지 받고, 작성자 혼자인 저장소는 GitHub가 자기 PR 승인을 허용하지 않으므로 코멘트 확인이 그 절차를 갈음합니다. 커맨드는 `gh pr review --approve`/`--request-changes`/`--comment`를 실행하지 않으며(PR의 리뷰 상태를 바꾸지 않고 일반 코멘트만 남깁니다), 발견한 문제를 직접 수정하지도 않습니다. Blocker/Major가 있으면 수정한 뒤 2번을 다시 실행합니다.
+4. **`/rw:git:squash-merge-pull [PR번호]`** — 확인을 마친 PR을 squash merge 하고 로컬 기본 브랜치를 동기화합니다.
 
 ## 다른 도구로 이식
 
