@@ -6,7 +6,7 @@ user-invocable: true
 
 # /rw:git:pr-review — PR 코드 리뷰 및 결과 코멘트
 
-열린 PR의 변경분을 `code-reviewer` 에이전트(+ 저장소에 남아 있는 스택 전담 리뷰어)로 리뷰하고, 결과를 PR 코멘트로 남긴 뒤 확인용 링크를 출력합니다. **리뷰 accept(승인)와 머지는 사람이 직접 합니다** — 이 커맨드는 승인·변경요청·머지를 수행하지 않습니다.
+열린 PR의 변경분을 `code-reviewer` 에이전트(+ 저장소에 남아 있는 스택 전담 리뷰어)로 리뷰하고, 결과를 PR 코멘트로 남긴 뒤 확인용 링크를 출력합니다. **리뷰 확인과 머지 판단은 사람이 합니다** — 이 커맨드는 승인·변경요청·머지를 수행하지 않습니다. GitHub는 작성자 본인의 PR에 Approve를 허용하지 않으므로, 리뷰어가 따로 없는 저장소에서는 코멘트 확인이 승인 절차를 갈음합니다.
 
 커밋·push(`/rw:git:commit-and-push`)와 PR 생성(`/commit-commands:commit-push-pr` 또는 `gh pr create`)을 마친 뒤, `/rw:git:squash-merge-pull`로 머지하기 전에 실행하는 중간 단계입니다. `/rw:git:commit-and-push`는 PR을 생성하지 않으므로(그 커맨드의 범위 밖) PR이 없으면 PR 생성 수단을 따로 실행해야 합니다.
 
@@ -82,7 +82,7 @@ user-invocable: true
    ### 참고 (이번 변경 범위 밖)
    - <머지 조건이 아닌 관찰 사항, 각 한 줄>
 
-   > 자동 생성된 리뷰입니다. 승인(accept)과 머지는 사람이 판단합니다.
+   > 자동 생성된 리뷰입니다. 머지 여부는 사람이 판단합니다.
    ```
 
    - 지적이 없는 등급의 섹션은 만들지 않습니다. 상세 근거가 없으면 `<details>` 블록 전체를, 관찰 사항이 없으면 참고 섹션을 생략합니다.
@@ -107,11 +107,11 @@ user-invocable: true
 - Draft 여부, 충돌(`mergeable`) 상태 등 머지 전 확인이 필요한 사항 (해당 없으면 생략)
 - 다음 단계 안내:
   - Blocker/Major가 있으면: 해당 지적을 수정한 뒤 이 커맨드를 다시 실행하도록 안내합니다. 수정은 이 커맨드가 하지 않습니다.
-  - 지적이 없거나 Minor/Nit만 남으면: **사용자가 PR에서 직접 리뷰를 확인·승인한 뒤** `/rw:git:squash-merge-pull`로 머지하도록 안내합니다.
+  - 지적이 없거나 Minor/Nit만 남으면: **사용자가 PR에서 리뷰 내용을 확인한 뒤**(별도 리뷰어가 있으면 Approve까지 받은 뒤) `/rw:git:squash-merge-pull`로 머지하도록 안내합니다. 작성자 혼자인 저장소에 Approve를 받으라고 안내하지 마세요 — GitHub가 자기 PR 승인을 허용하지 않습니다.
 
 ## 하지 말아야 할 것
 
-- `gh pr review --approve` / `--request-changes` / `--comment` 실행하기 (리뷰 accept는 사람의 몫이며, 리뷰 상태를 바꾸지 않는다)
+- `gh pr review --approve` / `--request-changes` / `--comment` 실행하기 (승인 판단은 사람의 몫이며, 이 커맨드는 리뷰 상태를 바꾸지 않는다)
 - PR 머지하기 (`/rw:git:squash-merge-pull`의 범위)
 - 리뷰 중 발견한 문제를 직접 수정하거나 커밋·push 하기 (read-only 리뷰 흐름이다)
 - 사용자 확인 없이 PR에 코멘트 게시하기
