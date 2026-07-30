@@ -35,7 +35,7 @@ Claude Code용 프로젝트 규칙(`rules`)과 서브에이전트(`agents`), 커
 
 ## PR 리뷰 흐름
 
-1. **`/rw:git:commit-and-push`** (또는 `/commit-commands:commit-push-pr`) — 변경사항을 커밋·push 하고 PR을 올립니다.
+1. **`/rw:git:commit-and-push`** — 변경사항을 커밋하고 push 합니다(PR 생성은 이 커맨드의 범위가 아닙니다). PR은 **`/commit-commands:commit-push-pr`** 또는 `gh pr create`로 생성합니다.
 2. **`/rw:git:pr-review [PR번호]`** — 열린 PR의 변경분을 `code-reviewer` 에이전트(+ 저장소에 남아 있는 스택 전담 리뷰어)로 리뷰하고, 심각도 등급(Blocker/Major/Minor/Nit)이 붙은 결과를 PR 코멘트로 남긴 뒤 확인용 링크를 출력합니다. 리뷰 기준은 `rules/code-review.md`입니다.
 3. **사람이 PR에서 리뷰를 확인하고 승인(accept)합니다.** 커맨드는 `gh pr review --approve`/`--request-changes`를 실행하지 않으며, 발견한 문제를 직접 수정하지도 않습니다. Blocker/Major가 있으면 수정한 뒤 2번을 다시 실행합니다.
 4. **`/rw:git:squash-merge-pull [PR번호]`** — 승인된 PR을 squash merge 하고 로컬 기본 브랜치를 동기화합니다.
