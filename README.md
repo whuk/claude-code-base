@@ -16,13 +16,14 @@ Claude Code용 프로젝트 규칙(`rules`)과 서브에이전트(`agents`), 커
 .claude/
 ├── CLAUDE.md              # 전체 개발 방법론 (TDD, Tidy First, 일반 행동 규칙)
 ├── rules/
+│   ├── code-review.md      # 스택 무관 코드 리뷰 기준 (심각도 등급, 정확성·보안·중복·코드 스멜·컨벤션·테스트 관점, 지적 작성 형식). 어떤 스택을 선택해도 유지됨
 │   ├── backend/
 │   │   ├── shared/          # 스택 공통 아키텍처 원칙 (CQRS-lite, 계층 의존 방향, DDD 전술 패턴)과 REST API 규약 (rest-api.md)
 │   │   ├── spring/          # Spring Boot 구현 규칙 (api-dto.md는 공통, java/·kotlin/으로 언어 분리 후 각 언어 아래 layered/·hexagonal/로 아키텍처 스타일 분리. 각 언어 레벨의 repository-tools.md(JPA용 QueryDSL/JdbcClient/jOOQ 상세)와 repository-sql.md(SQL-first, ORM 미사용)는 아키텍처 공통이며 영속성 도구 선택에 따라 둘 중 하나만 유지. java/의 webflux.md·repository-r2dbc.md는 WebFlux(리액티브, Java 전용) 선택 시에만 유지하며 이 경우 JPA/SQL-first 영속성 규칙을 대체, repository-reactive-mongo.md는 WebFlux + 리액티브 MongoDB 병용 시에만 유지)
 │   │   ├── nestjs/          # NestJS 구현 규칙
 │   │   └── fastapi/         # FastAPI 구현 규칙
 │   └── frontend/           # TypeScript/Next.js/Vite/Vue.js 규칙 (typescript.md는 공통. nextjs.md/vite.md/vue.md 중 선택한 프레임워크만 유지. vite-routing-reactrouter.md·vite-routing-tanstack.md는 Vite 전용 라우팅 규칙으로, Vite 선택 시 라우팅 라이브러리에 맞는 하나만 유지하고 Next.js/Vue.js 선택 시 둘 다 삭제)
-├── agents/                 # 워크플로우별 서브에이전트, 스택별로 분리 (spring-*/nestjs-*/fastapi-*/frontend-*). Spring은 Layered 전제인 spring-*와 Hexagonal 전담인 spring-hexagonal-*을 아키텍처 스타일별로, 프론트엔드는 React 계열(Next.js/Vite) 전제인 frontend-*와 Vue.js 전담인 frontend-vue-*를 프레임워크별로 제공
+├── agents/                 # 워크플로우별 서브에이전트, 스택별로 분리 (spring-*/nestjs-*/fastapi-*/frontend-*). Spring은 Layered 전제인 spring-*와 Hexagonal 전담인 spring-hexagonal-*을 아키텍처 스타일별로, 프론트엔드는 React 계열(Next.js/Vite) 전제인 frontend-*와 Vue.js 전담인 frontend-vue-*를 프레임워크별로 제공. code-reviewer는 스택 무관 리뷰어로 어떤 스택을 선택해도 유지됨
 └── commands/rw/             # 커스텀 슬래시 커맨드 (init, git, plan, prd, tdd)
 ```
 
@@ -31,6 +32,13 @@ Claude Code용 프로젝트 규칙(`rules`)과 서브에이전트(`agents`), 커
 1. **`/rw:plan:plan <PRD 파일 경로 또는 기능 설명>`** — 프로젝트 루트에 `plan.md`를 생성합니다. 기능 개요, 구현 목표, 설계, Phase별 테스트 체크리스트로 구성됩니다. `plan.md`가 이미 있으면 실행되지 않고 먼저 `plan_move`로 아카이빙하라고 안내합니다.
 2. **`/rw:tdd:go`** — `plan.md`에서 체크 안 된 테스트를 하나 찾아 Red(실패 확인) → Green(최소 구현) 순으로 구현하고, 통과하면 해당 항목에 체크합니다. 모든 테스트가 끝날 때까지 반복 실행합니다.
 3. **`/rw:plan:plan_move`** — 완료된(또는 중단된) `plan.md`를 요약 키워드가 담긴 파일명(`plan_yyyyMMdd_요약키워드.md`)으로 `plans/` 디렉토리에 아카이빙합니다. 이후 `/rw:plan:plan`으로 새 계획을 시작할 수 있습니다.
+
+## PR 리뷰 흐름
+
+1. **`/rw:git:commit-and-push`** — 변경사항을 커밋하고 push 합니다(PR 생성은 이 커맨드의 범위가 아닙니다). PR은 **`/commit-commands:commit-push-pr`** 또는 `gh pr create`로 생성합니다.
+2. **`/rw:git:pr-review [PR번호]`** — 열린 PR의 변경분을 `code-reviewer` 에이전트(+ 저장소에 남아 있는 스택 전담 리뷰어)로 리뷰하고, 심각도 등급(Blocker/Major/Minor/Nit)이 붙은 결과를 PR 코멘트로 남긴 뒤 확인용 링크를 출력합니다. 리뷰 기준은 `rules/code-review.md`입니다.
+3. **사람이 PR에서 리뷰를 확인하고 승인(accept)합니다.** 커맨드는 `gh pr review --approve`/`--request-changes`/`--comment`를 실행하지 않으며(PR의 리뷰 상태를 바꾸지 않고 일반 코멘트만 남깁니다), 발견한 문제를 직접 수정하지도 않습니다. Blocker/Major가 있으면 수정한 뒤 2번을 다시 실행합니다.
+4. **`/rw:git:squash-merge-pull [PR번호]`** — 승인된 PR을 squash merge 하고 로컬 기본 브랜치를 동기화합니다.
 
 ## 다른 도구로 이식
 
