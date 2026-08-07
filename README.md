@@ -80,6 +80,20 @@ git rm .claude/rules/frontend/vite-routing-reactrouter.md \
 > 커맨드는 일반 코멘트만 남기고 PR의 리뷰 상태를 바꾸지 않으며(`--approve`/`--request-changes` 미실행), 발견한 문제를 대신 수정하지도 않습니다.
 > 별도 리뷰어가 있으면 Approve까지 받고, 작성자 혼자인 저장소는 GitHub가 자기 PR 승인을 허용하지 않으므로 코멘트 확인이 그 절차를 갈음합니다.
 
+## 그 외 커맨드
+
+| 커맨드 | 역할 |
+|---|---|
+| `/rw:prd:prd1 [프로젝트 설명]` | 코드베이스를 탐색해 러프 기획 문서 `PRD1.md` 생성 |
+| `/rw:prd:prd2 [추가 요구사항]` | `PRD1.md` 위에 상세 설계를 얹어 `PRD2.md` 생성 |
+| `/rw:git:branch` | 작업에 맞는 브랜치 생성 — `plan.md`가 있으면 다음 미완료 테스트에서, 없으면 현재 변경사항에서 이름을 뽑습니다 |
+| `/rw:plan:plan_clean [일수]` | `~/.claude/plans`에 쌓인 플랜 모드 산출물을 목록 확인 후 삭제 |
+
+기획부터 시작한다면 `prd1` → `prd2`로 문서를 만든 뒤 `/rw:plan:plan PRD2.md`로 계획 흐름에 연결합니다.
+
+`plan_clean`이 다루는 대상은 프로젝트의 `plan.md`가 아니라, **플랜 모드가 `~/.claude/plans`에 남기는 파일**입니다.
+전역 디렉토리라 다른 프로젝트의 플랜도 함께 보이므로 목록에 생성 프로젝트를 표시하며, 삭제 전 항상 승인을 받습니다.
+
 ## 다른 도구로 이식
 
 Codex CLI, Gemini CLI 등 다른 코딩 에이전트로 옮기는 방법은 아직 정리되지 않았습니다.
