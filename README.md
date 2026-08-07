@@ -44,7 +44,7 @@ git rm .claude/rules/frontend/vite-routing-reactrouter.md \
 │   │   └── fastapi/       # FastAPI
 │   └── frontend/          # TypeScript 공통 + Next.js / Vite / Vue.js
 ├── agents/                # 워크플로우별 서브에이전트 (스택별 분리)
-└── commands/rw/           # 커스텀 슬래시 커맨드 (init, git, plan, prd, tdd)
+└── commands/rw/           # 커스텀 슬래시 커맨드 (init, git, spec, plan, prd, tdd)
 ```
 
 `/rw:init`이 선택에 따라 남기는 규칙 파일:
@@ -60,15 +60,23 @@ git rm .claude/rules/frontend/vite-routing-reactrouter.md \
 에이전트도 같은 축으로 나뉩니다 — Spring은 Layered용 `spring-*`와 Hexagonal용 `spring-hexagonal-*`,
 프론트엔드는 React 계열(Next.js/Vite)용 `frontend-*`와 Vue.js용 `frontend-vue-*`를 제공합니다.
 
-## 계획 기반 작업 흐름 (plan.md)
+## 기능 개발 흐름 (spec.md → plan.md → 코드)
 
 | 커맨드 | 역할 |
 |---|---|
-| `/rw:plan:plan <PRD 경로 또는 기능 설명>` | 프로젝트 루트에 `plan.md` 생성 (기능 개요, 구현 목표, 설계, Phase별 테스트 체크리스트) |
+| `/rw:spec:spec <러프한 기능 설명>` | 되묻는 질문 라운드로 구체화해 `spec.md` 생성 (목표, 범위, 비목표, 시나리오, 엣지 케이스, 실패 시나리오, 완료의 정의) |
+| `/rw:plan:plan [spec/PRD 경로 또는 기능 설명]` | 프로젝트 루트에 `plan.md` 생성 (기능 개요, 구현 목표, 설계, Phase별 테스트 체크리스트) |
 | `/rw:tdd:go` | `plan.md`의 미완료 테스트를 하나씩 Red → Green으로 구현하고 체크 |
+| `/rw:spec:spec_move` | 완료·중단된 `spec.md`를 `specs/spec_yyyyMMdd_요약키워드.md`로 아카이빙 |
 | `/rw:plan:plan_move` | 완료·중단된 `plan.md`를 `plans/plan_yyyyMMdd_요약키워드.md`로 아카이빙 |
 
-`plan.md`가 이미 있으면 `/rw:plan:plan`은 실행되지 않고, 먼저 `plan_move`로 아카이빙하라고 안내합니다.
+`spec.md`는 **무엇을 왜 만들고 어떻게 동작해야 하는가**만 다룹니다. 클래스·계층·라이브러리 같은 구현 방법은 `plan.md`의 몫입니다.
+`/rw:spec:spec`은 사용자가 던진 러프한 설명을 그대로 받아쓰지 않고, 위 항목을 채우기 위한 질문을 최대 4라운드까지 되묻습니다.
+답을 미룬 항목은 추측으로 채우지 않고 `spec.md`의 "미해결 질문"에 남습니다.
+
+`spec.md`가 루트에 있으면 `/rw:plan:plan`을 **인자 없이** 실행할 수 있습니다. 그러면 그 `spec.md`를 입력으로 계획을 세웁니다.
+
+`spec.md`나 `plan.md`가 이미 있으면 해당 생성 커맨드는 실행되지 않고, 먼저 `spec_move`/`plan_move`로 아카이빙하라고 안내합니다.
 
 ## PR 리뷰 흐름
 
@@ -89,7 +97,12 @@ git rm .claude/rules/frontend/vite-routing-reactrouter.md \
 | `/rw:git:branch` | 작업에 맞는 브랜치 생성 — `plan.md`가 있으면 다음 미완료 테스트에서, 없으면 현재 변경사항에서 이름을 뽑습니다 |
 | `/rw:plan:plan_clean [일수]` | `~/.claude/plans`에 쌓인 플랜 모드 산출물을 목록 확인 후 삭제 |
 
-기획부터 시작한다면 `prd1` → `prd2`로 문서를 만든 뒤 `/rw:plan:plan PRD2.md`로 계획 흐름에 연결합니다.
+PRD와 `spec.md`는 다루는 층위가 다릅니다. **PRD는 제품 전체 기획**(화면 흐름, 기술스택, 보안, 마일스톤)이고,
+**`spec.md`는 그 안의 개별 기능 명세**입니다. 둘 중 하나만 써도 되고, 이어서 써도 됩니다.
+
+- 제품을 처음부터 세운다면 `prd1` → `prd2`로 문서를 만든 뒤, 기능 하나씩 `/rw:spec:spec`으로 명세를 뽑아 `/rw:plan:plan`으로 넘깁니다.
+- 이미 돌아가는 프로젝트에 기능을 붙인다면 PRD 없이 `/rw:spec:spec`부터 시작합니다.
+- PRD2 전체를 한 번에 계획으로 옮기고 싶다면 `/rw:plan:plan PRD2.md`도 그대로 동작합니다.
 
 `plan_clean`이 다루는 대상은 프로젝트의 `plan.md`가 아니라, **플랜 모드가 `~/.claude/plans`에 남기는 파일**입니다.
 전역 디렉토리라 다른 프로젝트의 플랜도 함께 보이므로 목록에 생성 프로젝트를 표시하며, 삭제 전 항상 승인을 받습니다.
