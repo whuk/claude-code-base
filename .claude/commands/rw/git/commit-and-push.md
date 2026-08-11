@@ -60,7 +60,12 @@ user-invocable: true
    - 작성한 커밋 메시지 전문
    - 경로 B-옵션 2로 진입했다면 "보호 브랜치 직접 push" 경고
 2. 확인되면 파일을 명시적으로 `git add <files...>` 합니다. `git add -A` / `git add .` 는 사용하지 마세요.
-3. 커밋 메시지는 HEREDOC 으로 전달합니다:
+3. **staging 직후, 커밋 전에 실제 스테이징 결과를 검증합니다.** 1단계 수집과 여기 사이에는 사용자 확인 대기가 끼어 있어, 그동안 편집기에서 저장된 내용까지 `git add`가 함께 담습니다 — 사용자가 승인한 diff와 커밋될 diff가 달라질 수 있습니다.
+   ```bash
+   git diff --cached --stat
+   ```
+   1단계에서 보여준 파일 목록·변경 규모와 다르면 커밋하지 말고, 달라진 부분을 사용자에게 보여준 뒤 다시 확인받으세요. 커밋 메시지가 더 이상 맞지 않으면 3단계로 돌아가 다시 작성합니다.
+4. 커밋 메시지는 HEREDOC 으로 전달합니다:
    ```bash
    git commit -m "$(cat <<'EOF'
    <subject>
@@ -71,7 +76,7 @@ user-invocable: true
    EOF
    )"
    ```
-4. 커밋 실패 시(예: pre-commit 훅 위반) 원인을 진단하고 수정한 뒤 **새 커밋**을 만드세요. `--amend` 는 사용하지 마세요. `--no-verify` 는 사용자가 명시적으로 요청한 경우에만 사용하세요.
+5. 커밋 실패 시(예: pre-commit 훅 위반) 원인을 진단하고 수정한 뒤 **새 커밋**을 만드세요. `--amend` 는 사용하지 마세요. `--no-verify` 는 사용자가 명시적으로 요청한 경우에만 사용하세요.
 
 ## 5단계: Push 수행
 
@@ -95,6 +100,7 @@ user-invocable: true
 - PR 생성·머지 수행하기 (이 커맨드의 범위가 아님 — 필요 시 `/commit-commands:commit-push-pr` 또는 `/rw:git:squash-merge-pull` 사용 안내)
 - 사용자 확인 없이 커밋·push 수행하기
 - `git add -A` / `git add .` 로 무차별 staging
+- staging 후 `git diff --cached`로 실제 커밋 내용을 검증하지 않고 곧바로 커밋하기 (확인 대기 중 저장된 변경이 승인 없이 섞여 들어간다)
 - `.env` 등 민감 파일을 경고 없이 commit 하기
 - 보호 브랜치에 `--force` / `--force-with-lease` 사용하기
 - 커밋 실패 시 `--amend` 로 이전 커밋 덮어쓰기
