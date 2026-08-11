@@ -51,12 +51,14 @@ GitHub PR을 squash merge하고 로컬 main 브랜치를 최신 상태로 동기
 
 ## 6단계: 로컬 기본 브랜치 동기화
 
-- `git checkout main && git pull origin main`을 실행합니다 (기본 브랜치가 `main`이 아니면 `git remote show origin`으로 확인한 HEAD 브랜치를 사용합니다). 작업 디렉토리는 3단계에서 이미 정리했으므로 여기서 다시 검사하지 않습니다
+- **remote 이름을 `origin`으로 가정하지 마세요.** 저장소마다 이름이 다르고 여러 개일 수 있습니다. `git remote`로 목록을 보고, 하나뿐이면 그것을, 여러 개면 `git config --get branch.{기본브랜치}.remote`로 기본 브랜치가 추적 중인 remote를 사용합니다. 판정이 안 되면 사용자에게 확인받습니다.
+- 기본 브랜치명은 `git remote show {remote}`의 HEAD 브랜치로 확인합니다(`main`이 아닐 수 있습니다).
+- `git checkout {기본브랜치} && git pull {remote} {기본브랜치}`를 실행합니다. 작업 디렉토리는 3단계에서 이미 정리했으므로 여기서 다시 검사하지 않습니다
 
 ## 7단계: 정리 작업
 
 - 삭제된 리모트 브랜치에 대응하는 로컬 브랜치가 있으면 정리합니다. squash merge는 커밋 그래프상 머지가 아니어서 `git branch -d`가 "not fully merged"로 거부되므로, PR이 실제로 머지된 것을 2·5단계에서 확인한 뒤 `git branch -D <브랜치명>`을 사용합니다
-- `git fetch --prune`으로 리모트 추적 브랜치를 정리합니다
+- `git fetch --prune {remote}`로 리모트 추적 브랜치를 정리합니다(6단계에서 확정한 remote 이름을 사용합니다)
 - 3단계에서 stash 했다면 `git stash pop`으로 복원합니다. 충돌이 나면 자동으로 해소하지 말고 사용자에게 알립니다
 
 ## 결과 보고
@@ -72,6 +74,7 @@ GitHub PR을 squash merge하고 로컬 main 브랜치를 최신 상태로 동기
 - 후보 PR이 여럿인데 확인 없이 하나를 골라 머지하기
 - merge 불가능한 PR을 강제로 머지하기
 - 되돌릴 수 없는 머지를 실행한 **뒤에** 워킹트리 상태를 확인하기 (3단계에서 머지 전에 확인한다)
-- main 브랜치가 아닌 다른 브랜치에서 pull 수행하기
+- remote 이름을 `origin`으로, 기본 브랜치명을 `main`으로 가정하기 (6단계에서 실제 값을 확정한다)
+- 기본 브랜치가 아닌 다른 브랜치에서 pull 수행하기
 - 로컬에 커밋되지 않은 변경사항이 있을 때 checkout하기 (3단계에서 stash 또는 중단으로 처리한다)
 - stash 해놓고 복원하지 않은 채 종료하기 (7단계에서 복원하고, 실패했으면 결과 보고에 남긴다)

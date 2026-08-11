@@ -81,17 +81,27 @@ user-invocable: true
 ## 5단계: Push 수행
 
 1. 현재 브랜치의 upstream 설정 여부를 확인하세요(`git rev-parse --abbrev-ref --symbolic-full-name @{u}` 가 실패하면 upstream 없음).
-   - upstream 이 없으면 `git push -u origin <브랜치명>` 으로 push + 추적 설정을 동시에 수행합니다.
-   - upstream 이 있으면 `git push` 만 수행합니다.
-2. push 가 거부된 경우(non-fast-forward 등) 강제 push 를 자동으로 시도하지 마세요. 원인을 사용자에게 보고하고 처리 방법을 확인받으세요.
-3. 보호 브랜치(`main`, `master`, `develop`, `dev`)에 push 하는 경우 절대 `--force` / `--force-with-lease` 를 사용하지 마세요. 사용자가 명시적으로 요청해도 위험을 한 번 더 경고하세요.
+   - upstream 이 있으면 `git push` 만 수행합니다. remote 는 upstream 설정에 이미 담겨 있습니다.
+   - upstream 이 없으면 2항으로 remote 이름을 먼저 확정한 뒤 `git push -u <remote> <브랜치명>` 으로 push + 추적 설정을 동시에 수행합니다.
+2. **remote 이름을 `origin` 으로 가정하지 마세요.** 저장소마다 이름이 다르고(fork 경유, 사내 미러 등) 여러 개일 수 있습니다. 다음 순서로 확정합니다:
+   ```bash
+   git remote                                   # 등록된 remote 목록
+   git config --get branch.{기본브랜치}.remote   # 기본 브랜치가 추적 중인 remote
+   ```
+   - remote 가 하나뿐이면 그 이름을 사용합니다.
+   - 여러 개면 기본 브랜치(`main`/`master` 등)가 추적 중인 remote 를 사용합니다.
+   - 그래도 판정이 안 되면 목록을 보여주고 사용자에게 확인받습니다. 임의로 고르지 마세요.
+3. push 가 인증 오류(`could not read Password`, `Repository not found` 등)로 실패하면 곧바로 재로그인을 요청하지 말고, `gh auth status` 로 활성 계정이 대상 저장소의 소유 계정과 일치하는지 먼저 확인하세요. 불일치면 `gh auth switch --user <계정>` 으로 전환한 뒤 한 번 재시도합니다. 그래도 실패하면 원인을 보고하고 중단하세요.
+4. push 가 거부된 경우(non-fast-forward 등) 강제 push 를 자동으로 시도하지 마세요. 원인을 사용자에게 보고하고 처리 방법을 확인받으세요.
+5. 보호 브랜치(`main`, `master`, `develop`, `dev`)에 push 하는 경우 절대 `--force` / `--force-with-lease` 를 사용하지 마세요. 사용자가 명시적으로 요청해도 위험을 한 번 더 경고하세요.
 
 ## 결과 보고
 
 다음을 간결하게 보고하세요:
 
 - 사용된 경로 (A: argument 브랜치 / B-1: 새 분기 / B-2: 보호 브랜치 직접 / C: 일반 브랜치)
-- 최종 브랜치명과 upstream
+- 최종 브랜치명과 upstream (remote 이름 포함. 5단계 2항에서 여러 후보 중 골랐다면 그 근거도)
+- 인증 오류로 계정을 전환했다면(5단계 3항) 그 사실 — 활성 계정이 바뀐 채로 남으므로 사용자가 알아야 한다
 - 생성된 커밋 SHA(짧은 해시)와 subject
 - push 결과(범위 갱신 또는 새 브랜치 생성 여부)
 
@@ -102,6 +112,8 @@ user-invocable: true
 - `git add -A` / `git add .` 로 무차별 staging
 - staging 후 `git diff --cached`로 실제 커밋 내용을 검증하지 않고 곧바로 커밋하기 (확인 대기 중 저장된 변경이 승인 없이 섞여 들어간다)
 - `.env` 등 민감 파일을 경고 없이 commit 하기
+- remote 이름을 `origin` 으로 가정하고 push 하기 (5단계 2항으로 실제 이름을 확정한다)
+- 인증 오류가 나자마자 사용자에게 재로그인을 요청하기 (5단계 3항의 활성 계정 확인·전환을 먼저 시도한다)
 - 보호 브랜치에 `--force` / `--force-with-lease` 사용하기
 - 커밋 실패 시 `--amend` 로 이전 커밋 덮어쓰기
 - `--no-verify` / `--no-gpg-sign` 등 안전장치 우회 (사용자 명시 요청 시 한정)
