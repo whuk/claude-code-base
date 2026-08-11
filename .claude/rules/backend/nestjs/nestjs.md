@@ -1,6 +1,11 @@
 ---
 description: NestJS 백엔드 고유 컨벤션 (backend/shared/architecture.md 전제)
-globs: "**/*.controller.ts,**/*.service.ts,**/*.module.ts,**/*.entity.ts,**/*.repository.ts"
+paths:
+  - "**/*.controller.ts"
+  - "**/*.service.ts"
+  - "**/*.module.ts"
+  - "**/*.entity.ts"
+  - "**/*.repository.ts"
 ---
 
 # NestJS 규칙

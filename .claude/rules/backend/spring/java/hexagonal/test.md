@@ -1,6 +1,7 @@
 ---
 description: 테스트 유형별(Domain/Application/Adapter) base class 및 결정적 테스트 작성 규칙 (Hexagonal)
-globs: "**/src/test/**"
+paths:
+  - "**/src/test/**"
 ---
 
 # 테스트 작성 규칙 (Hexagonal)

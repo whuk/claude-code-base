@@ -1,6 +1,11 @@
 ---
 description: FastAPI 백엔드 고유 컨벤션 (backend/shared/architecture.md 전제, DDD 강제 수준은 완화)
-globs: "**/router.py,**/schemas.py,**/service.py,**/repository.py,**/models.py"
+paths:
+  - "**/router.py"
+  - "**/schemas.py"
+  - "**/service.py"
+  - "**/repository.py"
+  - "**/models.py"
 ---
 
 # FastAPI 규칙

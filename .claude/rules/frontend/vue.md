@@ -1,6 +1,8 @@
 ---
 description: Vue.js 고유 컨벤션
-globs: "**/*.vue,**/vite.config.*"
+paths:
+  - "**/*.vue"
+  - "**/vite.config.*"
 ---
 
 # Vue.js 규칙
