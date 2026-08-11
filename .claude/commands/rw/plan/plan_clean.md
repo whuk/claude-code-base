@@ -22,12 +22,20 @@ allowed-tools: Bash, Read, AskUserQuestion
 
 본 플랜은 `{slug}.md`이며, `{slug}.workshop.md`와 `{slug}-agent-*.md`는 그 플랜에 딸린 **부수 파일**이다. 부수 파일을 독립 항목으로 세지 않고 본 플랜에 묶어서 취급한다.
 
+파일명 패턴만으로 부수 파일을 판정하면 안 된다. slug 자체에 `-agent-`가 들어간 본 플랜(예: `fix-agent-timeout.md`)이 목록에서 영영 사라져 삭제도 되지 않는다. **대응하는 본 플랜이 실제로 존재할 때만** 부수 파일로 판정한다.
+
 ```bash
 for f in ~/.claude/plans/*.md; do
-  case "$f" in *.workshop.md|*-agent-*.md) continue;; esac
+  b=$(basename "$f" .md)
+  case "$b" in
+    *.workshop) [ -e ~/.claude/plans/"${b%.workshop}".md ] && continue ;;
+  esac
+  case "$b" in
+    *-agent-*) [ -e ~/.claude/plans/"${b%%-agent-*}".md ] && continue ;;
+  esac
   printf '%s\t%s\t%s\n' \
     "$(date -r "$f" +%Y-%m-%d)" \
-    "$(basename "$f" .md)" \
+    "$b" \
     "$(head -20 "$f" | grep -m1 '^#' | sed 's/^#*[[:space:]]*//')"
 done | sort
 ```
