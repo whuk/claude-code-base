@@ -1,6 +1,7 @@
 ---
 description: 테스트 유형별 base class 선택 및 결정적 테스트 작성 규칙
-globs: "**/src/test/**"
+paths:
+  - "**/src/test/**"
 ---
 
 # 테스트 작성 규칙

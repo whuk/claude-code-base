@@ -113,4 +113,4 @@ Codex CLI, Gemini CLI 등 다른 코딩 에이전트로 옮기는 방법은 아�
 
 - **Gemini CLI** — 형식이 Claude Code와 유사해 이식이 비교적 쉽습니다.
 - **Codex CLI** — TOML로 재작성이 필요합니다.
-- 두 도구 모두 `globs`/`alwaysApply` 기반 조건부 규칙 로딩을 네이티브로 지원하지 않습니다.
+- 두 도구 모두 `paths` 기반 조건부 규칙 로딩을 네이티브로 지원하지 않습니다.

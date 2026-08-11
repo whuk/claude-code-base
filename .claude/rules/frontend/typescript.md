@@ -1,6 +1,9 @@
 ---
 description: TypeScript 프론트엔드 공통 컨벤션 (Next.js, Vite, Vue 공통 적용)
-globs: "**/*.ts,**/*.tsx,**/*.vue"
+paths:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.vue"
 ---
 
 # TypeScript 프론트엔드 공통 규칙

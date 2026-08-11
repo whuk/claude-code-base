@@ -1,6 +1,7 @@
 ---
 description: 계층별 테스트 전략(Domain 단위·서비스 실제 빈 통합·Adapter)과 stereotype 기반 테스트 규칙 (Hexagonal — Pragmatic flavor, Kotlin)
-globs: "**/src/test/**"
+paths:
+  - "**/src/test/**"
 ---
 
 # 테스트 작성 규칙 (Hexagonal — Pragmatic flavor, Kotlin)
