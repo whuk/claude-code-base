@@ -34,9 +34,10 @@ git rm .claude/rules/frontend/vite-routing-reactrouter.md \
 ```
 .claude/
 ├── CLAUDE.md              # 개발 방법론 (TDD, Tidy First, 일반 행동 규칙)
-├── STYLE_GUIDE.md         # .claude 문서 작성 포맷
+├── guides/                # 필요 시 명시적으로 읽는 규약 (자동 로드 안 됨)
+│   ├── STYLE_GUIDE.md     # .claude 문서 작성 포맷
+│   └── code-review.md     # 스택 무관 코드 리뷰 기준 (code-reviewer 에이전트가 읽음)
 ├── rules/
-│   ├── code-review.md     # 스택 무관 코드 리뷰 기준
 │   ├── backend/
 │   │   ├── shared/        # 공통 아키텍처 원칙, REST API 규약
 │   │   ├── spring/        # Spring Boot
@@ -81,7 +82,7 @@ git rm .claude/rules/frontend/vite-routing-reactrouter.md \
 ## PR 리뷰 흐름
 
 1. **`/rw:git:commit-and-push`** — 커밋과 push까지만 수행합니다. PR 생성은 `/commit-commands:commit-push-pr` 또는 `gh pr create`를 사용합니다.
-2. **`/rw:git:pr-review [PR번호]`** — `code-reviewer` 에이전트(+ 저장소에 남아 있는 스택 전담 리뷰어)가 변경분을 리뷰하고, 심각도 등급(Blocker/Major/Minor/Nit)이 붙은 결과를 PR 코멘트로 남깁니다. 기준은 `rules/code-review.md`입니다.
+2. **`/rw:git:pr-review [PR번호]`** — `code-reviewer` 에이전트(+ 저장소에 남아 있는 스택 전담 리뷰어)가 변경분을 리뷰하고, 심각도 등급(Blocker/Major/Minor/Nit)이 붙은 결과를 PR 코멘트로 남깁니다. 기준은 `.claude/guides/code-review.md`입니다.
 3. **사람이 리뷰 결과를 확인하고 머지 여부를 판단합니다.** Blocker/Major가 있으면 수정한 뒤 2번을 다시 실행합니다.
 4. **`/rw:git:squash-merge-pull [PR번호]`** — squash merge 후 로컬 기본 브랜치를 동기화합니다.
 
