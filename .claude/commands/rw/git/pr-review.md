@@ -74,7 +74,7 @@ user-invocable: true
    - NestJS: `nestjs-code-reviewer` / FastAPI: `fastapi-code-reviewer`
    - 프론트엔드: `frontend-code-reviewer`(React 계열) 또는 `frontend-vue-code-reviewer`(Vue.js)
    - 풀스택이면 백엔드·프론트엔드 리뷰어를 모두 호출합니다.
-   - 1항이 증분 리뷰면 같은 증분 지시를 스택 전담 리뷰어에게도 넘기세요.
+   - 1항에서 지난 리뷰 코멘트나 증분 범위를 넘겼으면(증분 리뷰 또는 전체 리뷰 복귀) 같은 자료와 지시를 스택 전담 리뷰어에게도 넘기세요.
    - 호출 프롬프트에 `code-reviewer`와 함께 실행된다는 사실을 명시하세요. 스택 전담 리뷰어는 이때 일반 품질 검토를 건너뛰어 같은 지적을 중복으로 만들지 않습니다.
    - **스택 전담 리뷰어의 산출물 형식에는 등급 체계가 없습니다.** 호출 프롬프트에 "각 지적에 `.claude/guides/code-review.md` 1번의 등급(Blocker/Major/Minor/Nit)을 붙여 반환하라"를 명시하세요.
 3. 반환된 결과를 병합합니다. 같은 `파일:라인`에 대한 중복 지적은 하나로 합치고, 등급이 다르면 높은 등급을 채택합니다.
