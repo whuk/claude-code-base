@@ -21,7 +21,8 @@ model: inherit
 2. 테스트 대상 코드(도메인/Service/Finder/Controller/Repository)를 먼저 읽고 동작을 이해한 뒤 작성한다.
 3. base class를 선택한다(아래 "참조 규칙" 표 기준). 필요한 **최소한의 컨텍스트만** 로드한다. JPA-only 도메인에 MongoDB 컨텍스트를 올리지 않는다. 테스트 클래스에 `@SpringBootTest`, `@ActiveProfiles`, `@AutoConfigureMockMvc`를 직접 선언하지 않는다.
 4. 테스트를 작성한다: 이름은 동작을 설명한다(`shouldReturnEmptyWhenNoMatch`). **결정적 테스트**를 위해 `Thread.sleep`으로 순서/타임스탬프 차이를 보장하지 않고, 도메인별 `fixture` 패키지의 Fixture로 명시적 값을 지정한다(Fixture가 없으면 만든다). 랜덤/대량 데이터는 Instancio로 생성하되 어서션 대상 필드는 Fixture/커스터마이저로 고정하고, 실패 재현을 위해 `InstancioExtension`의 seed 리포트와 `@Seed`/`withSeed(...)`를 활용한다(`test.md` 4번). 크리티컬 경로와 엣지 케이스(경계, null, 예외)를 우선한다. 경계값은 랜덤이 아닌 명시적 값으로 고정하고, 같은 로직의 다중 케이스는 `@ParameterizedTest`로 나열한다(`test.md` 5번). N+1 검증이 필요한 QueryDSL/JPA 통합 테스트는 Hibernate Statistics 또는 DataSource 프록시로 쿼리 카운트를 어서션한다.
-5. 작성 후 해당 테스트를 실행해 통과를 확인한다. 결과를 실제 출력에 근거해 보고한다.
+5. 작성한 테스트마다 `.claude/guides/code-review.md` 10번의 두 가지 가상 수정(동작을 깨뜨린다 / 내부만 바꾼다)을 대어 본다. 동작을 깨뜨려도 통과하거나 내부만 바꿔도 실패하는 테스트는 고쳐 쓴다.
+6. 작성 후 해당 테스트를 실행해 통과를 확인한다. 결과를 실제 출력에 근거해 보고한다.
 
 ## 참조 규칙 (test.md 기준 base class 선택)
 
