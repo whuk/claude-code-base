@@ -65,6 +65,22 @@ class CheckCommandShellTest(unittest.TestCase):
             done | sort
         """))
 
+    def test_passes_variable_assigned_and_used_inside_a_loop_after_a_pipe(self):
+        self.assertPasses(bash_block("""
+            git ls-files | while read f; do
+              b=$(basename "$f")
+              echo "$b"
+            done
+        """))
+
+    def test_passes_variable_assigned_and_used_inside_a_loop_after_and(self):
+        self.assertPasses(bash_block("""
+            true && for f in a b; do
+              b=$f
+              echo "$b"
+            done
+        """))
+
     def test_flags_variable_assigned_inside_multiline_compound_and_used_after_it(self):
         self.assertViolation(bash_block("if true; then\n  Z=3\nfi\necho $Z"))
 
@@ -83,6 +99,12 @@ class CheckCommandShellTest(unittest.TestCase):
 
     def test_passes_cd_chained_with_command(self):
         self.assertPasses(bash_block("cd /tmp && ls"))
+
+    def test_passes_cd_continued_to_next_line_with_trailing_and(self):
+        self.assertPasses(bash_block("cd /tmp &&\n  ls"))
+
+    def test_passes_variable_used_on_line_continued_with_trailing_pipe(self):
+        self.assertPasses(bash_block("X=1; echo 1 |\n  grep $X"))
 
     def test_passes_cd_followed_by_command_on_the_same_line(self):
         self.assertPasses(bash_block("cd /tmp; ls"))

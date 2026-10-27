@@ -99,7 +99,7 @@ user-invocable: true
    - 게시가 끝나면 임시 파일을 삭제합니다.
    - 셸 변수는 다음 Bash 호출까지 유지되지 않으므로, 경로를 변수에 담지 않고 출력값을 기록해 `{본문 파일}`에 그대로 씁니다.
    ```bash
-   mktemp -t pr-review   # 스크래치패드가 있으면 이 명령 대신 그 안의 경로를 사용
+   mktemp -t pr-review.XXXXXX   # 스크래치패드가 있으면 이 명령 대신 그 안의 경로를 사용
    # Write 도구로 {본문 파일}에 코멘트 본문을 기록한 뒤
    gh pr comment <PR번호> --body-file {본문 파일}
    rm -f {본문 파일}

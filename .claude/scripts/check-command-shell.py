@@ -20,7 +20,8 @@ FENCE_OPEN = re.compile(r"^\s*```bash\s*$")
 FENCE_CLOSE = re.compile(r"^\s*```\s*$")
 ASSIGN = re.compile(r"^(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)=")
 STANDALONE_CD = re.compile(r"^cd(\s|$)")
-OPENERS = re.compile(r"^(for|while|until|if|case)\b|\{\s*$")
+OPENERS = re.compile(r"(?:^|[|&;]\s*)(for|while|until|if|case)\b|\{\s*$")
+TRAILING_OPERATOR = re.compile(r"(?:&&|\|\||\|)$")
 CLOSERS = re.compile(r"^(done|fi|esac|\})\b")
 SEGMENT = re.compile(r";|&&|\|\||\b(?:then|do|else)\b")
 HEREDOC = re.compile(r"<<(?!<)-?\s*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\1")
@@ -64,6 +65,9 @@ def logical_lines(path):
             start = number
         if text.endswith("\\"):
             pending = (start, text[:-1].strip())
+            continue
+        if TRAILING_OPERATOR.search(text):
+            pending = (start, text)
             continue
         pending = None
         if not text:

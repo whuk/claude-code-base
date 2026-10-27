@@ -16,6 +16,8 @@ hook은 고친 파일 하나만 검사한다. 전체를 검사하려면 저장�
 python3 .claude/scripts/check-command-shell.py
 ```
 
+검사 대상은 ```` ```bash ```` 펜스뿐이다(`STYLE_GUIDE.md` 7번이 셸 명령을 `bash` 블록으로 쓰게 한다). 정규식 기반이라 다음은 잡지 못한다: 써야 할 `cd` 지시가 빠진 경우, 한 줄 복합문 안의 `cd`(`if x; then cd /tmp; fi`), `case` 분기 패턴 뒤의 `cd`.
+
 검사를 고치거나 넓힐 때는 회귀 테스트를 함께 실행한다. 새로 잡거나 허용할 사례는 테스트에 먼저 추가한다.
 
 ```bash
