@@ -18,6 +18,10 @@ user-invocable: true
    git symbolic-ref --short refs/remotes/origin/HEAD
    git merge-base HEAD {기본 브랜치}
    ```
+   `refs/remotes/origin/HEAD`가 없는 클론(`git init` 뒤 `remote add`로 만든 경우 등)에서는 첫 명령이 실패합니다. 이때는 `gh`로 기본 브랜치 이름을 조회하고, 그 앞에 `origin/`을 붙여 `{기본 브랜치}`로 씁니다.
+   ```bash
+   gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
+   ```
    현재 브랜치가 기본 브랜치이거나, 대화 속 작업이 이미 머지된 다른 브랜치까지 걸쳐 있으면 기본값으로는 범위를 정할 수 없습니다. 이때는 대화에 나온 커밋 SHA로 후보 범위를 제시하고 사용자에게 확인받습니다. 추측으로 정하지 않습니다.
    ```bash
    git log --format='%h %s%n%b' {작업 시작 커밋}..HEAD
