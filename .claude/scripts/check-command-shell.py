@@ -21,7 +21,8 @@ ASSIGN = re.compile(r"^(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)=")
 STANDALONE_CD = re.compile(r"^cd(\s|$)")
 OPENERS = re.compile(r"^(for|while|until|if|case)\b|\{\s*$")
 CLOSERS = re.compile(r"^(done|fi|esac|\})\b")
-COMMANDS_DIR = Path(".claude/commands")
+SEGMENT = re.compile(r";|&&|\|\||\b(?:then|do|else)\b")
+COMMANDS_DIR = Path(__file__).resolve().parents[1] / "commands"
 
 
 def strip_comment(line):
@@ -43,6 +44,9 @@ def logical_lines(path):
             continue
         if FENCE_CLOSE.match(raw):
             in_block = False
+            if pending:
+                yield block, pending[0], pending[1], depth
+                pending = None
             continue
         text = strip_comment(raw).strip()
         if pending:
@@ -63,9 +67,21 @@ def logical_lines(path):
             depth += 1
 
 
+def assignments(text):
+    """한 논리 줄에서 `;`·`&&`·`then` 등으로 나뉜 각 명령의 맨 앞 대입 변수를 반환한다."""
+    names = []
+    for segment in SEGMENT.split(text):
+        match = ASSIGN.match(segment.strip())
+        if match:
+            names.append(match.group(1))
+    return names
+
+
 def check(path):
     errors = []
     assigned = {}
+    # 여러 줄 복합문 안의 대입은 복합문 전체가 한 번에 실행되므로, 복합문이 닫힌 뒤부터 다른 줄로 본다.
+    scoped = {}
     for block, line, text, depth in logical_lines(path):
         for name, origin in assigned.items():
             if re.search(r"\$\{?" + name + r"\b", text):
@@ -73,11 +89,15 @@ def check(path):
                     f"{path}:{line}: [shell-state] 변수 {name}을(를) {origin}행에서 대입하고 다른 줄에서 참조합니다. "
                     f"Bash 호출마다 셸 변수가 초기화되므로, 값을 출력해 기록하고 {{자리표시자}}로 넘기세요."
                 )
+        names = assignments(text)
         if depth > 0:
+            for name in names:
+                scoped.setdefault(name, line)
             continue
-        match = ASSIGN.match(text)
-        if match:
-            assigned[match.group(1)] = line
+        assigned.update(scoped)
+        scoped.clear()
+        for name in names:
+            assigned[name] = line
         if STANDALONE_CD.match(text) and "&&" not in text:
             errors.append(
                 f"{path}:{line}: [shell-state] 단독 cd는 다음 Bash 호출까지 유지되지 않습니다. "
