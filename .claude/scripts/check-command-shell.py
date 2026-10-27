@@ -3,11 +3,12 @@
 
 Claude Code의 Bash 도구는 호출마다 셸 변수와 작업 디렉토리를 초기화한다.
 커맨드 문서의 bash 블록은 한 줄(논리 줄)이 한 번의 호출로 실행될 수 있으므로,
-최상위에서 대입한 변수를 다른 줄에서 참조하거나 `&&` 없이 단독으로 `cd`하면 실패로 판정한다.
+최상위에서 대입한 변수를 다른 줄에서 참조하거나 `cd` 뒤에 같은 호출에서 실행할 명령이 없으면 실패로 판정한다.
 
 사용법:
   python3 .claude/scripts/check-command-shell.py [파일...]   # 인자가 없으면 .claude/commands 전체
   python3 .claude/scripts/check-command-shell.py --hook      # PostToolUse hook(stdin JSON)
+회귀 테스트: python3 .claude/scripts/test_check_command_shell.py
 """
 
 import json
@@ -22,6 +23,7 @@ STANDALONE_CD = re.compile(r"^cd(\s|$)")
 OPENERS = re.compile(r"^(for|while|until|if|case)\b|\{\s*$")
 CLOSERS = re.compile(r"^(done|fi|esac|\})\b")
 SEGMENT = re.compile(r";|&&|\|\||\b(?:then|do|else)\b")
+HEREDOC = re.compile(r"<<(?!<)-?\s*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\1")
 COMMANDS_DIR = Path(__file__).resolve().parents[1] / "commands"
 
 
@@ -32,11 +34,12 @@ def strip_comment(line):
 
 
 def logical_lines(path):
-    """bash 블록의 논리 줄을 (블록 번호, 시작 행, 텍스트, 복합문 깊이)로 반환한다."""
+    """bash 블록의 논리 줄을 (블록 번호, 시작 행, 텍스트, 복합문 깊이)로 반환한다. heredoc 본문은 건너뛴다."""
     in_block = False
     block = 0
     depth = 0
     pending = None
+    heredoc_end = None
     for number, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
         if not in_block:
             if FENCE_OPEN.match(raw):
@@ -44,9 +47,14 @@ def logical_lines(path):
             continue
         if FENCE_CLOSE.match(raw):
             in_block = False
+            heredoc_end = None
             if pending:
                 yield block, pending[0], pending[1], depth
                 pending = None
+            continue
+        if heredoc_end:
+            if raw.strip() == heredoc_end:
+                heredoc_end = None
             continue
         text = strip_comment(raw).strip()
         if pending:
@@ -65,44 +73,68 @@ def logical_lines(path):
         yield block, start, text, depth
         if OPENERS.search(text) and not re.search(r"\b(done|fi|esac)\b|\}\s*$", text):
             depth += 1
+        heredoc = HEREDOC.search(text)
+        if heredoc:
+            heredoc_end = heredoc.group(2)
 
 
-def assignments(text):
-    """한 논리 줄에서 `;`·`&&`·`then` 등으로 나뉜 각 명령의 맨 앞 대입 변수를 반환한다."""
-    names = []
-    for segment in SEGMENT.split(text):
-        match = ASSIGN.match(segment.strip())
-        if match:
-            names.append(match.group(1))
-    return names
+def segments(text):
+    """한 논리 줄을 `;`·`&&`·`then` 등으로 나눈 명령 목록을 반환한다."""
+    return [segment.strip() for segment in SEGMENT.split(text) if segment.strip()]
+
+
+def variable_error(path, line, name, origin):
+    return (
+        f"{path}:{line}: [shell-state] 변수 {name}을(를) {origin}행에서 대입하고 다른 줄에서 참조합니다. "
+        f"Bash 호출마다 셸 변수가 초기화되므로, 값을 출력해 기록하고 {{자리표시자}}로 넘기세요."
+    )
+
+
+def cd_error(path, line):
+    return (
+        f"{path}:{line}: [shell-state] 뒤에 실행할 명령이 없는 cd는 다음 Bash 호출까지 유지되지 않습니다. "
+        f"`cd {{경로}} && {{명령}}`처럼 실행할 명령과 같은 줄에 쓰세요."
+    )
 
 
 def check(path):
     errors = []
     assigned = {}
-    # 여러 줄 복합문 안의 대입은 복합문 전체가 한 번에 실행되므로, 복합문이 닫힌 뒤부터 다른 줄로 본다.
+    # 여러 줄 복합문은 전체가 한 번에 실행되므로, 그 안의 대입과 cd는 복합문이 닫힌 뒤부터 다른 줄로 본다.
     scoped = {}
+    scoped_cd = None
     for block, line, text, depth in logical_lines(path):
-        for name, origin in assigned.items():
-            if re.search(r"\$\{?" + name + r"\b", text):
-                errors.append(
-                    f"{path}:{line}: [shell-state] 변수 {name}을(를) {origin}행에서 대입하고 다른 줄에서 참조합니다. "
-                    f"Bash 호출마다 셸 변수가 초기화되므로, 값을 출력해 기록하고 {{자리표시자}}로 넘기세요."
-                )
-        names = assignments(text)
+        commands = segments(text)
+        reported = set()
+        local = set()
+        names = []
+        for command in commands:
+            for name, origin in assigned.items():
+                if name not in local and name not in reported and re.search(r"\$\{?" + name + r"\b", command):
+                    reported.add(name)
+                    errors.append(variable_error(path, line, name, origin))
+            match = ASSIGN.match(command)
+            if match:
+                local.add(match.group(1))
+                names.append(match.group(1))
+        ends_with_cd = bool(commands) and bool(STANDALONE_CD.match(commands[-1]))
         if depth > 0:
             for name in names:
                 scoped.setdefault(name, line)
+            if ends_with_cd:
+                scoped_cd = line
+            elif not CLOSERS.match(text):
+                scoped_cd = None
             continue
+        if scoped_cd and len(commands) <= 1:
+            errors.append(cd_error(path, scoped_cd))
+        scoped_cd = None
         assigned.update(scoped)
         scoped.clear()
         for name in names:
             assigned[name] = line
-        if STANDALONE_CD.match(text) and "&&" not in text:
-            errors.append(
-                f"{path}:{line}: [shell-state] 단독 cd는 다음 Bash 호출까지 유지되지 않습니다. "
-                f"`cd {{경로}} && {{명령}}`처럼 실행할 명령과 같은 줄에 쓰세요."
-            )
+        if ends_with_cd:
+            errors.append(cd_error(path, line))
     return errors
 
 

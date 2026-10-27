@@ -15,3 +15,9 @@ hook은 고친 파일 하나만 검사한다. 전체를 검사하려면 저장�
 ```bash
 python3 .claude/scripts/check-command-shell.py
 ```
+
+검사를 고치거나 넓힐 때는 회귀 테스트를 함께 실행한다. 새로 잡거나 허용할 사례는 테스트에 먼저 추가한다.
+
+```bash
+python3 .claude/scripts/test_check_command_shell.py
+```
