@@ -23,7 +23,7 @@ model: opus
    - **frontend/nextjs.md** (Next.js 프로젝트) — 불필요하게 넓은 범위의 `"use client"`, Server Component에서 자기 자신의 Route Handler를 fetch로 호출, 캐시 무효화가 필요한 요청에서 캐시 옵션 누락.
    - **frontend/vite.md** (Vite 프로젝트) — `resolve.alias`와 `tsconfig.json` `paths` 불일치, 근거 없이 라우팅 라이브러리 교체.
    - **CLAUDE.md** — 구조적/동작 변경 혼재, 과복잡화(YAGNI 위반), 불필요한 추상화.
-3. **일반 품질 검토(단독 실행 시)**: 정확성 버그(경계 조건, null, 레이스 컨디션), 중복, 명명, 단일 책임 위반, 과잉 방어 같은 스택 무관 관점은 범용 `code-reviewer`가 맡는다. 호출 프롬프트에 `code-reviewer`와 함께 실행된다고 적혀 있으면(`/rw:git:pr-review` 등) 이 단계를 건너뛰어 중복 지적을 만들지 않고, 단독으로 실행될 때만 본다.
+3. **일반 품질 검토(단독 실행 시)**: 정확성 버그(경계 조건, null, 레이스 컨디션), 중복, 명명, 단일 책임 위반, 과잉 방어 같은 스택 무관 관점은 범용 `code-reviewer`가 맡는다. 호출 프롬프트에 `code-reviewer`와 함께 실행된다고 적혀 있으면(`/rw:git:pr-review` 등) 이 단계를 건너뛰어 중복 지적을 만들지 않고, 단독으로 실행될 때만 본다. 이때 발생 불가능한 시나리오에 대한 방어 코드(과잉 방어)는 단순화를 제안한다.
 
 ## 참조 규칙
 

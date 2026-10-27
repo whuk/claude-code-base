@@ -22,7 +22,7 @@ model: opus
    - **frontend/typescript.md** — `any` 타입 사용, feature 간 직접 import, 서버 데이터를 클라이언트 상태 스토어에 그대로 복사, 테스트에서 `data-testid`를 role/label보다 우선 사용, 외부 경계 데이터에 런타임 검증(Zod 등) 누락, 테스트에서 어서션 대상 필드·경계값의 랜덤 생성이나 `faker.seed(...)` 고정 없는 랜덤 데이터 사용.
    - **frontend/vue.md** — 신규 컴포넌트에 Options API 사용, Vuex를 신규 상태관리로 채택, React 전용 라이브러리(React Testing Library, react-hook-form 등)를 변환 없이 반입, `<script setup>` 내부에서 CVA variant 등 재사용 상수를 매 인스턴스 생성마다 재선언, 서버 상태를 vue-query가 아닌 Pinia로 관리, composable `use` 접두사 명명 위반.
    - **CLAUDE.md** — 구조적/동작 변경 혼재, 과복잡화(YAGNI 위반), 불필요한 추상화.
-3. **일반 품질 검토(단독 실행 시)**: 정확성 버그(경계 조건, null, 레이스 컨디션), 중복, 명명, 단일 책임 위반, 과잉 방어 같은 스택 무관 관점은 범용 `code-reviewer`가 맡는다. 호출 프롬프트에 `code-reviewer`와 함께 실행된다고 적혀 있으면(`/rw:git:pr-review` 등) 이 단계를 건너뛰어 중복 지적을 만들지 않고, 단독으로 실행될 때만 본다. 반응성 상실은 Vue 고유의 함정이므로 함께 실행될 때도 본다.
+3. **일반 품질 검토(단독 실행 시)**: 정확성 버그(경계 조건, null, 레이스 컨디션), 중복, 명명, 단일 책임 위반, 과잉 방어 같은 스택 무관 관점은 범용 `code-reviewer`가 맡는다. 호출 프롬프트에 `code-reviewer`와 함께 실행된다고 적혀 있으면(`/rw:git:pr-review` 등) 이 단계를 건너뛰어 중복 지적을 만들지 않고, 단독으로 실행될 때만 본다. 이때 발생 불가능한 시나리오에 대한 방어 코드(과잉 방어)는 단순화를 제안한다. 반응성 상실은 Vue 고유의 함정이므로 함께 실행될 때도 본다.
 
 ## 참조 규칙
 
