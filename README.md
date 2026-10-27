@@ -36,7 +36,9 @@ git rm .claude/rules/frontend/vite-routing-reactrouter.md \
 ├── CLAUDE.md              # 개발 방법론 (TDD, Tidy First, 일반 행동 규칙)
 ├── guides/                # 필요 시 명시적으로 읽는 규약 (자동 로드 안 됨)
 │   ├── STYLE_GUIDE.md     # .claude 문서 작성 포맷
-│   └── code-review.md     # 스택 무관 코드 리뷰 기준 (code-reviewer 에이전트가 읽음)
+│   ├── code-review.md     # 스택 무관 코드 리뷰 기준 (code-reviewer 에이전트가 읽음)
+│   └── enforced-rules.md  # 구조로 강제하는 규칙 대응표 (/rw:correct가 갱신)
+├── scripts/               # 규칙 강제용 검사 스크립트 (settings.json hook이 실행)
 ├── rules/
 │   ├── backend/
 │   │   ├── shared/        # 공통 아키텍처 원칙, REST API 규약
