@@ -68,7 +68,7 @@ git rm .claude/rules/frontend/vite-routing-reactrouter.md \
 | 커맨드 | 역할 |
 |---|---|
 | `/rw:spec:spec <러프한 기능 설명>` | 되묻는 질문 라운드로 구체화해 `spec.md` 생성 (목표, 범위, 비목표, 시나리오, 엣지 케이스, 실패 시나리오, 완료의 정의) |
-| `/rw:plan:plan [spec/PRD 경로 또는 기능 설명]` | 프로젝트 루트에 `plan.md` 생성 (기능 개요, 구현 목표, 설계, Phase별 테스트 체크리스트) |
+| `/rw:plan:plan [spec/PRD 경로 또는 기능 설명]` | 프로젝트 루트에 `plan.md` 생성 (기능 개요, 구현 목표, 설계, Phase별 테스트 체크리스트, 수동 확인 목록) |
 | `/rw:tdd:go` | `plan.md`의 미완료 테스트를 하나씩 Red → Green으로 구현하고 체크 |
 | `/rw:spec:spec_move` | 완료·중단된 `spec.md`를 `specs/spec_yyyyMMdd_요약키워드.md`로 아카이빙 |
 | `/rw:plan:plan_move` | 완료·중단된 `plan.md`를 `plans/plan_yyyyMMdd_요약키워드.md`로 아카이빙 |

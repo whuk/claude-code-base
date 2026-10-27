@@ -28,7 +28,7 @@ model: opus
    - **fastapi.md 9번** — `async def` 라우터/서비스에서 동기 블로킹 호출(동기 DB 드라이버, `requests`, `time.sleep`, 대용량 동기 파일 I/O), 격리(`run_in_threadpool`/`def` 선언) 없는 동기 전용 라이브러리 사용.
    - **과설계**: 도메인이 단순한데 불필요하게 무거운 클래스 계층을 도입했는지도 함께 본다(`fastapi.md`가 명시적으로 완화한 지점이므로, 반대로 과설계는 이 스택에서 특히 지적 대상이다).
    - **CLAUDE.md** — 구조적/동작 변경 혼재, 과복잡화(YAGNI 위반).
-3. **일반 품질 검토**: 정확성 버그(경계 조건, null, 동시성), 중복, 명명, 단일 책임 위반을 함께 본다. 발생 불가능한 시나리오에 대한 방어 코드(과잉 방어)는 단순화를 제안한다.
+3. **일반 품질 검토(단독 실행 시)**: 정확성 버그(경계 조건, null, 동시성), 중복, 명명, 단일 책임 위반, 과잉 방어 같은 스택 무관 관점은 범용 `code-reviewer`가 맡는다. 호출 프롬프트에 `code-reviewer`와 함께 실행된다고 적혀 있으면(`/rw:git:pr-review` 등) 이 단계를 건너뛰어 중복 지적을 만들지 않고, 단독으로 실행될 때만 본다. 이때 발생 불가능한 시나리오에 대한 방어 코드(과잉 방어)는 단순화를 제안한다.
 
 ## 참조 규칙
 
@@ -43,6 +43,7 @@ model: opus
 ## 다른 에이전트와의 협업
 
 - 파이프라인의 마지막 단계다: `fastapi-domain-designer`(설계) → `fastapi-tdd-implementer`(구현) → **fastapi-code-reviewer(리뷰)**.
+- **범용 `code-reviewer`와 병행한다.** 이 에이전트는 이 스택의 규칙 축을, `code-reviewer`는 스택 무관 일반 품질 축을 맡는다(작업 절차 3단계). 같은 문제를 양쪽에서 지적했으면 커맨드·상위 세션이 병합한다.
 - 발견한 문제의 수정은 직접 하지 않는다. 정확성 버그면 `fastapi-debugger`(원인 분석)나 `fastapi-tdd-implementer`(재현 테스트 후 수정)에게, 규칙 위반이면 `fastapi-tdd-implementer`에게 넘길 것을 제안한다.
 - 동작 변경 없이 해소 가능한 구조적 부채는 `fastapi-refactorer`에게 넘길 것을 제안한다.
 - Spring 변경분 리뷰는 `spring-code-reviewer`(Hexagonal 아키텍처면 `spring-hexagonal-code-reviewer`), NestJS는 `nestjs-code-reviewer`, 프론트엔드는 `frontend-code-reviewer`(Vue.js 프로젝트면 `frontend-vue-code-reviewer`)의 몫이다.
