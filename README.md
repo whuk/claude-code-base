@@ -45,7 +45,7 @@ git rm .claude/rules/frontend/vite-routing-reactrouter.md \
 │   │   └── fastapi/       # FastAPI
 │   └── frontend/          # TypeScript 공통 + Next.js / Vite / Vue.js
 ├── agents/                # 워크플로우별 서브에이전트 (스택별 분리)
-└── commands/rw/           # 커스텀 슬래시 커맨드 (init, correct, git, spec, plan, prd, tdd, review)
+└── commands/rw/           # 커스텀 슬래시 커맨드 (init, correct, reflect, git, spec, plan, prd, tdd, review)
 ```
 
 `/rw:init`이 선택에 따라 남기는 규칙 파일:
@@ -99,6 +99,7 @@ git rm .claude/rules/frontend/vite-routing-reactrouter.md \
 | `/rw:plan:plan_clean [일수]` | `~/.claude/plans`에 쌓인 플랜 모드 산출물을 목록 확인 후 삭제 |
 | `/rw:review:blast-radius [PR번호·커밋 범위]` | 변경이 diff 밖에서 무엇을 깨뜨릴 수 있는지 찾고, 안전하다는 근거가 되는 사실을 실제 코드 실행으로 증명 |
 | `/rw:correct [교정할 실수]` | 반복되는 실수를 아키텍처 → 타입 → 린터 → 테스트 → 문서 순으로 가장 높은 수준에서 막고, 새 검사가 과거 실수에 실패함을 증명 |
+| `/rw:reflect [회고 초점]` | 긴 작업이 끝난 뒤 대화를 회고해 다음에도 쓸 교훈을 뽑고, 기존 지침 파일의 수정안으로 반영. 구조로 강제할 교훈은 `/rw:correct`로 넘김 |
 
 PRD와 `spec.md`는 다루는 층위가 다릅니다. **PRD는 제품 전체 기획**(화면 흐름, 기술스택, 보안, 마일스톤)이고,
 **`spec.md`는 그 안의 개별 기능 명세**입니다. 둘 중 하나만 써도 되고, 이어서 써도 됩니다.
