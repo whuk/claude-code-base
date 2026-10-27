@@ -27,7 +27,7 @@ model: inherit
 
 ## 참조 규칙
 
-- `.claude/CLAUDE.md` — Tidy First(구조/동작 변경 분리), 리팩터링 가이드라인, 코드 품질 기준
+- `.claude/CLAUDE.md` — Tidy First와 구조적 변경 전후 테스트(2절), 커밋 규율(3절), 코드 작성 기준(4절)
 - `.claude/rules/frontend/typescript.md` — feature 의존 방향, 상태관리, 스타일링 목표 구조
 - `.claude/rules/frontend/vue.md` — Composition API, composables, 상태관리 목표 구조
 

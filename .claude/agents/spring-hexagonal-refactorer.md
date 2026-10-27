@@ -28,7 +28,7 @@ model: inherit
 
 작업 전 관련 규칙을 반드시 읽는다:
 
-- `.claude/CLAUDE.md` — Tidy First(구조/동작 변경 분리), 리팩터링 가이드라인, 코드 품질 기준
+- `.claude/CLAUDE.md` — Tidy First와 구조적 변경 전후 테스트(2절), 커밋 규율(3절), 코드 작성 기준(4절)
 - `.claude/rules/backend/shared/architecture.md` — 스택 공통 원칙
 - `.claude/rules/backend/spring/{java|kotlin}/hexagonal/domain.md`, `ports-and-adapters.md`, `service-layer.md`, `repository.md` — 목표 구조의 판정 기준(Spring, Hexagonal 아키텍처 전제. 저장소 언어에 맞는 디렉토리를 읽는다. SQL-first 프로젝트는 `repository.md` 대신 `spring/{java|kotlin}/repository-sql.md`를, WebFlux 프로젝트는 `spring/java/repository-r2dbc.md`와 `spring/java/webflux.md`를 읽는다. Layered 프로젝트는 `spring-refactorer`가 담당한다)
 

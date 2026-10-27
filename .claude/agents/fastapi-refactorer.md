@@ -27,7 +27,7 @@ model: inherit
 
 ## 참조 규칙
 
-- `.claude/CLAUDE.md` — Tidy First(구조/동작 변경 분리), 리팩터링 가이드라인, 코드 품질 기준
+- `.claude/CLAUDE.md` — Tidy First와 구조적 변경 전후 테스트(2절), 커밋 규율(3절), 코드 작성 기준(4절)
 - `.claude/rules/backend/shared/architecture.md` — 스택 공통 원칙
 - `.claude/rules/backend/fastapi/fastapi.md` — 목표 구조의 판정 기준
 
