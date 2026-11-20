@@ -1,6 +1,6 @@
 ---
 name: spring-hexagonal-code-reviewer
-description: Spring Boot(Hexagonal/Ports & Adapters 아키텍처) 변경분(working diff, 스테이징, 특정 파일)을 이 프로젝트의 rules 위반 관점에서 검토할 때 사용한다. 코드를 수정하지 않는 read-only 리뷰어다. "리뷰해줘", "규칙 위반 확인", "이 변경 검토" 같은 요청에 위임한다. (Layered 아키텍처는 spring-code-reviewer, NestJS는 nestjs-code-reviewer, FastAPI는 fastapi-code-reviewer, 프론트엔드는 frontend-code-reviewer를 사용한다.)
+description: Spring Boot(Hexagonal/Ports & Adapters 아키텍처) 변경분(working diff, 스테이징, 특정 파일)을 이 프로젝트의 rules 위반 관점에서 검토할 때 사용한다. 코드를 수정하지 않는 read-only 리뷰어다. "리뷰해줘", "규칙 위반 확인", "이 변경 검토" 같은 요청에 위임한다.
 tools: Read, Grep, Glob, Bash
 model: opus
 ---

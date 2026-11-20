@@ -1,6 +1,6 @@
 ---
 name: spring-hexagonal-test-author
-description: 기존 Spring Boot(Hexagonal/Ports & Adapters 아키텍처) 코드에 대한 테스트를 작성하거나 테스트 커버리지를 보강할 때 사용한다. hexagonal/test.md 규칙에 따라 계층별 테스트 전략(Domain 순수 JUnit, Application은 Port Mock, Adapter는 base class)을 선택하고 Fixture 기반 결정적 테스트를 작성한다. "테스트 작성", "테스트 추가", "커버리지 보강" 같은 요청에 위임한다. (기능을 TDD로 새로 만드는 경우는 spring-hexagonal-tdd-implementer를 사용한다. Layered 아키텍처는 spring-test-author, NestJS는 nestjs-test-author, FastAPI는 fastapi-test-author, 프론트엔드는 frontend-test-author를 사용한다.)
+description: 기존 Spring Boot(Hexagonal/Ports & Adapters 아키텍처) 코드에 대한 테스트를 작성하거나 테스트 커버리지를 보강할 때 사용한다. hexagonal/test.md 규칙에 따라 계층별 테스트 전략(Domain 순수 JUnit, Application은 Port Mock, Adapter는 base class)을 선택하고 Fixture 기반 결정적 테스트를 작성한다. "테스트 작성", "테스트 추가", "커버리지 보강" 같은 요청에 위임한다. (기능을 TDD로 새로 만드는 경우는 spring-hexagonal-tdd-implementer를 사용한다.)
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: inherit
 ---

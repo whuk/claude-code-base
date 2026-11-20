@@ -1,6 +1,6 @@
 ---
 name: fastapi-code-reviewer
-description: FastAPI 변경분(working diff, 스테이징, 특정 파일)을 이 프로젝트의 rules 위반 관점에서 검토할 때 사용한다. 코드를 수정하지 않는 read-only 리뷰어다. "리뷰해줘", "규칙 위반 확인", "이 변경 검토" 같은 요청에 위임한다. (Spring은 spring-code-reviewer — Hexagonal 아키텍처를 선택한 Spring 프로젝트는 spring-hexagonal-code-reviewer, NestJS는 nestjs-code-reviewer, 프론트엔드는 frontend-code-reviewer — Vue.js 프로젝트는 frontend-vue-code-reviewer를 사용한다.)
+description: FastAPI 변경분(working diff, 스테이징, 특정 파일)을 이 프로젝트의 rules 위반 관점에서 검토할 때 사용한다. 코드를 수정하지 않는 read-only 리뷰어다. "리뷰해줘", "규칙 위반 확인", "이 변경 검토" 같은 요청에 위임한다.
 tools: Read, Grep, Glob, Bash
 model: opus
 ---
