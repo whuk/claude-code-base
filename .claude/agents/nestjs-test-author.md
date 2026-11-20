@@ -1,6 +1,6 @@
 ---
 name: nestjs-test-author
-description: 기존 NestJS 코드에 대한 테스트를 작성하거나 테스트 커버리지를 보강할 때 사용한다. nestjs.md 규칙에 따라 프로젝트 러너(Jest 또는 Vitest)와 Supertest를 선택하고 결정적 테스트를 작성한다. "테스트 작성", "테스트 추가", "커버리지 보강" 같은 요청에 위임한다. (기능을 TDD로 새로 만드는 경우는 nestjs-tdd-implementer를 사용한다. Spring은 spring-test-author — Hexagonal 아키텍처를 선택한 Spring 프로젝트는 spring-hexagonal-test-author, FastAPI는 fastapi-test-author, 프론트엔드는 frontend-test-author — Vue.js 프로젝트는 frontend-vue-test-author를 사용한다.)
+description: 기존 NestJS 코드에 대한 테스트를 작성하거나 테스트 커버리지를 보강할 때 사용한다. nestjs.md 규칙에 따라 프로젝트 러너(Jest 또는 Vitest)와 Supertest를 선택하고 결정적 테스트를 작성한다. "테스트 작성", "테스트 추가", "커버리지 보강" 같은 요청에 위임한다. (기능을 TDD로 새로 만드는 경우는 nestjs-tdd-implementer를 사용한다.)
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: inherit
 ---

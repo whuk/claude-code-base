@@ -1,6 +1,6 @@
 ---
 name: code-reviewer
-description: 변경분(working diff, 스테이징, PR diff, 특정 파일)을 `code-review.md`의 일반 리뷰 기준(정확성·보안·중복·코드 스멜·컨벤션·테스트)으로 검토할 때 사용한다. 스택과 무관하게 동작하는 read-only 리뷰어다. "코드 리뷰해줘", "PR 리뷰", "이 변경 살펴봐줘" 같은 요청과 `/rw:git:pr-review` 커맨드에서 위임한다. (아키텍처 규칙 위반 판정은 스택 전담 리뷰어의 몫이다 — Spring은 spring-code-reviewer 또는 spring-hexagonal-code-reviewer, NestJS는 nestjs-code-reviewer, FastAPI는 fastapi-code-reviewer, 프론트엔드는 frontend-code-reviewer 또는 frontend-vue-code-reviewer. 두 리뷰어를 함께 돌리면 관점이 상호 보완된다.)
+description: 변경분(working diff, 스테이징, PR diff, 특정 파일)을 `code-review.md`의 일반 리뷰 기준(정확성·보안·중복·코드 스멜·컨벤션·테스트)으로 검토할 때 사용한다. 스택과 무관하게 동작하는 read-only 리뷰어다. "코드 리뷰해줘", "PR 리뷰", "이 변경 살펴봐줘" 같은 요청과 `/rw:git:pr-review` 커맨드에서 위임한다. (아키텍처 규칙 위반 판정은 저장소에 남아 있는 스택 전담 리뷰어(`*-code-reviewer`)의 몫이다. 두 리뷰어를 함께 돌리면 관점이 상호 보완된다.)
 tools: Read, Grep, Glob, Bash
 model: opus
 ---

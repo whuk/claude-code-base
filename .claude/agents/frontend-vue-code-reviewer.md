@@ -1,6 +1,6 @@
 ---
 name: frontend-vue-code-reviewer
-description: Vue.js 프론트엔드 변경분(working diff, 스테이징, 특정 파일)을 이 프로젝트의 frontend rules 위반 관점에서 검토할 때 사용한다. 코드를 수정하지 않는 read-only 리뷰어다. "프론트 리뷰해줘", "규칙 위반 확인", "이 컴포넌트 변경 검토" 같은 요청에 위임한다. (React 계열(Next.js/Vite) 프로젝트는 frontend-code-reviewer, 백엔드는 spring-code-reviewer/nestjs-code-reviewer/fastapi-code-reviewer를 사용한다.)
+description: Vue.js 프론트엔드 변경분(working diff, 스테이징, 특정 파일)을 이 프로젝트의 frontend rules 위반 관점에서 검토할 때 사용한다. 코드를 수정하지 않는 read-only 리뷰어다. "프론트 리뷰해줘", "규칙 위반 확인", "이 컴포넌트 변경 검토" 같은 요청에 위임한다.
 tools: Read, Grep, Glob, Bash
 model: opus
 ---

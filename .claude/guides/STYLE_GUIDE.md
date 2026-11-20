@@ -62,13 +62,14 @@ disable-model-invocation: true     # 선택. 사용자만 트리거하게 제한
 ```yaml
 ---
 name: <kebab-case 이름>
-description: <이 에이전트를 언제 위임하는지, 형제 에이전트와의 구분점 포함>
+description: <이 에이전트를 언제 위임하는지, 같은 스택에 함께 남는 형제 에이전트와의 구분점 포함>
 tools: <콤마 구분 목록>            # 전체 도구 허용 시 생략하지 말고 tools: '*' 로 명시
 model: inherit | opus | sonnet | haiku
 ---
 ```
 
 - `tools` 필드를 생략해 "전체 허용"을 암묵적으로 표현하지 않는다. `tools: '*'`로 명시한다. 와일드카드는 YAML 앵커 문법과 충돌하지 않도록 작은따옴표로 감싼다.
+- `description`에는 `/rw:init` 뒤에도 함께 남는 형제(같은 스택의 `tdd-implementer`와 `test-author` 등)와의 구분점만 쓴다. 다른 스택·아키텍처·프레임워크의 대응 에이전트 안내는 본문 `## 전제`에 둔다 — `description`은 매 세션 로드되고, `/rw:init`이 그 에이전트들을 삭제하면 없는 이름을 가리키게 된다. 스택과 무관하게 남는 에이전트(`code-reviewer`, `*-style-checker`)가 갈리는 대상을 가리킬 때는 "저장소에 남아 있는 쪽"으로 적는다.
 
 ### 3.4. Meta (CLAUDE.md)
 

@@ -1,6 +1,6 @@
 ---
 name: frontend-vue-architect
-description: Vue.js 프론트엔드 기능을 구현하기 전에 feature 구조, 상태 소재지, 컴포넌트 경계를 설계할 때 사용한다. SFC/composables 구조, TanStack Query(vue-query)/Pinia 상태 분리, Vue Router 라우트-feature 매핑을 결정하는 read-only 설계 전담이다. 코드를 작성하지 않고 설계안을 산출하며, 구현은 frontend-vue-tdd-implementer가 이어받는다. "프론트 구조 어떻게 잡지", "이 기능 컴포넌트 어떻게 나눌까", "상태 어디에 둘까" 같은 요청에 위임한다. (React 계열(Next.js/Vite) 프로젝트는 frontend-architect를 사용한다.)
+description: Vue.js 프론트엔드 기능을 구현하기 전에 feature 구조, 상태 소재지, 컴포넌트 경계를 설계할 때 사용한다. SFC/composables 구조, TanStack Query(vue-query)/Pinia 상태 분리, Vue Router 라우트-feature 매핑을 결정하는 read-only 설계 전담이다. 코드를 작성하지 않고 설계안을 산출하며, 구현은 frontend-vue-tdd-implementer가 이어받는다. "프론트 구조 어떻게 잡지", "이 기능 컴포넌트 어떻게 나눌까", "상태 어디에 둘까" 같은 요청에 위임한다.
 tools: Read, Grep, Glob, Bash
 model: opus
 ---

@@ -1,6 +1,6 @@
 ---
 name: frontend-style-checker
-description: TypeScript 프론트엔드 코드(React 계열과 Vue 공통)가 Biome(또는 ESLint+Prettier) 컨벤션을 따르는지 검사할 때 사용한다. 포매터/린터로 결정적으로 검사하고, 도구가 잡지 못하는 명명·표기 관례는 React/Vue/TypeScript 커뮤니티 표준 기준으로 리뷰하는 read-only 검사기다. "프론트 스타일 체크", "린트 검사", "포매팅 검사" 같은 요청에 위임한다. (프로젝트 아키텍처 rules 위반 검토는 frontend-code-reviewer가 담당한다. 백엔드는 spring-style-checker/nestjs-style-checker/fastapi-style-checker를 사용한다.)
+description: TypeScript 프론트엔드 코드(React 계열과 Vue 공통)가 Biome(또는 ESLint+Prettier) 컨벤션을 따르는지 검사할 때 사용한다. 포매터/린터로 결정적으로 검사하고, 도구가 잡지 못하는 명명·표기 관례는 React/Vue/TypeScript 커뮤니티 표준 기준으로 리뷰하는 read-only 검사기다. "프론트 스타일 체크", "린트 검사", "포매팅 검사" 같은 요청에 위임한다. (프로젝트 아키텍처 rules 위반 검토는 frontend-code-reviewer 또는 frontend-vue-code-reviewer 중 저장소에 남아 있는 쪽이 담당한다.)
 tools: Read, Grep, Glob, Bash
 model: inherit
 ---

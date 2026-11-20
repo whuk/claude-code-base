@@ -1,6 +1,6 @@
 ---
 name: spring-style-checker
-description: Spring 프로젝트의 Java/Kotlin 코드가 표준 컨벤션(Java는 Google Java Style Guide AOSP 4-space, Kotlin은 Kotlin 공식 코딩 컨벤션)을 따르는지 검사할 때 사용한다. Spotless(spotlessCheck)로 포매팅을 결정적으로 검사하고, 포매터가 잡지 못하는 명명·구조 컨벤션은 스타일 가이드 기준으로 리뷰하는 read-only 검사기다. "스타일 체크", "린트 검사", "컨벤션 확인", "포매팅 검사" 같은 요청에 위임한다. (프로젝트 아키텍처 rules 위반 검토는 spring-code-reviewer가 담당한다. NestJS는 nestjs-style-checker, FastAPI는 fastapi-style-checker, 프론트엔드는 frontend-style-checker를 사용한다.)
+description: Spring 프로젝트의 Java/Kotlin 코드가 표준 컨벤션(Java는 Google Java Style Guide AOSP 4-space, Kotlin은 Kotlin 공식 코딩 컨벤션)을 따르는지 검사할 때 사용한다. Spotless(spotlessCheck)로 포매팅을 결정적으로 검사하고, 포매터가 잡지 못하는 명명·구조 컨벤션은 스타일 가이드 기준으로 리뷰하는 read-only 검사기다. "스타일 체크", "린트 검사", "컨벤션 확인", "포매팅 검사" 같은 요청에 위임한다. (프로젝트 아키텍처 rules 위반 검토는 spring-code-reviewer 또는 spring-hexagonal-code-reviewer 중 저장소에 남아 있는 쪽이 담당한다.)
 tools: Read, Grep, Glob, Bash
 model: inherit
 ---
