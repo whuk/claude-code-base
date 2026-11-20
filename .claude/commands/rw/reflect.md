@@ -15,10 +15,13 @@ user-invocable: true
 1. 회고 근거는 현재 대화와, 이번 작업에서 만든 커밋·PR 코멘트입니다.
 2. 커밋 범위의 시작점 `{작업 시작 커밋}`을 정합니다. 기본값은 현재 브랜치가 기본 브랜치에서 갈라진 지점입니다.
    ```bash
-   git symbolic-ref --short refs/remotes/origin/HEAD
+   git remote
+   git symbolic-ref --short refs/remotes/{remote}/HEAD
    git merge-base HEAD {기본 브랜치}
    ```
-   `refs/remotes/origin/HEAD`가 없는 클론(`git init` 뒤 `remote add`로 만든 경우 등)에서는 첫 명령이 실패합니다. 이때는 `gh`로 기본 브랜치 이름을 조회하고, 그 앞에 `origin/`을 붙여 `{기본 브랜치}`로 씁니다.
+   remote 이름을 `origin`으로 가정하지 않습니다. `git remote` 출력이 하나뿐이면 그 이름을 `{remote}`로 씁니다. 여러 개면 아래 명령으로 기본 브랜치 이름을 조회한 뒤 `git config --get branch.{이름}.remote`로 그 브랜치가 추적 중인 remote를 씁니다. 그래도 판정이 안 되면 목록을 보여주고 사용자에게 확인받습니다.
+
+   `refs/remotes/{remote}/HEAD`가 없는 클론(`git init` 뒤 `remote add`로 만든 경우 등)에서는 `git symbolic-ref`가 실패합니다. 이때는 `gh`로 기본 브랜치 이름을 조회하고, 그 앞에 `{remote}/`를 붙여 `{기본 브랜치}`로 씁니다.
    ```bash
    gh repo view --json defaultBranchRef --jq .defaultBranchRef.name
    ```

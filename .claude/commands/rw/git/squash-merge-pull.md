@@ -1,12 +1,12 @@
 ---
-description: "GitHub PR을 squash merge하고 로컬 main 브랜치를 최신 상태로 동기화한다."
+description: "GitHub PR을 squash merge하고 로컬 기본 브랜치를 최신 상태로 동기화한다."
 argument-hint: "squash merge할 PR 번호 (예: #123 또는 123, 선택). 생략하면 현재 브랜치의 열린 PR을 대상으로 합니다."
 user-invocable: true
 ---
 
-# /rw:git:squash-merge-pull — PR squash merge 및 main 동기화
+# /rw:git:squash-merge-pull — PR squash merge 및 기본 브랜치 동기화
 
-GitHub PR을 squash merge하고 로컬 main 브랜치를 최신 상태로 동기화합니다.
+GitHub PR을 squash merge하고 로컬 기본 브랜치를 최신 상태로 동기화합니다.
 
 ## 1단계: 대상 PR 결정
 
