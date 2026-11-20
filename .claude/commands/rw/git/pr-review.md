@@ -54,9 +54,11 @@ user-invocable: true
      ```bash
      gh pr view <PR번호> --json commits --jq '[.commits[] | select(.oid | startswith("{리뷰한 head}"))] | length'
      ```
-   - 1이면 그 커밋부터 PR head까지의 증분 diff를 가져옵니다.
+   - 1이면 그 커밋부터 PR head까지의 증분 diff를 가져옵니다. remote 이름을 `origin`으로 가정하지 마세요 — `pull/<PR번호>/head` ref는 PR이 열린 저장소에만 있습니다(fork 경유면 `origin`은 fork입니다). 아래 첫 두 명령의 출력을 대조해 URL이 그 저장소(`owner/repo`)를 가리키는 remote를 `{remote}`로 씁니다. 맞는 remote가 없으면 목록을 보여주고 사용자에게 확인받습니다.
      ```bash
-     git fetch origin pull/<PR번호>/head
+     gh repo view --json nameWithOwner --jq .nameWithOwner
+     git remote -v
+     git fetch {remote} pull/<PR번호>/head
      git diff {리뷰한 head} FETCH_HEAD
      ```
      증분 diff가 비어 있으면 새 커밋은 있지만 순변경이 없다는 뜻입니다(예: 되돌리기 커밋). 다음 메시지를 출력하고 **중단**하세요:

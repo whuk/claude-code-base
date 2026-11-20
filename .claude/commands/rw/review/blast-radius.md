@@ -18,12 +18,14 @@ user-invocable: true
 
 ### 경로 A: PR 번호가 입력된 경우
 
-`#123`, `123`에서 숫자만 추출해 변경분을 가져오고, PR head를 worktree로 체크아웃합니다.
+`#123`, `123`에서 숫자만 추출해 변경분을 가져오고, PR head를 worktree로 체크아웃합니다. remote 이름을 `origin`으로 가정하지 않습니다 — `pull/{번호}/head` ref는 PR이 열린 저장소에만 있습니다(fork 경유면 `origin`은 fork입니다). `gh repo view`와 `git remote -v`의 출력을 대조해 URL이 그 저장소(`owner/repo`)를 가리키는 remote를 `{remote}`로 씁니다. 맞는 remote가 없으면 목록을 보여주고 사용자에게 확인받습니다.
 
 ```bash
 gh pr diff {번호}
 mktemp -d
-git fetch origin pull/{번호}/head
+gh repo view --json nameWithOwner --jq .nameWithOwner
+git remote -v
+git fetch {remote} pull/{번호}/head
 git worktree add --detach {worktree 경로} FETCH_HEAD
 ```
 
